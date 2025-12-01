@@ -27,7 +27,7 @@ because it's going to be plugged in directly as raw text.
 Don't use backticks or any sort of markdown.
 """
 
-MINUTES = 1
+MINUTES = 5
 DEFAULT_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.0-flash")
 API_KEY_FILE = os.getenv("LITELLM_KEY_FILE", "api_key.txt")
 STATE_FILE = os.getenv("STATE_FILE", "state.txt")

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Slide</title>
+
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #main {
+            display: flex;
+            background-color: black;
+            width: 100%;
+            height: 100%;
+        }
+
+        strudel-repl {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        iframe {
+            width: 96%;
+            height: 94%;
+            border: none;
+        }
+    </style>
+
+    <script>
+        function update_repl(code) {
+            let main = document.getElementById(`main`)
+            let old_repl = main.querySelector(`strudel-repl`)
+
+            if (old_repl) {
+                old_repl.remove()
+            }
+
+            let new_repl = document.createElement(`strudel-repl`)
+            let comment = document.createComment(`${code}`)
+            new_repl.appendChild(comment)
+            main.appendChild(new_repl)
+        }
+    </script>
+</head>
+
+<body>
+    <script src="https://unpkg.com/@strudel/embed@latest"></script>
+
+    <div id="main">
+        <strudel-repl>
+        <!-- sound("bd [hh rim]*2 bd [hh rim]*1.5, jazz*4").lpf(1000).room(0.3) -->
+        </strudel-repl>
+    </div>
+</body>
