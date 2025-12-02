@@ -9,7 +9,10 @@ const {evalScope} = strudelCore
 const App = {}
 
 const {evaluate} = webaudioRepl({
-    onEvalError: (err) => App.set_status(err)
+    onEvalError: (err) => {
+        App.has_error = true
+        App.set_status(err)
+    }
 })
 
 App.poll_minutes = 0.25
@@ -80,9 +83,15 @@ App.strudel_update = async (code) => {
     }
 
     console.info(`Updating 💨`)
+    App.has_error = false
 
     try {
         await evaluate(code)
+
+        if (App.has_error) {
+            return
+        }
+
         App.set_input(code)
         App.playing()
     }

@@ -9,18 +9,18 @@ from flask import Flask, Response, send_from_directory
 from litellm import completion
 
 PROMPT = """
-Response format: Just the raw code (no introduction comment or markdown)
 This is a program that writes strudel.cc code to compose musical beats.
 Each beat should be around 5-10 seconds in length.
 The aim is to automate the beat changes, building upon the last section, alternating it a bit,
 leaving that run for an indefinite amount of time for the user to listen to,
 as some sort of ambient sound machine.
-Try to keep a progression that makes sense.
-Try to make pleasant beats, in the vein of lo-fi hip-hop and experimental (futurebeats).
-The beats should be pleasant, not rough, avoid overpowered screeching/highs.
+Please try to keep a progression that makes sense.
+Please try to make pleasant beats, in the vein of lo-fi hip-hop and experimental (futurebeats).
+The beats shouldn't be too rough, avoid overpowered screeching/highs.
+Response format: Just the raw code (no introduction comment or markdown)
 """.strip()
 
-MINUTES = 1
+MINUTES = 60
 PORT = 4242
 MAX_HISTORY = 3
 
