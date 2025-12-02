@@ -1,96 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Slide</title>
-
-    <style>
-        body {font-family: monospace; padding: 20px; background: #222; color: #eee;}
-        textarea {width: 100%; height: 100px; background: #111; color: #0f0; border: 1px solid #444; padding: 10px;}
-        button {padding: 10px 20px; cursor: pointer; font-weight: bold;}
-        .controls {margin-top: 10px; display: flex; gap: 10px;}
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 
 <body>
-    <h2>Slide</h2>
+    <div id="main">
+        <div id="title">Slide</div>
 
-    <textarea id="code-input">s("bd sd").fast(2)</textarea>
+        <textarea id="code-input">s("bd sd").fast(2)</textarea>
 
-    <div class="controls">
-        <button id="btn-start">Start Audio</button>
-        <button id="btn-update">Update Pattern</button>
-        <button id="btn-stop">Stop</button>
+        <div class="controls">
+            <button id="btn-start">Start Audio</button>
+            <button id="btn-update">Update Pattern</button>
+            <button id="btn-stop">Stop</button>
+        </div>
+
+        <pre id="status">Waiting for audio...</pre>
     </div>
 
-    <pre id="status" style="margin-top:20px; color: #888;">Waiting for audio...</pre>
     <script src="/dist/strudel.bundle.js"></script>
-
-    <script>
-        const code_input = document.getElementById(`code-input`)
-
-        const ensure_strudel_ready = async () => {
-            if (!window.strudel_init) {
-                App.set_status(`Bundle not loaded. Check console for errors.`)
-                console.error(`strudel.bundle.js is missing or failed to load`)
-                return false
-            }
-
-            await window.strudel_init()
-            return true
-        }
-
-        const start_status_watch = () => {
-            if (!window.strudel_watchStatus) {
-                console.warn(`Polling function missing. Did strudel bundle load?`)
-                return
-            }
-
-            const minutes = (window.App && window.App.statusPollMinutes) || 1
-            window.strudel_watchStatus(minutes)
-        }
-
-        document.getElementById(`btn-start`).addEventListener(`click`, async () => {
-            const ready = await ensure_strudel_ready()
-
-            if (!ready) {
-                return
-            }
-
-            App.set_status(`Audio Ready! Click Update to play.`)
-            start_status_watch()
-        })
-
-        document.getElementById(`btn-update`).addEventListener(`click`, async () => {
-            const ready = await ensure_strudel_ready()
-
-            if (!ready) {
-                return
-            }
-
-            const code = code_input.value
-
-            try {
-                App.strudel_update(code)
-                App.playing()
-            } catch (e) {
-                App.set_status(`Error: ${e.message}`)
-            }
-        })
-
-        document.getElementById(`btn-stop`).addEventListener(`click`, () => {
-            if (!window.strudel_stop) {
-                App.set_status(`Bundle not loaded. Cannot stop audio.`)
-                return
-            }
-
-            if (window.strudel_stopStatusWatch) {
-                window.strudel_stopStatusWatch()
-            }
-
-            window.strudel_stop()
-            App.set_status(`Stopped.`)
-        })
-    </script>
 </body>
 </html>

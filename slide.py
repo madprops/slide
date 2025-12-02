@@ -240,13 +240,13 @@ def get_status() -> Response:
 	status = HISTORY[-1]
 	return Response(status, mimetype="text/plain")
 
-@app.get("/healthz")
-def get_health() -> Dict[str, str]:
-	return {"status": "ok"}
-
 @app.route("/dist/<path:filename>")
 def dist_assets(filename):
     return send_from_directory("dist", filename)
+
+@app.route("/css/<path:filename>")
+def css_assets(filename):
+    return send_from_directory("css", filename)
 
 def shutdown_worker() -> None:
 	stop_event.set()

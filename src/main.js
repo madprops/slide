@@ -174,6 +174,73 @@ App.set_status = (status) => {
     status_el.innerText = status
 }
 
+App.start_events = () => {
+    const code_input = document.getElementById(`code-input`)
+
+    const ensure_strudel_ready = async () => {
+        if (!window.strudel_init) {
+            App.set_status(`Bundle not loaded. Check console for errors.`)
+            console.error(`strudel.bundle.js is missing or failed to load`)
+            return false
+        }
+
+        await window.strudel_init()
+        return true
+    }
+
+    const start_status_watch = () => {
+        if (!window.strudel_watchStatus) {
+            console.warn(`Polling function missing. Did strudel bundle load?`)
+            return
+        }
+
+        const minutes = (window.App && window.App.statusPollMinutes) || 1
+        window.strudel_watchStatus(minutes)
+    }
+
+    document.getElementById(`btn-start`).addEventListener(`click`, async () => {
+        const ready = await ensure_strudel_ready()
+
+        if (!ready) {
+            return
+        }
+
+        App.set_status(`Audio Ready! Click Update to play.`)
+        start_status_watch()
+    })
+
+    document.getElementById(`btn-update`).addEventListener(`click`, async () => {
+        const ready = await ensure_strudel_ready()
+
+        if (!ready) {
+            return
+        }
+
+        const code = code_input.value
+
+        try {
+            App.strudel_update(code)
+            App.playing()
+        } catch (e) {
+            App.set_status(`Error: ${e.message}`)
+        }
+    })
+
+    document.getElementById(`btn-stop`).addEventListener(`click`, () => {
+        if (!window.strudel_stop) {
+            App.set_status(`Bundle not loaded. Cannot stop audio.`)
+            return
+        }
+
+        if (window.strudel_stopStatusWatch) {
+            window.strudel_stopStatusWatch()
+        }
+
+        window.strudel_stop()
+        App.set_status(`Stopped.`)
+    })
+}
+
 // Export functions to window for use in HTML
 window.strudel_init = App.strudel_init
 window.strudel_update = App.strudel_update
@@ -181,3 +248,5 @@ window.strudel_stop = App.strudel_stop
 window.strudel_watchStatus = App.strudel_watch_status
 window.strudel_stopStatusWatch = App.stop_status_watch
 window.App = App
+
+App.start_events()
