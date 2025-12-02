@@ -11,7 +11,7 @@ from litellm import completion
 PROMPT = """
 This is a program that writes strudel.cc code to compose musical beats.
 Each beat should be around 5-10 seconds in length.
-The aim is to automate the beat changes, building upon the last section, alternating it a bit,
+The aim is to automate the beat changes, building upon the last section, altering it a bit,
 leaving that run for an indefinite amount of time for the user to listen to,
 as some sort of ambient sound machine.
 Please try to keep a progression that makes sense.
