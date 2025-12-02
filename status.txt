@@ -1,1 +1,0 @@
-sound("bd [hh rim]*2 bd [hh rim]*1.5, jazz*4").lpf(1000).room(0.3)
