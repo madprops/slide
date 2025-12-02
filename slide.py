@@ -7,7 +7,7 @@ import threading
 from pathlib import Path
 from typing import Dict, Optional, List
 
-from flask import Flask, Response
+from flask import Flask, Response, send_from_directory
 from litellm import completion
 
 
@@ -27,7 +27,7 @@ because it's going to be plugged in directly as raw text.
 Don't use backticks or any sort of markdown.
 """
 
-MINUTES = 5
+MINUTES = 20
 DEFAULT_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.0-flash")
 API_KEY_FILE = os.getenv("LITELLM_KEY_FILE", "api_key.txt")
 STATE_FILE = os.getenv("STATE_FILE", "state.txt")
@@ -234,6 +234,20 @@ def start_worker_if_needed() -> None:
 	worker_thread.start()
 
 
+@app.get("/")
+def index() -> Response:
+	"""Serve the main HTML page."""
+
+	return send_from_directory(".", "index.html")
+
+
+@app.get("/strudel/<path:path>")
+def strudel_files(path: str) -> Response:
+	"""Serve strudel library files."""
+
+	return send_from_directory("strudel", path)
+
+
 @app.get("/state")
 def get_state() -> Response:
 	"""Expose the most recent AI answer as plain text."""
@@ -247,6 +261,11 @@ def get_state() -> Response:
 @app.get("/healthz")
 def get_health() -> Dict[str, str]:
 	return {"status": "ok"}
+
+
+@app.route("/dist/<path:filename>")
+def dist_assets(filename):
+    return send_from_directory("dist", filename)
 
 
 def shutdown_worker() -> None:

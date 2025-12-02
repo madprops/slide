@@ -1,0 +1,11 @@
+{
+  "name": "slide",
+  "version": "1.0.0",
+  "devDependencies": {
+    "vite": "latest"
+  },
+  "dependencies": {
+    "fraction.js": "^5.2.1",
+    "nanostores": "^0.11.3"
+  }
+}
