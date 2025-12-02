@@ -45,6 +45,7 @@ App.strudel_init = async () => {
 
     try {
         await App.ensure_scope()
+
         // This must be called in response to a user interaction
         await initAudio()
 
@@ -55,6 +56,7 @@ App.strudel_init = async () => {
         await samples('github:tidalcycles/dirt-samples')
 
         App.audio_started = true
+        App.strudel_watch_status()
         console.info(`Audio Ready.`)
     }
     catch (err) {
@@ -94,17 +96,13 @@ App.stop_status_watch = () => {
     App.clear_status_watch()
 }
 
-App.strudel_watch_status = (minutes) => {
-    const poll_minutes = minutes || App.poll_minutes
-
-    if (!poll_minutes || poll_minutes <= 0) {
-        console.warn(`Provide a polling interval in minutes greater than zero`)
+App.strudel_watch_status = () => {
+    if (!App.poll_minutes || (App.poll_minutes <= 0)) {
+        console.error(`Provide a polling interval in minutes greater than zero`)
         return
     }
 
-    App.poll_minutes = poll_minutes
-
-    const intervalMs = poll_minutes * 60 * 1000
+    const interval_ms = App.poll_minutes * 60 * 1000
 
     const poll_status = async () => {
         if (App.poll_in_flight) {
@@ -112,7 +110,7 @@ App.strudel_watch_status = (minutes) => {
         }
 
         if (!App.audio_started) {
-            console.warn(`Audio not started yet. Call strudel_init() before strudel_watch_status().`)
+            console.warn(`Audio not started yet.`)
             return
         }
 
@@ -146,5 +144,7 @@ App.strudel_watch_status = (minutes) => {
 
     App.poll_timer = setInterval(() => {
         poll_status()
-    }, intervalMs)
+    }, interval_ms)
+
+    console.info(`Interval started.`)
 }
