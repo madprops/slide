@@ -43,6 +43,16 @@
             return true
         }
 
+        const startStatusWatch = () => {
+            if (!window.strudel_watchStatus) {
+                console.warn('Polling function missing. Did strudel bundle load?')
+                return
+            }
+
+            const minutes = (window.App && window.App.statusPollMinutes) || 1
+            window.strudel_watchStatus(minutes)
+        }
+
         document.getElementById('btn-start').addEventListener('click', async () => {
             const ready = await ensureStrudelReady()
 
@@ -51,6 +61,7 @@
             }
 
             statusEl.innerText = 'Audio Ready! Click Update to play.'
+            startStatusWatch()
         })
 
         document.getElementById('btn-update').addEventListener('click', async () => {
@@ -74,6 +85,10 @@
             if (!window.strudel_stop) {
                 statusEl.innerText = 'Bundle not loaded. Cannot stop audio.'
                 return
+            }
+
+            if (window.strudel_stopStatusWatch) {
+                window.strudel_stopStatusWatch()
             }
 
             window.strudel_stop()

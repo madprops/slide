@@ -1,54 +1,50 @@
-import './process-env.js'
-import * as strudelCore from '@strudel.cycles/core'
-import * as strudelMini from '@strudel.cycles/mini'
-import * as strudelWebAudio from '@strudel.cycles/webaudio'
+import "./process-env.js"
+import * as strudelCore from "@strudel.cycles/core"
+import * as strudelMini from "@strudel.cycles/mini"
+import * as strudelWebAudio from "@strudel.cycles/webaudio"
+import {initAudio, samples} from "superdough"
+import {webaudioRepl} from "@strudel.cycles/webaudio"
 
-const { evalScope } = strudelCore
+const {evalScope} = strudelCore
+const {evaluate} = webaudioRepl()
+const App = {}
 
-// Import initAudio from superdough instead of webaudio
-import { initAudio, samples } from 'superdough'
-import { webaudioRepl } from '@strudel.cycles/webaudio'
+App.poll_minutes = 1
+App.audio_started = false
+App.poll_in_flight = false
 
-const { evaluate } = webaudioRepl()
+App.clear_status_watch = () => {
+    if (!App.poll_timer) {
+        return
+    }
 
-let App = window.App
-
-if (!App) {
-    App = {}
-    window.App = App
+    clearInterval(App.poll_timer)
+    App.poll_timer = undefined
 }
 
-let scopePromise
-
-let statusPollTimer
-let lastStatusCode
-let statusPollInFlight = false
-
-const ensureStrudelScope = () => {
-    if (!scopePromise) {
-        scopePromise = evalScope(strudelCore, strudelMini, strudelWebAudio).catch((err) => {
-            scopePromise = undefined
+App.ensure_scope = () => {
+    if (!App.scope_promise) {
+        App.scope_promise = evalScope(strudelCore, strudelMini, strudelWebAudio).catch((err) => {
+            App.scope_promise = undefined
             console.error(`Strudel scope failed to load`, err)
             throw err
         })
     }
 
-    return scopePromise
+    return App.scope_promise
 }
-
-let audioStarted = false
 
 // 1. Export a setup function to the global window object
 // This allows your HTML/Flask templates to call it easily.
-window.strudel_init = async () => {
-    if (audioStarted) {
+App.strudel_init = async () => {
+    if (App.audio_started) {
         return
     }
 
-    console.log(`Initializing Audio...`)
+    console.info(`Initializing Audio...`)
 
     try {
-        await ensureStrudelScope()
+        await App.ensure_scope()
         // This must be called in response to a user interaction
         await initAudio()
 
@@ -58,8 +54,8 @@ window.strudel_init = async () => {
         // Load default samples
         await samples('github:tidalcycles/dirt-samples')
 
-        audioStarted = true
-        console.log(`Audio Ready.`)
+        App.audio_started = true
+        console.info(`Audio Ready.`)
     }
     catch (err) {
         console.error(`Audio Failed:`, err)
@@ -68,23 +64,24 @@ window.strudel_init = async () => {
 }
 
 // 2. Export the update function
-window.strudel_update = (code) => {
-    if (!audioStarted) {
+App.strudel_update = (code) => {
+    if (!App.audio_started) {
         console.warn(`Audio not started yet. Call strudel_init() first.`)
         return
     }
 
-    console.log(`Running:`, code)
+    console.info(`Running:`, code)
     evaluate(code)
 }
 
 // 3. Export stop
-window.strudel_stop = () => {
+App.strudel_stop = () => {
+    App.stop_status_watch()
     evaluate(`hush`)
 }
 
 App.fetchStatusCode = async () => {
-    const response = await fetch(`/status`, { cache: `no-store` })
+    const response = await fetch(`/state`, { cache: `no-store` })
 
     if (!response.ok) {
         throw new Error(`Status endpoint returned ${response.status}`)
@@ -93,25 +90,33 @@ App.fetchStatusCode = async () => {
     return response.text()
 }
 
-App.strudel_watchStatus = (minutes) => {
-    if (!minutes || minutes <= 0) {
+App.stop_status_watch = () => {
+    App.clear_status_watch()
+}
+
+App.strudel_watch_status = (minutes) => {
+    const poll_minutes = minutes || App.poll_minutes
+
+    if (!poll_minutes || poll_minutes <= 0) {
         console.warn(`Provide a polling interval in minutes greater than zero`)
         return
     }
 
-    const intervalMs = minutes * 60 * 1000
+    App.poll_minutes = poll_minutes
 
-    const pollStatus = async () => {
-        if (statusPollInFlight) {
+    const intervalMs = poll_minutes * 60 * 1000
+
+    const poll_status = async () => {
+        if (App.poll_in_flight) {
             return
         }
 
-        if (!audioStarted) {
-            console.warn(`Audio not started yet. Call strudel_init() before strudel_watchStatus().`)
+        if (!App.audio_started) {
+            console.warn(`Audio not started yet. Call strudel_init() before strudel_watch_status().`)
             return
         }
 
-        statusPollInFlight = true
+        App.poll_in_flight = true
 
         try {
             const code = await App.fetchStatusCode()
@@ -121,30 +126,25 @@ App.strudel_watchStatus = (minutes) => {
                 return
             }
 
-            if (nextCode === lastStatusCode) {
+            if (nextCode === App.last_status) {
                 return
             }
 
-            lastStatusCode = nextCode
+            App.last_status = nextCode
             window.strudel_update(nextCode)
         }
         catch (err) {
             console.error(`Failed to update Strudel status`, err)
         }
         finally {
-            statusPollInFlight = false
+            App.poll_in_flight = false
         }
     }
 
-    if (statusPollTimer) {
-        clearInterval(statusPollTimer)
-    }
+    App.clear_status_watch()
+    poll_status()
 
-    pollStatus()
-
-    statusPollTimer = setInterval(() => {
-        pollStatus()
+    App.poll_timer = setInterval(() => {
+        poll_status()
     }, intervalMs)
 }
-
-window.strudel_watchStatus = App.strudel_watchStatus
