@@ -72,7 +72,7 @@
 
             try {
                 App.strudel_update(code)
-                App.set_status(`Playing 🥁`)
+                App.playing()
             } catch (e) {
                 App.set_status(`Error: ${e.message}`)
             }

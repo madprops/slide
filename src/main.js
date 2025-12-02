@@ -68,6 +68,10 @@ App.strudel_init = async () => {
     }
 }
 
+App.playing = () => {
+    App.set_status(`Playing 🥁`)
+}
+
 // 2. Export the update function
 App.strudel_update = async (code) => {
     if (!App.audio_started) {
@@ -79,10 +83,17 @@ App.strudel_update = async (code) => {
 
     try {
         await evaluate(code)
+        App.set_input(code)
+        App.playing()
     }
     catch (err) {
         App.set_status(err)
     }
+}
+
+App.set_input = (code) => {
+    const code_input = document.getElementById(`code-input`)
+    code_input.value = code
 }
 
 // 3. Export stop
