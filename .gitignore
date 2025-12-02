@@ -1,4 +1,4 @@
-api_key.txt
-state.txt
 venv/*
 node_modules/*
+keys/*
+status.txt

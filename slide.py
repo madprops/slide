@@ -20,11 +20,12 @@ Try to make pleasant beats, in the vein of lo-fi hip-hop and experimental (futur
 The beats should be pleasant, not rough, avoid overpowered screeching/highs.
 """.strip()
 
-MINUTES = 60
+MINUTES = 1
 PORT = 4242
 MAX_HISTORY = 3
 DEFAULT_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.0-flash")
-API_KEY_FILE = os.getenv("LITELLM_KEY_FILE", "api_key.txt")
+GOOGLE_API_KEY_FILE = os.getenv("LITELLM_KEY_FILE", "keys/google_api_key.txt")
+CLAUDE_API_KEY_FILE = os.getenv("LITELLM_KEY_FILE", "keys/claude_api_key.txt")
 STATE_FILE = os.getenv("STATE_FILE", "status.txt")
 INSTRUCTIONS = ""
 INSTRUCTIONS_FILE = os.getenv("INSTRUCTIONS_FILE", "instructions.txt")
@@ -56,19 +57,29 @@ def resolve_model_name(raw_name: str) -> str:
 def load_api_key() -> str:
 	"""Load the provider key from api_key.txt, raising if it cannot be read."""
 
-	global API_KEY
+	global GOOGLE_API_KEY
+	global CLAUDE_API_KEY
 
-	key_path = Path(API_KEY_FILE)
+	key_path = Path(GOOGLE_API_KEY_FILE)
 
 	try:
 		key = key_path.read_text(encoding="utf-8").strip()
 	except FileNotFoundError as exc:
-		raise RuntimeError(f"API key file missing: {key_path}") from exc
-
+		pass
 	if not key:
-		raise RuntimeError(f"API key file is empty: {key_path}")
+		pass
 
-	API_KEY = key
+	GOOGLE_API_KEY = key
+	key_path_2 = Path(CLAUDE_API_KEY_FILE)
+
+	try:
+		key_2 = key_path_2.read_text(encoding="utf-8").strip()
+	except FileNotFoundError as exc:
+		pass
+	if not key_2:
+		pass
+
+	CLAUDE_API_KEY = key_2
 
 def load_instructions() -> str:
 	"""Load customizable instructions used to build the AI prompt."""

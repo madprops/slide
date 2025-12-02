@@ -12,7 +12,7 @@ const {evaluate} = webaudioRepl({
     onEvalError: (err) => App.set_status(err)
 })
 
-App.poll_minutes = 1
+App.poll_minutes = 0.25
 App.audio_started = false
 App.poll_in_flight = false
 
