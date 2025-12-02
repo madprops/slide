@@ -9,17 +9,18 @@ from litellm import completion
 
 PROMPT = """
 This is a program that writes strudel.cc code to compose musical beats.
-Each beat should be around 5-10 seconds in length.
+Each beat should be around 3-5 seconds in length.
 The aim is to automate the beat changes, building upon the last section, altering it a bit,
 leaving that run for an indefinite amount of time for the user to listen to,
 as some sort of ambient sound machine.
 Please try to keep a progression that makes sense.
 Please try to make pleasant beats, in the vein of lo-fi hip-hop and experimental (futurebeats).
+Don't try overly complex beats, to avoid syntax errors (this is important).
 The beats shouldn't be too rough, avoid overpowered screeching/highs.
 Response format: Just the raw code (no introduction comment or markdown)
 """.strip()
 
-MINUTES = 60
+MINUTES = 1
 PORT = 4242
 MAX_HISTORY = 3
 
@@ -152,9 +153,12 @@ def get_beats() -> str:
 
 	s = ""
 
-	for i, beat in enumerate(beats):
-		s += f"\n\nBEAT {i + 1}:\n\n"
-		s += beat
+	if len(beats) > 0:
+		for i, beat in enumerate(beats):
+			s += f"\n\nBEAT {i + 1}:\n\n"
+			s += beat
+	else:
+		s = "There is no history yet, this is the first beat."
 
 	return s.strip()
 
