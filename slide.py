@@ -12,20 +12,16 @@ from litellm import completion
 
 
 PROMPT = """
+Response format: Just the raw code (no introduction comment or markdown)
 This is a program that writes strudel.cc code to compose musical beats.
 Each beat should be around 5-10 seconds in length.
 The aim is to automate the beat changes, building upon the last section, alternating it a bit,
 leaving that run for an indefinite amount of time for the user to listen to,
 as some sort of ambient sound machine.
-On each prompt you will receive the last 3 beats, and you will be asked to produce the followup.
-There might be no history yet, in that case a starting point must be generated.
 Try to keep a progression that makes sense.
 Try to make pleasant beats, in the vein of lo-fi hip-hop and experimental (futurebeats).
 The beats should be pleasant, not rough, avoid overpowered screeching/highs.
-The response should ONLY be the code of the new beat, ready to be used in strudel,
-because it's going to be plugged in directly as raw text.
-Don't use backticks or any sort of markdown.
-"""
+""".strip()
 
 MINUTES = 20
 DEFAULT_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.0-flash")
@@ -37,6 +33,7 @@ REQUEST_INTERVAL_MINUTES = max(1, int(os.getenv("REQUEST_INTERVAL_MINUTES", f"{M
 DEFAULT_ANSWER = ""
 PORT = 4242
 MAX_HISTORY = 3
+USE_INSTRUCTIONS = False
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
@@ -135,7 +132,10 @@ def persist_answer(answer: str) -> None:
 
 
 def record_history(entry: str) -> None:
-	"""Keep a bounded, in-memory sequence of recent beats."""
+	"""Keep a bounded, in-memory sequence of recent beats.
+
+	Callers should hold answer_lock when invoking from threaded contexts.
+	"""
 
 	if not entry or entry == DEFAULT_ANSWER:
 		return
@@ -159,20 +159,28 @@ def get_beats() -> str:
 	return s.strip()
 
 
-def get_prompt() -> str:
+def make_prompt() -> str:
 	global PROMPT
 	global INSTRUCTIONS
 
-	PROMPT = f"""{PROMPT}\n\n
-	Here are the last 3 beats (from older to newer):
+	items = [PROMPT]
 
-	{get_beats()}
+	if USE_INSTRUCTIONS:
+		instructions = f"""Here are the instructions on how to write strudel code:
 
-	Here are the instructions on how to write strudel code:
+		{INSTRUCTIONS}
+		""".strip()
 
-	{INSTRUCTIONS}
-	""".strip()
+		items.append(instructions)
 
+	if len(HISTORY) > 0:
+		beats = f"""Here are the last {len(HISTORY)} beats (from older to newer):
+
+		{get_beats()}""".strip()
+
+		items.append(beats)
+
+	PROMPT = "\n\n".join(items).strip()
 	return PROMPT
 
 
@@ -184,7 +192,7 @@ def run_ai_prompt() -> str:
 
 	messages = [
 		{"role": "system", "content": "Respond with clear, user-friendly summaries."},
-		{"role": "user", "content": get_prompt()},
+		{"role": "user", "content": make_prompt()},
 	]
 
 	response = completion(
@@ -280,6 +288,7 @@ def main() -> None:
 	load_instructions()
 	load_cached_answer()
 	start_worker_if_needed()
+	print(make_prompt())
 	atexit.register(shutdown_worker)
 	app.run(host="0.0.0.0", port=PORT, debug=False)
 
