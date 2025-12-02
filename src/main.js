@@ -148,3 +148,11 @@ App.strudel_watch_status = () => {
 
     console.info(`Interval started.`)
 }
+
+// Export functions to window for use in HTML
+window.strudel_init = App.strudel_init
+window.strudel_update = App.strudel_update
+window.strudel_stop = App.strudel_stop
+window.strudel_watchStatus = App.strudel_watch_status
+window.strudel_stopStatusWatch = App.stop_status_watch
+window.App = App
