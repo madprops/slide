@@ -3,8 +3,13 @@ import * as strudelCore from '@strudel.cycles/core'
 import * as strudelMini from '@strudel.cycles/mini'
 import * as strudelWebAudio from '@strudel.cycles/webaudio'
 
-const { evaluate, evalScope } = strudelCore
-const { initAudio } = strudelWebAudio
+const { evalScope } = strudelCore
+
+// Import initAudio from superdough instead of webaudio
+import { initAudio, samples } from 'superdough'
+import { webaudioRepl } from '@strudel.cycles/webaudio'
+
+const { evaluate } = webaudioRepl()
 
 let scopePromise
 
@@ -33,12 +38,21 @@ window.strudel_init = async () => {
 
     try {
         await ensureStrudelScope()
+        // This must be called in response to a user interaction
         await initAudio()
+
+        // Enable mini-notation for strings
+        strudelMini.miniAllStrings()
+
+        // Load default samples
+        await samples('github:tidalcycles/dirt-samples')
+
         audioStarted = true
         console.log(`Audio Ready.`)
     }
     catch (err) {
         console.error(`Audio Failed:`, err)
+        throw err
     }
 }
 
