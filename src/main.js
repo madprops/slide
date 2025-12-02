@@ -179,7 +179,7 @@ App.start_events = () => {
 
     const ensure_strudel_ready = async () => {
         if (!window.strudel_init) {
-            App.set_status(`Bundle not loaded. Check console for errors.`)
+            App.set_status(`Bundle not loaded. Check console for errors`)
             console.error(`strudel.bundle.js is missing or failed to load`)
             return false
         }
@@ -205,7 +205,7 @@ App.start_events = () => {
             return
         }
 
-        App.set_status(`Audio Ready! Click Update to play.`)
+        App.set_status(`Audio Ready! Click Update to play`)
         start_status_watch()
     })
 
@@ -228,7 +228,7 @@ App.start_events = () => {
 
     document.getElementById(`btn-stop`).addEventListener(`click`, () => {
         if (!window.strudel_stop) {
-            App.set_status(`Bundle not loaded. Cannot stop audio.`)
+            App.set_status(`Bundle not loaded. Cannot stop audio`)
             return
         }
 
@@ -237,7 +237,7 @@ App.start_events = () => {
         }
 
         window.strudel_stop()
-        App.set_status(`Stopped.`)
+        App.set_status(`Stopped`)
     })
 }
 
