@@ -37,14 +37,22 @@ button {
     font-weight: bold;
 }
 
-.controls {
+#controls {
     margin-top: 10px;
     display: flex;
     gap: 10px;
+    height: 2rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
 }
 
 #status {
-    margin-top: 10px;
     color: #888;
     margin-left: 0.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
