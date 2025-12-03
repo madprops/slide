@@ -1,6 +1,12 @@
 ![](img/slide.png)
 
-![](screenshot.png)
+![](img/screenshot_1.png)
+
+![](img/screenshot_2.png)
+
+![](img/screenshot_3.png)
+
+![](img/screenshot_4.png)
 
 ---
 
