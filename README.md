@@ -14,6 +14,8 @@
 
 Patterns evolve over time automatically through the use of `AI`.
 
+It also has a collection of songs ready to play.
+
 ---
 
 Use `run.sh` to start the `flask` server.
