@@ -448,7 +448,6 @@ App.strudel_init = async () => {
         App.audio_started = true
         App.apply_volume()
         App.strudel_watch_status()
-        App.start_color_cycle()
         console.info(`Audio Ready.`)
     }
     catch (err) {
@@ -779,6 +778,7 @@ App.update_action = async () => {
     let code = code_input.value
     code = App.strip_set_cpm(code)
     code = `setCpm(${App.tempo_cpm})\n\n${code}`
+    App.start_color_cycle()
 
     try {
         await App.strudel_update(code)
