@@ -448,6 +448,7 @@ App.strudel_init = async () => {
         App.audio_started = true
         App.apply_volume()
         App.strudel_watch_status()
+        App.start_color_cycle()
         console.info(`Audio Ready.`)
     }
     catch (err) {
@@ -458,7 +459,6 @@ App.strudel_init = async () => {
 
 App.playing = () => {
     App.set_status(`Playing 🥁`)
-    App.start_color_cycle()
 }
 
 // 2. Export the update function
@@ -469,9 +469,9 @@ App.strudel_update = async (code) => {
     }
 
     console.info(`Updating 💨`)
-    const fullResult = await App.run_eval(code)
+    const full_result = await App.run_eval(code)
 
-    if (fullResult.ok) {
+    if (full_result.ok) {
         App.set_input(code)
         App.playing()
         return
@@ -483,7 +483,7 @@ App.strudel_update = async (code) => {
         return
     }
 
-    App.report_eval_failure(fullResult.error)
+    App.report_eval_failure(full_result.error)
 }
 
 App.set_input = (code) => {
