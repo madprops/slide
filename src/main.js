@@ -28,7 +28,7 @@ const {evaluate} = webaudioRepl({
     }
 })
 
-App.poll_minutes = 0.25
+App.poll_minutes = 0.2
 App.audio_started = false
 App.poll_in_flight = false
 App.volume_percent = 100

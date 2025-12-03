@@ -6,6 +6,8 @@ from pathlib import Path
 from typing import Dict, Optional, List
 from flask import Flask, Response, send_from_directory
 from litellm import completion
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
 PROMPT = """
 This is a program that writes strudel.cc patterns using the strudel syntax (or tidal notation).
@@ -43,6 +45,7 @@ app = Flask(__name__)
 stop_event = threading.Event()
 answer_lock = threading.Lock()
 worker_thread: Optional[threading.Thread] = None
+status_observer: Optional[Observer] = None
 HISTORY: List[str] = []
 
 def strip_markdown_code_fences(text: str) -> str:
@@ -165,6 +168,52 @@ def record_history(entry: str) -> None:
 
 	if len(HISTORY) > MAX_HISTORY:
 		del HISTORY[:-MAX_HISTORY]
+
+class StatusFileHandler(FileSystemEventHandler):
+	"""Watch for changes to status.txt and update history."""
+
+	def __init__(self, status_filename: str):
+		super().__init__()
+		self.status_filename = status_filename
+
+	def on_modified(self, event):
+		if event.is_directory:
+			return
+
+		if Path(event.src_path).name == self.status_filename:
+			logging.info("Detected change in %s, updating history", self.status_filename)
+			content = read_status_file()
+
+			with answer_lock:
+				record_history(content)
+
+def start_status_watcher() -> None:
+	"""Start watching status.txt for external changes."""
+
+	global status_observer
+
+	if status_observer and status_observer.is_alive():
+		return
+
+	status_path = Path(STATE_FILE)
+	watch_dir = str(status_path.parent.resolve())
+	status_filename = status_path.name
+
+	handler = StatusFileHandler(status_filename)
+	status_observer = Observer()
+	status_observer.schedule(handler, watch_dir, recursive=False)
+	status_observer.start()
+	logging.info("Started watching %s for changes", STATE_FILE)
+
+def stop_status_watcher() -> None:
+	"""Stop the status file watcher."""
+
+	global status_observer
+
+	if status_observer:
+		status_observer.stop()
+		status_observer.join(timeout=2)
+		status_observer = None
 
 def get_beats() -> str:
 	with answer_lock:
@@ -303,6 +352,7 @@ def img_assets(filename):
 
 def shutdown_worker() -> None:
 	stop_event.set()
+	stop_status_watcher()
 
 	if worker_thread:
 		worker_thread.join(timeout=2)
@@ -312,6 +362,7 @@ def main() -> None:
 	load_instructions()
 	load_status()
 	start_worker_if_needed()
+	start_status_watcher()
 	atexit.register(shutdown_worker)
 	app.run(host="0.0.0.0", port=PORT, debug=False)
 
