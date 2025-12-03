@@ -27,10 +27,24 @@ App.filter_code = (code) => {
   // Remove .cpm() calls with any arguments
   code = code.replace(/\.cpm\s*\([^)]*\)/gi, ``)
 
+  // Remove .scope() calls with any arguments (only if scope is not enabled)
+  if (!App.scope_enabled) {
+    code = code.replace(/\.scope\s*\([^)]*\)/gi, ``)
+  }
+
   // Replace multiple empty lines with single empty line
   code = code.replace(/\n\s*\n\s*\n+/g, `\n\n`)
 
   return code.trim()
+}
+
+App.add_scope_preamble = (code) => {
+    if (!App.scope_enabled) {
+        return code
+    }
+
+    let scope_line = `all(x => x.scope({align: true, color: 'cyan'}))`
+    return `${scope_line}\n${code}`
 }
 
 // No-op visualization function
@@ -71,7 +85,7 @@ const {evaluate, scheduler} = webaudioRepl({
     }
 })
 
-App.fetch_delay = 0.2
+App.fetch_delay = 20
 App.audio_started = false
 App.fetch_in_flight = false
 App.volume_percent = 100
@@ -84,6 +98,7 @@ App.is_playing = false
 App.color_index = 0
 App.color_cycle_timer = undefined
 App.do_partial_updates = false
+App.scope_enabled = false
 
 App.cycle_colors = [
     `#94dd94`,
@@ -490,6 +505,22 @@ App.init_tempo_controls = () => {
     })
 }
 
+App.init_scope_checkbox = () => {
+    let checkbox = document.getElementById(`scope-checkbox`)
+
+    if (!checkbox) {
+        return
+    }
+
+    checkbox.addEventListener(`change`, (event) => {
+        App.scope_enabled = event.target.checked
+
+        if (App.is_playing) {
+            App.play_action(undefined, true)
+        }
+    })
+}
+
 App.ensure_scope = () => {
     if (!App.scope_promise) {
         App.scope_promise = evalScope(strudelCore, strudelMini, strudelWebAudio, strudelTonal).catch((err) => {
@@ -701,6 +732,7 @@ App.report_eval_failure = (error) => {
 App.run_eval = async (code) => {
     App.reset_eval_state()
     code = App.filter_code(code)
+    code = App.add_scope_preamble(code)
     App.set_input(code)
 
     try {
@@ -892,7 +924,7 @@ App.get_input = () => {
     return document.getElementById(`code-input`)
 }
 
-App.play_action = async (code = ``) => {
+App.play_action = async (code = ``, force = false) => {
     let ready = await App.ensure_strudel_ready()
 
     if (!ready) {
@@ -908,10 +940,7 @@ App.play_action = async (code = ``) => {
         return
     }
 
-    // Filter code to remove unwanted calls
-    code = App.filter_code(code)
-
-    if (code === App.last_code) {
+    if (!force && (code === App.last_code)) {
         return
     }
 
@@ -1060,6 +1089,7 @@ App.start_events = () => {
 
     App.init_volume_controls()
     App.init_tempo_controls()
+    App.init_scope_checkbox()
 }
 
 // Export functions to window for use in HTML

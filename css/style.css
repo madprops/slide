@@ -53,6 +53,20 @@ body, html {
     gap: 1rem;
 }
 
+#scope-control {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+    user-select: none;
+}
+
+#scope-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
 #volume-control {
     display: flex;
     align-items: flex-start;
