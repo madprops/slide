@@ -597,6 +597,7 @@ App.strudel_update = async (code) => {
 App.set_input = (code) => {
     const code_input = App.get_input()
     code_input.value = code
+    code_input.scrollTop = 0
 }
 
 App.clear_draw_context = () => {
