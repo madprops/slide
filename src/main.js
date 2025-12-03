@@ -40,6 +40,7 @@ App.tempo_debounce_timer = undefined
 App.is_playing = false
 App.color_index = 0
 App.color_cycle_timer = undefined
+App.do_partial_updates = false
 
 App.cycle_colors = [
     `#94dd94`,
@@ -516,10 +517,12 @@ App.strudel_update = async (code) => {
         return
     }
 
-    const partial_applied = await App.apply_partial_update(code)
+    if (App.do_partial_updates) {
+        const partial_applied = await App.apply_partial_update(code)
 
-    if (partial_applied) {
-        return
+        if (partial_applied) {
+            return
+        }
     }
 
     App.report_eval_failure(full_result.error)
@@ -822,7 +825,7 @@ App.play_action = async (code = ``) => {
         return
     }
 
-    code = App.strip_set_cpm(code)
+    // code = App.strip_set_cpm(code)
     code = `setCpm(${App.tempo_cpm})\n\n${code}`
     App.start_color_cycle()
 
