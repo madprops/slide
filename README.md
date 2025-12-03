@@ -37,7 +37,7 @@ MAX_HISTORY = The amount of saved pattern history, used for context when generat
 
 ---
 
-The `PROMPT` variables hold the general prompt sent to the AI.
+The `PROMPT` variable holds the general prompt sent to the AI.
 
 The history/beats are also included if they exist.
 
