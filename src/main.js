@@ -494,7 +494,7 @@ App.playing = (extra) => {
     let msg = `Playing 🥁`
 
     if (extra) {
-        msg = `${msg}. ${extra}`.trim()
+        msg = `${msg} - ${extra}`.trim()
     }
 
     App.set_status(msg)
@@ -781,8 +781,11 @@ App.apply_partial_update = async (code) => {
     const sanitized = applied.join(`\n\n`)
     App.set_input(sanitized)
 
-    if (applied.length < segments.length) {
+    if (skipped > 0) {
         App.playing(`Skipped ${skipped} segment(s)`)
+    }
+    else {
+        App.playing()
     }
 
     return true
