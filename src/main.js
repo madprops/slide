@@ -370,6 +370,19 @@ App.update_tempo = (cpm) => {
     App.persist_tempo()
 }
 
+App.on_slider_change = () => {
+    App.update_tempo(event.target.value)
+
+    if (App.tempo_debounce_timer) {
+        clearTimeout(App.tempo_debounce_timer)
+    }
+
+    App.tempo_debounce_timer = setTimeout(() => {
+        App.tempo_debounce_timer = undefined
+        App.play_action()
+    }, 10)
+}
+
 App.init_tempo_controls = () => {
     let slider = App.get_tempo_slider()
 
@@ -398,17 +411,23 @@ App.init_tempo_controls = () => {
         }
     })
 
-    slider.addEventListener(`change`, (event) => {
-        App.update_tempo(event.target.value)
+    slider.addEventListener(`wheel`, (event) => {
+        event.preventDefault()
+        let step = parseInt(event.target.step, 10) || 1
+        let current = parseInt(event.target.value, 10)
 
-        if (App.tempo_debounce_timer) {
-            clearTimeout(App.tempo_debounce_timer)
+        if (event.deltaY < 0) {
+            event.target.value = current + step
+        }
+        else {
+            event.target.value = current - step
         }
 
-        App.tempo_debounce_timer = setTimeout(() => {
-            App.tempo_debounce_timer = undefined
-            App.play_action()
-        }, 10)
+        App.on_slider_change()
+    })
+
+    slider.addEventListener(`change`, (event) => {
+        App.on_slider_change()
     })
 }
 
@@ -545,12 +564,7 @@ App.strudel_watch_status = () => {
                 return
             }
 
-            if (next_code === App.last_status) {
-                return
-            }
-
-            App.last_status = next_code
-            App.strudel_update(next_code)
+            await App.play_action(next_code)
         }
         catch (err) {
             console.error(`Failed to update Strudel status`, err)
@@ -774,17 +788,22 @@ App.get_input = () => {
     return document.getElementById(`code-input`)
 }
 
-App.play_action = async () => {
-    let code_input = App.get_input()
+App.play_action = async (code = ``) => {
     let ready = await App.ensure_strudel_ready()
 
     if (!ready) {
         return
     }
 
-    App.start_status_watch()
+    if (!code) {
+        let code_input = App.get_input()
+        code = code_input.value
+    }
 
-    let code = code_input.value
+    if (!code) {
+        return
+    }
+
     code = App.strip_set_cpm(code)
     code = `setCpm(${App.tempo_cpm})\n\n${code}`
     App.start_color_cycle()
@@ -824,6 +843,7 @@ App.start_status_watch = () => {
 App.start_events = () => {
     document.getElementById(`btn-play`).addEventListener(`click`, async () => {
         App.play_action()
+        App.start_status_watch()
     })
 
     document.getElementById(`btn-stop`).addEventListener(`click`, () => {
