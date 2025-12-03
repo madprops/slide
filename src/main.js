@@ -563,6 +563,10 @@ App.stop_status_watch = () => {
 }
 
 App.strudel_watch_status = () => {
+    if (App.poll_timer) {
+        return
+    }
+
     if (!App.poll_minutes || (App.poll_minutes <= 0)) {
         console.error(`Provide a polling interval in minutes greater than zero`)
         return
