@@ -2,8 +2,11 @@ import "./process-env.js"
 import * as strudelCore from "@strudel.cycles/core"
 import * as strudelMini from "@strudel.cycles/mini"
 import * as strudelWebAudio from "@strudel.cycles/webaudio"
+import * as strudelTonal from "@strudel.cycles/tonal"
 import {getSuperdoughAudioController, initAudio, samples, registerSynthSounds} from "superdough"
 import {webaudioRepl} from "@strudel.cycles/webaudio"
+import {transpiler} from "@strudel.cycles/transpiler"
+import {registerSoundfonts} from "@strudel.cycles/soundfonts"
 
 const {evalScope} = strudelCore
 const App = {}
@@ -23,6 +26,7 @@ App.handle_eval_error = (err) => {
 }
 
 const {evaluate, scheduler} = webaudioRepl({
+    transpiler,
     onEvalError: (err) => {
         App.handle_eval_error(err)
     }
@@ -449,7 +453,7 @@ App.init_tempo_controls = () => {
 
 App.ensure_scope = () => {
     if (!App.scope_promise) {
-        App.scope_promise = evalScope(strudelCore, strudelMini, strudelWebAudio).catch((err) => {
+        App.scope_promise = evalScope(strudelCore, strudelMini, strudelWebAudio, strudelTonal).catch((err) => {
             App.scope_promise = undefined
             console.error(`Strudel scope failed to load`, err)
             throw err
@@ -477,11 +481,15 @@ App.strudel_init = async () => {
         // Enable mini-notation for strings
         strudelMini.miniAllStrings()
 
-        // Register synth sounds (triangle, square, sawtooth, sine)
-        await registerSynthSounds()
+        // Load samples and sounds in parallel
+        const ds = `https://raw.githubusercontent.com/felixroos/dough-samples/main`
 
-        // Load default samples
-        await samples(`github:tidalcycles/dirt-samples`)
+        await Promise.all([
+            registerSynthSounds(),
+            registerSoundfonts(),
+            samples(`github:tidalcycles/dirt-samples`),
+            samples(`${ds}/tidal-drum-machines.json`),
+        ])
 
         App.audio_started = true
         App.apply_volume()
