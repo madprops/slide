@@ -26,7 +26,7 @@ App.filter_code = (code) => {
   // Replace multiple empty lines with single empty line
   code = code.replace(/\n\s*\n\s*\n+/g, `\n\n`)
 
-  return code
+  return code.trim()
 }
 
 // No-op visualization function
@@ -571,11 +571,6 @@ App.strudel_update = async (code) => {
     console.info(`Updating 💨`)
     await App.ensure_scope()
 
-    // Filter code to remove unwanted calls
-    code = App.filter_code(code)
-    console.log(code)
-    App.set_input(code)
-
     App.set_tempo()
     const full_result = await App.run_eval(code)
 
@@ -693,11 +688,13 @@ App.report_eval_failure = (error) => {
     App.set_status(message)
 }
 
-App.run_eval = async (snippet) => {
+App.run_eval = async (code) => {
     App.reset_eval_state()
+    code = App.filter_code(code)
+    App.set_input(code)
 
     try {
-        await evaluate(snippet)
+        await evaluate(code)
     }
     catch (err) {
         return {ok: false, error: err}
