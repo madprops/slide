@@ -295,6 +295,21 @@ App.init_volume_controls = () => {
     slider.addEventListener(`input`, (event) => {
         App.update_volume(App.read_volume_value(event.target))
     })
+
+    slider.addEventListener(`wheel`, (event) => {
+        event.preventDefault()
+        let step = parseInt(event.target.step, 10) || 1
+        let current = parseInt(event.target.value, 10)
+
+        if (event.deltaY < 0) {
+            event.target.value = current + step
+        }
+        else {
+            event.target.value = current - step
+        }
+
+        App.update_volume(App.read_volume_value(event.target))
+    })
 }
 
 App.get_tempo_slider = () => {
