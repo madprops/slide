@@ -8,6 +8,7 @@ import {webaudioRepl} from "@strudel.cycles/webaudio"
 import {transpiler} from "@strudel.cycles/transpiler"
 import {registerSoundfonts} from "@strudel.cycles/soundfonts"
 import {Pattern} from "@strudel.cycles/core"
+import {getDrawContext, cleanupDraw} from "@strudel.cycles/draw"
 
 const {evalScope} = strudelCore
 const App = {}
@@ -596,7 +597,12 @@ App.set_input = (code) => {
 }
 
 App.clear_draw_context = () => {
-    // No-op: draw context not used
+    try {
+        cleanupDraw(true)
+    }
+    catch (err) {
+        console.warn(`Failed to clear draw context`, err)
+    }
 }
 
 // 3. Export stop
