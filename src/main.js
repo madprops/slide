@@ -12,6 +12,23 @@ import {Pattern} from "@strudel.cycles/core"
 const {evalScope} = strudelCore
 const App = {}
 
+// Generic code filter to remove or neutralize unwanted calls
+App.filter_code = (code) => {
+  // Remove setcps() calls with any arguments
+  code = code.replace(/setcps\s*\([^)]*\)/gi, ``)
+
+  // Remove setbpm() calls with any arguments
+  code = code.replace(/setbpm\s*\([^)]*\)/gi, ``)
+
+  // Remove setcpm() calls with any arguments
+  code = code.replace(/setcpm\s*\([^)]*\)/gi, ``)
+
+  // Replace multiple empty lines with single empty line
+  code = code.replace(/\n\s*\n\s*\n+/g, `\n\n`)
+
+  return code
+}
+
 // No-op visualization function
 Pattern.prototype._pianoroll = function (options = {}) {
   return this
@@ -552,14 +569,17 @@ App.strudel_update = async (code) => {
     }
 
     console.info(`Updating 💨`)
-
     await App.ensure_scope()
+
+    // Filter code to remove unwanted calls
+    code = App.filter_code(code)
+    console.log(code)
+    App.set_input(code)
 
     App.set_tempo()
     const full_result = await App.run_eval(code)
 
     if (full_result.ok) {
-        App.set_input(code)
         App.playing()
         return
     }
@@ -880,6 +900,9 @@ App.play_action = async (code = ``) => {
     if (!code) {
         return
     }
+
+    // Filter code to remove unwanted calls
+    code = App.filter_code(code)
 
     if (code === App.last_code) {
         return
