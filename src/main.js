@@ -407,7 +407,7 @@ App.init_tempo_controls = () => {
 
         App.tempo_debounce_timer = setTimeout(() => {
             App.tempo_debounce_timer = undefined
-            App.update_action()
+            App.play_action()
         }, 10)
     })
 }
@@ -767,13 +767,15 @@ App.get_input = () => {
     return document.getElementById(`code-input`)
 }
 
-App.update_action = async () => {
+App.play_action = async () => {
     let code_input = App.get_input()
     let ready = await App.ensure_strudel_ready()
 
     if (!ready) {
         return
     }
+
+    App.start_status_watch()
 
     let code = code_input.value
     code = App.strip_set_cpm(code)
@@ -802,34 +804,19 @@ App.stop_action = () => {
     App.set_status(`Stopped`)
 }
 
-App.start_action = async () => {
-    const start_status_watch = () => {
-        if (!window.strudel_watchStatus) {
-            console.warn(`Polling function missing. Did strudel bundle load?`)
-            return
-        }
-
-        const minutes = (window.App && window.App.statusPollMinutes) || 1
-        window.strudel_watchStatus(minutes)
-    }
-
-    const ready = await App.ensure_strudel_ready()
-
-    if (!ready) {
+App.start_status_watch = () => {
+    if (!window.strudel_watchStatus) {
+        console.warn(`Polling function missing. Did strudel bundle load?`)
         return
     }
 
-    start_status_watch()
-    App.update_action()
+    let minutes = (window.App && window.App.statusPollMinutes) || 1
+    window.strudel_watchStatus(minutes)
 }
 
 App.start_events = () => {
-    document.getElementById(`btn-start`).addEventListener(`click`, async () => {
-        App.start_action()
-    })
-
-    document.getElementById(`btn-update`).addEventListener(`click`, async () => {
-        App.update_action()
+    document.getElementById(`btn-play`).addEventListener(`click`, async () => {
+        App.play_action()
     })
 
     document.getElementById(`btn-stop`).addEventListener(`click`, () => {
