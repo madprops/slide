@@ -385,7 +385,7 @@ App.update_tempo = (cpm) => {
     App.persist_tempo()
 }
 
-App.on_slider_change = () => {
+App.on_tempo_change = (event) => {
     App.update_tempo(event.target.value)
 
     if (App.tempo_debounce_timer) {
@@ -438,11 +438,11 @@ App.init_tempo_controls = () => {
             event.target.value = current - step
         }
 
-        App.on_slider_change()
+        App.on_tempo_change(event)
     })
 
     slider.addEventListener(`change`, (event) => {
-        App.on_slider_change()
+        App.on_tempo_change(event)
     })
 }
 

@@ -40,9 +40,17 @@ body {
 }
 
 #title {
-    font-size: 1.9rem;
+    font-size: 1.8rem;
     text-shadow: 0 0 0.18rem currentcolor;
     user-select: none;
+}
+
+#top-controls {
+    margin-left: 1rem;
+    margin-bottom: -8px;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
 }
 
 #volume-control {
@@ -50,7 +58,6 @@ body {
     align-items: flex-start;
     gap: 0.4rem;
     font-size: 0.95rem;
-    margin-left: 1.2rem;
     user-select: none;
 }
 
@@ -72,7 +79,6 @@ body {
     align-items: flex-start;
     gap: 0.4rem;
     font-size: 0.95rem;
-    margin-left: 1.2rem;
     user-select: none;
 }
 
