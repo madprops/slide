@@ -2,9 +2,8 @@
   --green: #94dd94;
 }
 
-body {
+body, html {
     font-family: monospace;
-    padding: 20px;
     background: #222;
     color: #eee;
     margin: 0;
@@ -20,6 +19,7 @@ body {
     justify-content: center;
     flex-direction: column;
     padding: 0.8rem;
+    box-sizing: border-box;
 }
 
 #top {
