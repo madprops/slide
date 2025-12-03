@@ -67,6 +67,28 @@ body {
     transition: color 3s ease;
 }
 
+#tempo-control {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+    margin-left: 1.2rem;
+    user-select: none;
+}
+
+#tempo-slider {
+    width: 10rem;
+    accent-color: var(--green);
+    transition: accent-color 3s ease;
+}
+
+#tempo-value {
+    min-width: 4rem;
+    text-align: left;
+    color: var(--green);
+    transition: color 3s ease;
+}
+
 #code-input {
     width: 90%;
     height: 250px;

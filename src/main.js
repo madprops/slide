@@ -33,6 +33,9 @@ App.audio_started = false
 App.poll_in_flight = false
 App.volume_percent = 100
 App.volume_storage_key = `slide.volumePercent`
+App.tempo_cpm = 60
+App.tempo_storage_key = `slide.tempoCpm`
+App.tempo_debounce_timer = undefined
 App.is_playing = false
 App.color_index = 0
 App.color_cycle_timer = undefined
@@ -51,6 +54,8 @@ App.apply_color = (color, index) => {
     let code_input = document.getElementById(`code-input`)
     let volume_value = document.getElementById(`volume-value`)
     let volume_slider = document.getElementById(`volume-slider`)
+    let tempo_value = document.getElementById(`tempo-value`)
+    let tempo_slider = document.getElementById(`tempo-slider`)
     let status_el = document.getElementById(`status`)
     let image_el = document.getElementById(`image`)
 
@@ -64,6 +69,14 @@ App.apply_color = (color, index) => {
 
     if (volume_slider) {
         volume_slider.style.accentColor = color
+    }
+
+    if (tempo_value) {
+        tempo_value.style.color = color
+    }
+
+    if (tempo_slider) {
+        tempo_slider.style.accentColor = color
     }
 
     if (status_el) {
@@ -103,6 +116,8 @@ App.stop_color_cycle = () => {
     let code_input = document.getElementById(`code-input`)
     let volume_value = document.getElementById(`volume-value`)
     let volume_slider = document.getElementById(`volume-slider`)
+    let tempo_value = document.getElementById(`tempo-value`)
+    let tempo_slider = document.getElementById(`tempo-slider`)
     let status_el = document.getElementById(`status`)
     let image_el = document.getElementById(`image`)
 
@@ -116,6 +131,14 @@ App.stop_color_cycle = () => {
 
     if (volume_slider) {
         volume_slider.style.accentColor = color
+    }
+
+    if (tempo_value) {
+        tempo_value.style.color = color
+    }
+
+    if (tempo_slider) {
+        tempo_slider.style.accentColor = color
     }
 
     if (status_el) {
@@ -264,6 +287,128 @@ App.init_volume_controls = () => {
 
     slider.addEventListener(`input`, (event) => {
         App.update_volume(App.read_volume_value(event.target))
+    })
+}
+
+App.get_tempo_slider = () => {
+    return document.getElementById(`tempo-slider`)
+}
+
+App.get_tempo_value = () => {
+    return document.getElementById(`tempo-value`)
+}
+
+App.refresh_tempo_ui = () => {
+    let slider = App.get_tempo_slider()
+    let display = App.get_tempo_value()
+
+    if (slider) {
+        slider.value = `${App.tempo_cpm}`
+    }
+
+    if (display) {
+        display.textContent = `${App.tempo_cpm} cpm`
+    }
+}
+
+App.persist_tempo = () => {
+    if (typeof window === `undefined`) {
+        return
+    }
+
+    try {
+        window.localStorage?.setItem(App.tempo_storage_key, `${App.tempo_cpm}`)
+    }
+    catch (err) {
+        console.warn(`Failed to persist tempo`, err)
+    }
+}
+
+App.load_saved_tempo = () => {
+    if (typeof window === `undefined`) {
+        return undefined
+    }
+
+    try {
+        let saved = window.localStorage?.getItem(App.tempo_storage_key)
+
+        if (saved == null) {
+            return undefined
+        }
+
+        let parsed = parseInt(saved, 10)
+
+        if (!Number.isFinite(parsed)) {
+            return undefined
+        }
+
+        return parsed
+    }
+    catch (err) {
+        console.warn(`Failed to load tempo`, err)
+        return undefined
+    }
+}
+
+App.apply_tempo = async () => {
+    if (!App.is_playing) {
+        return
+    }
+
+    let code_input = App.get_input()
+    let code = code_input?.value || ``
+
+    if (!code.trim()) {
+        return
+    }
+
+    await App.eval_code(code)
+}
+
+App.update_tempo = (cpm) => {
+    let next_value = parseInt(cpm, 10)
+
+    if (!Number.isFinite(next_value)) {
+        next_value = App.tempo_cpm
+    }
+
+    next_value = Math.min(200, Math.max(20, next_value))
+    App.tempo_cpm = next_value
+    App.refresh_tempo_ui()
+    App.persist_tempo()
+}
+
+App.init_tempo_controls = () => {
+    let slider = App.get_tempo_slider()
+
+    if (!slider) {
+        return
+    }
+
+    let saved_tempo = App.load_saved_tempo()
+
+    if (Number.isFinite(saved_tempo)) {
+        App.tempo_cpm = saved_tempo
+    }
+
+    App.refresh_tempo_ui()
+    App.persist_tempo()
+
+    slider.addEventListener(`input`, (event) => {
+        App.update_tempo(event.target.value)
+    })
+
+    slider.addEventListener(`change`, (event) => {
+        App.update_tempo(event.target.value)
+
+        if (App.tempo_debounce_timer) {
+            clearTimeout(App.tempo_debounce_timer)
+        }
+
+        App.tempo_debounce_timer = setTimeout(() => {
+            App.tempo_debounce_timer = undefined
+            App.apply_tempo()
+        }, 500)
     })
 }
 
@@ -682,6 +827,7 @@ App.start_events = () => {
     })
 
     App.init_volume_controls()
+    App.init_tempo_controls()
 }
 
 // Export functions to window for use in HTML
