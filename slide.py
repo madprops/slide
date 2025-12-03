@@ -23,6 +23,7 @@ Response format: Just the raw syntax.
 MINUTES = 100
 PORT = 4242
 MAX_HISTORY = 3
+USE_INSTRUCTIONS = False
 
 GOOGLE_MODEL = "gemini/gemini-2.0-flash"
 CLAUDE_MODEL = "anthropic/claude-sonnet-4-20250514"
@@ -35,7 +36,6 @@ INSTRUCTIONS = ""
 INSTRUCTIONS_FILE = os.getenv("INSTRUCTIONS_FILE", "instructions.txt")
 REQUEST_INTERVAL_MINUTES = max(1, int(os.getenv("REQUEST_INTERVAL_MINUTES", f"{MINUTES}")))
 DEFAULT_ANSWER = ""
-USE_INSTRUCTIONS = False
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
