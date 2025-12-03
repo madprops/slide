@@ -133,7 +133,6 @@ def read_status_file() -> str:
 		logging.warning("Failed to read status file %s: %s", status_path, exc)
 		return DEFAULT_ANSWER
 
-
 def load_status() -> str:
 	"""Return the cached AI response from disk if available."""
 

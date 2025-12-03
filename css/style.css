@@ -242,7 +242,12 @@ button:hover {
     color: #888;
 }
 
-#song_picker_title {
+#song-picker-title {
     font-size: 1.2rem;
     color: var(--green);
+    user-select: none;
+}
+
+#songs-list {
+    user-select: none;
 }
