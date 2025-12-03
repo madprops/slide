@@ -56,13 +56,15 @@ body {
 
 #volume-slider {
     width: 10rem;
-    accent-color: #7bc67b;
+    accent-color: #0f0;
+    transition: accent-color 3s ease;
 }
 
 #volume-value {
     min-width: 3rem;
     text-align: left;
-    color: #ccc;
+    color: #0f0;
+    transition: color 3s ease;
 }
 
 #code-input {
@@ -78,6 +80,7 @@ body {
     max-width: 96%;
     max-height: 620px;
     outline: none;
+    transition: color 3s ease;
 }
 
 button {
@@ -109,7 +112,7 @@ button:hover {
 }
 
 #status {
-    color: #888;
+    color: #0f0;
     margin-left: 0.1rem;
     display: flex;
     align-items: center;
@@ -117,4 +120,5 @@ button:hover {
     height: 100%;
     font-size: 1.2rem;
     margin-left: 0.5rem;
+    transition: color 3s ease;
 }

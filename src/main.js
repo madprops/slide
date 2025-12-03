@@ -33,6 +33,10 @@ App.audio_started = false
 App.poll_in_flight = false
 App.volume_percent = 100
 App.volume_storage_key = `slide.volumePercent`
+App.is_playing = false
+App.color_index = 0
+App.color_cycle_timer = undefined
+App.cycle_colors = [`#0f0`, `#ff0`, `#f00`, `#4af`]
 
 App.clear_status_watch = () => {
     if (!App.poll_timer) {
@@ -41,6 +45,55 @@ App.clear_status_watch = () => {
 
     clearInterval(App.poll_timer)
     App.poll_timer = undefined
+}
+
+App.apply_color = (color) => {
+    let code_input = document.getElementById(`code-input`)
+    let volume_value = document.getElementById(`volume-value`)
+    let volume_slider = document.getElementById(`volume-slider`)
+    let status_el = document.getElementById(`status`)
+
+    if (code_input) {
+        code_input.style.color = color
+    }
+
+    if (volume_value) {
+        volume_value.style.color = color
+    }
+
+    if (volume_slider) {
+        volume_slider.style.accentColor = color
+    }
+
+    if (status_el) {
+        status_el.style.color = color
+    }
+}
+
+App.start_color_cycle = () => {
+    if (App.color_cycle_timer) {
+        return
+    }
+
+    App.is_playing = true
+    App.color_index = 0
+    App.apply_color(App.cycle_colors[0])
+
+    App.color_cycle_timer = setInterval(() => {
+        App.color_index = (App.color_index + 1) % App.cycle_colors.length
+        App.apply_color(App.cycle_colors[App.color_index])
+    }, 3 * 1000)
+}
+
+App.stop_color_cycle = () => {
+    if (App.color_cycle_timer) {
+        clearInterval(App.color_cycle_timer)
+        App.color_cycle_timer = undefined
+    }
+
+    App.is_playing = false
+    App.color_index = 0
+    App.apply_color(App.cycle_colors[0])
 }
 
 App.get_volume_slider = () => {
@@ -229,6 +282,7 @@ App.strudel_init = async () => {
 
 App.playing = () => {
     App.set_status(`Playing 🥁`)
+    App.start_color_cycle()
 }
 
 // 2. Export the update function
@@ -264,6 +318,7 @@ App.set_input = (code) => {
 // 3. Export stop
 App.strudel_stop = () => {
     App.stop_status_watch()
+    App.stop_color_cycle()
     evaluate(`hush`)
 }
 
