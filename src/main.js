@@ -8,6 +8,7 @@ import {getSuperdoughAudioController, initAudio, samples, registerSynthSounds} f
 import {webaudioRepl} from "@strudel.cycles/webaudio"
 import {transpiler} from "@strudel.cycles/transpiler"
 import {registerSoundfonts} from "@strudel.cycles/soundfonts"
+import {getDrawContext, cleanupDraw} from "@strudel.cycles/draw"
 
 const {evalScope} = strudelCore
 const App = {}
@@ -468,15 +469,19 @@ App.ensure_scope = () => {
 // This allows your HTML/Flask templates to call it easily.
 App.strudel_init = async () => {
     if (App.audio_started) {
+        console.info(`Audio already initialized`)
         return
     }
 
     console.info(`Initializing Audio...`)
 
     try {
+        console.info(`Loading scope...`)
         await App.ensure_scope()
+        console.info(`Scope loaded`)
 
         // This must be called in response to a user interaction
+        console.info(`Initializing audio context...`)
         await initAudio()
 
         // Enable mini-notation for strings
@@ -485,6 +490,7 @@ App.strudel_init = async () => {
         // Load samples and sounds in parallel
         const ds = `https://raw.githubusercontent.com/felixroos/dough-samples/main`
 
+        console.info(`Loading samples and soundfonts...`)
         await Promise.all([
             registerSynthSounds(),
             registerSoundfonts(),
@@ -494,7 +500,6 @@ App.strudel_init = async () => {
 
         App.audio_started = true
         App.apply_volume()
-        App.strudel_watch_status()
         console.info(`Audio Ready.`)
     }
     catch (err) {
@@ -525,6 +530,9 @@ App.strudel_update = async (code) => {
     }
 
     console.info(`Updating 💨`)
+
+    await App.ensure_scope()
+
     App.set_tempo()
     const full_result = await App.run_eval(code)
 
@@ -550,10 +558,20 @@ App.set_input = (code) => {
     code_input.value = code
 }
 
+App.clear_draw_context = () => {
+    try {
+        cleanupDraw(true)
+    }
+    catch (err) {
+        console.warn(`Failed to clear draw context`, err)
+    }
+}
+
 // 3. Export stop
 App.strudel_stop = () => {
     App.stop_status_watch()
     App.stop_color_cycle()
+    App.clear_draw_context()
     evaluate(`hush`)
 }
 
@@ -823,7 +841,9 @@ App.ensure_strudel_ready = async () => {
         return false
     }
 
+    console.log(`Calling strudel_init, audio_started:`, App.audio_started)
     await window.strudel_init()
+    console.log(`After strudel_init, audio_started:`, App.audio_started)
     return true
 }
 
@@ -852,6 +872,7 @@ App.play_action = async (code = ``) => {
     }
 
     App.last_code = code
+    App.clear_draw_context()
     App.start_color_cycle()
 
     try {
@@ -873,6 +894,7 @@ App.stop_action = () => {
     }
 
     window.strudel_stop()
+    App.clear_draw_context()
     App.set_status(`Stopped`)
 }
 
@@ -952,13 +974,18 @@ App.load_song = async (song_name) => {
     App.close_songs_modal()
 
     try {
+        App.set_status(`Loading ${song_name}...`)
         let content = await App.fetch_song_content(song_name)
         App.stop_status_watch()
+        App.stop_color_cycle()
+        App.clear_draw_context()
+        App.last_code = null
         await App.play_action(content)
         App.set_status(`Playing: ${song_name}`)
     }
     catch (err) {
         App.set_status(`Failed to load song: ${err.message}`)
+        console.error(`Failed to load song:`, err)
     }
 }
 
