@@ -1,4 +1,5 @@
 const App = {}
+App.fetch_delay_seconds = 3
 
 import "./process-env.js"
 import * as strudelMini from "@strudel.cycles/mini"
@@ -71,7 +72,6 @@ const {evaluate, scheduler} = webaudioRepl({
 })
 
 App.events_started = false
-App.fetch_delay = 20
 App.audio_started = false
 App.fetch_in_flight = false
 App.volume_percent = 100
@@ -97,6 +97,7 @@ App.clear_status_watch = () => {
         return
     }
 
+    console.info(`Interval cleared.`)
     clearInterval(App.fetch_timer)
     App.fetch_timer = undefined
 }
@@ -633,19 +634,25 @@ App.stop_status_watch = () => {
     App.clear_status_watch()
 }
 
-App.strudel_watch_status = () => {
+App.strudel_watch_status = (seconds) => {
+    if (Number.isFinite(seconds) && (seconds > 0)) {
+        App.fetch_delay_seconds = seconds
+    }
+
     if (App.fetch_timer) {
         return
     }
 
-    if (!App.fetch_delay || (App.fetch_delay <= 0)) {
-        console.error(`Provide a fetch interval in minutes greater than zero`)
+    if (!App.fetch_delay_seconds || (App.fetch_delay_seconds <= 0)) {
+        console.error(`Provide a fetch interval in seconds greater than zero`)
         return
     }
 
-    const interval_ms = App.fetch_delay * 60 * 1000
+    const interval_ms = App.fetch_delay_seconds * 1000
 
     const fetch_status = async () => {
+        console.info(`Fetching status...`)
+
         if (App.fetch_in_flight) {
             return
         }
@@ -948,8 +955,17 @@ App.start_status_watch = () => {
         return
     }
 
-    let minutes = (window.App && window.App.statusPollMinutes) || 1
-    App.strudel_watch_status(minutes)
+    let seconds = window.App && window.App.statusPollSeconds
+
+    if (!Number.isFinite(seconds) || (seconds <= 0)) {
+        let minutes = window.App && window.App.statusPollMinutes
+
+        if (Number.isFinite(minutes) && (minutes > 0)) {
+            seconds = minutes * 60
+        }
+    }
+
+    App.strudel_watch_status(seconds)
 }
 
 App.fetch_songs_list = async () => {
@@ -1040,16 +1056,38 @@ App.start_events = () => {
 
     App.events_started = true
 
-    document.getElementById(`btn-play`).addEventListener(`click`, async () => {
-        App.play_action()
+    document.getElementById(`btn-play`).addEventListener(`click`, () => {
+        App.stop_status_watch()
+
+        let code_input = App.get_input()
+        let next_code = code_input ? code_input.value : ``
+
+        App.play_action(next_code, true)
+    })
+
+    document.getElementById(`btn-auto`).addEventListener(`click`, async () => {
+        if (App.fetch_timer) {
+            App.set_status(`Auto mode already running`)
+            return
+        }
+
+        let ready = await App.ensure_strudel_ready()
+
+        if (!ready) {
+            return
+        }
+
         App.start_status_watch()
+        App.set_status(`Auto mode running`)
     })
 
     document.getElementById(`btn-stop`).addEventListener(`click`, () => {
+        App.stop_status_watch()
         App.stop_action()
     })
 
     document.getElementById(`btn-songs`).addEventListener(`click`, () => {
+        App.stop_status_watch()
         App.open_songs_modal()
     })
 

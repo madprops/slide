@@ -358,8 +358,9 @@ def list_songs() -> Response:
 	if not songs_dir.exists():
 		return Response("[]", mimetype="application/json")
 
-	song_files = [f.stem for f in songs_dir.glob("*.js")]
-	song_files.sort()
+	song_paths = list(songs_dir.glob("*.js"))
+	song_paths.sort(key=lambda path: path.stat().st_mtime, reverse=True)
+	song_files = [path.stem for path in song_paths]
 
 	import json
 	return Response(json.dumps(song_files), mimetype="application/json")
