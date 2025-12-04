@@ -38,6 +38,11 @@ body, html {
     border-radius: 25%;
     user-select: none;
     transition: filter 3s ease;
+    cursor: pointer;
+}
+
+#image:hover {
+    outline: 1px solid rgb(82, 120, 152);
 }
 
 #title {
@@ -225,6 +230,10 @@ button:hover {
     flex-direction: column;
 }
 
+#about-modal .modal-content {
+    max-width: 720px;
+}
+
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -260,7 +269,8 @@ button:hover {
     cursor: not-allowed;
 }
 
-#modal-close {
+#modal-close,
+#about-close {
     background: transparent;
     border: none;
     font-size: 2rem;
@@ -274,7 +284,8 @@ button:hover {
     justify-content: center;
 }
 
-#modal-close:hover {
+#modal-close:hover,
+#about-close:hover {
     color: #fff;
     box-shadow: none;
 }
@@ -316,4 +327,34 @@ button:hover {
 
 #songs-list {
     user-select: none;
+}
+
+#about-title {
+    font-size: 1.2rem;
+    color: var(--green);
+    user-select: none;
+}
+
+#about-body {
+    padding: 1rem;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: #ddd;
+}
+
+#about-body p {
+    margin: 0 0 1rem 0;
+}
+
+#about-body p:last-child {
+    margin-bottom: 0;
+}
+
+a.popup:visited, a.popup:link, a.popup:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+a.popup:hover {
+    font-weight: bold;
 }

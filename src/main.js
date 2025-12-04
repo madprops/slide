@@ -968,6 +968,26 @@ App.start_status_watch = () => {
     App.strudel_watch_status(seconds)
 }
 
+App.open_about_modal = () => {
+    let modal = document.getElementById(`about-modal`)
+
+    if (!modal) {
+        return
+    }
+
+    modal.classList.add(`active`)
+}
+
+App.close_about_modal = () => {
+    let modal = document.getElementById(`about-modal`)
+
+    if (!modal) {
+        return
+    }
+
+    modal.classList.remove(`active`)
+}
+
 App.start_events = () => {
     if (App.events_started) {
         return
@@ -1017,6 +1037,24 @@ App.start_events = () => {
     document.getElementById(`songs-modal`).addEventListener(`click`, (event) => {
         if (event.target.id === `songs-modal`) {
             App.close_songs_modal()
+        }
+    })
+
+    let about_image = document.getElementById(`image`)
+
+    if (about_image) {
+        about_image.addEventListener(`click`, () => {
+            App.open_about_modal()
+        })
+    }
+
+    document.getElementById(`about-close`).addEventListener(`click`, () => {
+        App.close_about_modal()
+    })
+
+    document.getElementById(`about-modal`).addEventListener(`click`, (event) => {
+        if (event.target.id === `about-modal`) {
+            App.close_about_modal()
         }
     })
 
