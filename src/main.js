@@ -114,15 +114,13 @@ App.apply_color = (color) => {
         image_el.style.filter = `drop-shadow(0 0 0.15rem ${color})`
     }
 
-    let scolor = App.scope_color
-
     if (scope_container) {
-        scope_container.style.borderColor = scolor
-        scope_container.style.boxShadow = `0 0 0.35rem ${scolor}33`
+        scope_container.style.borderColor = App.scope_border_color
+        scope_container.style.boxShadow = `0 0 0.35rem ${App.scope_border_color}33`
     }
 
     if (scope_canvas) {
-        scope_canvas.style.boxShadow = `inset 0 0 0.4rem ${scolor}1a`
+        scope_canvas.style.boxShadow = `inset 0 0 0.4rem ${App.scope_border_color}1a`
     }
 }
 
@@ -927,9 +925,11 @@ App.load_song_from_query = async () => {
     try {
         App.set_status(`Loading ${requested_song}...`)
         let content = await App.fetch_song_content(requested_song)
+
         if (App.code_scroll_active) {
             App.defer_code_scroll(App.code_scroll_song_pause_ms)
         }
+
         App.set_input(content, {scroll_delay_ms: App.code_scroll_song_pause_ms})
         App.set_song_context(requested_song)
         App.code_to_play = content

@@ -29,7 +29,8 @@ App.scope_animation_id = undefined
 App.scope_connected = false
 App.scope_pixel_ratio = 1
 App.scope_enabled = true
-App.scope_color = `rgba(113, 109, 136, 1)`
+App.scope_color = `rgba(204, 198, 239, 1)`
+App.scope_border_color = `#444`
 App.scope_sine_time = 0
 
 App.get_scope_container = () => {
