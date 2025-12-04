@@ -275,7 +275,7 @@ App.init_code_input_controls = () => {
                 })
 
                 DOM.ev(resize_handle, `dblclick`, (event) => {
-                    App.toggle_max()
+                    App.toggle_max(`restore`)
                 })
             }
         }
@@ -302,7 +302,7 @@ App.init_code_input_controls = () => {
     }
 }
 
-App.toggle_max = () => {
+App.toggle_max = (mode = `toggle`) => {
     let wrapper = DOM.el(`#code-input-wrapper`)
 
     if (!wrapper) {
@@ -314,12 +314,17 @@ App.toggle_max = () => {
     let max_height = parseInt(style.getPropertyValue(`--input_max_height`))
     let max_width = parseInt(style.getPropertyValue(`--input_max_width`))
     let cheight = wrapper.offsetHeight
-    wrapper.style.width = `${max_width}px`
+    wrapper.style.width = `${max_width}%`
 
-    if (Math.abs(cheight - max_height) > 2) {
-        wrapper.style.height = `${max_height}px`
+    if (mode === `restore`) {
+        wrapper.style.height = `${height}px`
     }
     else {
-        wrapper.style.height = `${height}px`
+        if (Math.abs(cheight - max_height) > 2) {
+            wrapper.style.height = `${max_height}px`
+        }
+        else {
+            wrapper.style.height = `${height}px`
+        }
     }
 }
