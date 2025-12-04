@@ -226,6 +226,18 @@ App.init_code_input_controls = () => {
                     document.body.style.userSelect = `none`
                     document.body.style.cursor = `se-resize`
 
+                    let controls = DOM.el(`#code-input-controls`)
+
+                    if (controls) {
+                        controls.style.opacity = `1`
+                        controls.style.pointerEvents = `auto`
+                        controls.classList.add(`active`)
+                    }
+
+                    resize_handle.style.opacity = `1`
+                    resize_handle.style.pointerEvents = `auto`
+                    resize_handle.classList.add(`active`)
+
                     let start_x = event.clientX
                     let start_y = event.clientY
                     let start_width = wrapper.offsetWidth
@@ -237,8 +249,13 @@ App.init_code_input_controls = () => {
                         let new_width = start_width + (move_event.clientX - start_x)
                         let new_height = start_height + (move_event.clientY - start_y)
 
-                        new_width = Math.max(500, new_width)
-                        new_height = Math.max(100, new_height)
+                        let style = getComputedStyle(document.documentElement)
+                        let min_width = parseInt(style.getPropertyValue(`--input_min_width`))
+                        let min_height = parseInt(style.getPropertyValue(`--input_min_height`))
+                        let max_height = parseInt(style.getPropertyValue(`--input_max_height`))
+
+                        new_width = Math.max(min_width, new_width)
+                        new_height = Math.max(min_height, Math.min(max_height, new_height))
 
                         wrapper.style.width = `${new_width}px`
                         wrapper.style.height = `${new_height}px`
@@ -248,6 +265,19 @@ App.init_code_input_controls = () => {
                         is_resizing = false
                         document.body.style.userSelect = ``
                         document.body.style.cursor = ``
+
+                        let controls = DOM.el(`#code-input-controls`)
+
+                        if (controls) {
+                            controls.style.opacity = ``
+                            controls.style.pointerEvents = ``
+                            controls.classList.remove(`active`)
+                        }
+
+                        resize_handle.style.opacity = ``
+                        resize_handle.style.pointerEvents = ``
+                        resize_handle.classList.remove(`active`)
+
                         document.removeEventListener(`mousemove`, mouse_move)
                         document.removeEventListener(`mouseup`, mouse_up)
                     }

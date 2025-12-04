@@ -4,6 +4,8 @@
   --small_font: 0.95rem;
   --input_height: 420px;
   --input_max_height: 680px;
+  --input_min_width: 500px;
+  --input_min_height: 100px;
 }
 
 body, html {
@@ -156,10 +158,12 @@ body, html {
 
 #code-input-wrapper {
     position: relative;
-    width: 88%;
+    width: var(--width);
     height: var(--input_height);
-    min-width: 500px;
-    min-height: 100px;
+    min-width: var(--input_min_width);
+    min-height: var(--input_min_height);
+    max-height: var(--input_max_height);
+    max-width: var(--width);
     resize: none;
     box-sizing: border-box;
     height: var(--input_height);
@@ -170,13 +174,11 @@ body, html {
 #code-input {
     width: 100%;
     height: 100%;
-    max-height: var(--input_max_height);
     background: #111;
     color: var(--green);
     border: 1px solid #444;
     padding: 10px;
     font-size: 1.1rem;
-    max-width: 100%;
     outline: none;
     transition: color 3s ease;
     box-sizing: border-box;
@@ -197,6 +199,11 @@ body, html {
 .code-input-wrapper:hover .code-input-controls {
     opacity: 1;
     pointer-events: auto;
+}
+
+.code-input-controls.active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
 }
 
 .code-input-control {
@@ -251,7 +258,16 @@ body, html {
     pointer-events: auto;
 }
 
+#resize-handle.active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
 #resize-handle:hover::after {
+    border-bottom-color: var(--green);
+}
+
+#resize-handle.active::after {
     border-bottom-color: var(--green);
 }
 
