@@ -64,7 +64,7 @@ App.load_saved_tempo = () => {
     }
 }
 
-App.update_tempo = (cpm, skip_heavy = false) => {
+App.update_tempo = (cpm) => {
     let next_value = parseInt(cpm, 10)
 
     if (!Number.isFinite(next_value)) {
@@ -73,7 +73,7 @@ App.update_tempo = (cpm, skip_heavy = false) => {
 
     // Round to nearest 5 for stepped values
     next_value = Math.round(next_value / 5) * 5
-
+    console.log(next_value)
     next_value = Math.min(App.max_tempo, Math.max(App.min_tempo, next_value))
     App.tempo_cpm = next_value
     App.refresh_tempo_ui()
@@ -81,7 +81,6 @@ App.update_tempo = (cpm, skip_heavy = false) => {
 
 App.on_tempo_change = (is_final = false) => {
     let slider = App.get_tempo_slider()
-    console.log(slider)
     App.update_tempo(slider.value, true)
 
     if (is_final) {
