@@ -79,9 +79,15 @@ App.update_tempo = (cpm) => {
     App.refresh_tempo_ui()
 }
 
-App.on_tempo_change = (is_final = false) => {
-    let slider = App.get_tempo_slider()
-    App.update_tempo(slider.value, true)
+App.on_tempo_change = (is_final = false, value_override = undefined) => {
+    let source_value = value_override
+
+    if (source_value == null) {
+        let slider = App.get_tempo_slider()
+        source_value = slider?.value
+    }
+
+    App.update_tempo(source_value)
 
     if (is_final) {
         App.persist_tempo()
@@ -146,19 +152,8 @@ App.init_tempo_controls = () => {
     })
 
     const step_tempo = (direction) => {
-        if (!slider) {
-            return
-        }
-
-        let current_value = parseInt(slider.value, 10)
-
-        if (!Number.isFinite(current_value)) {
-            current_value = App.tempo_cpm
-        }
-
-        let next_value = current_value + (direction * App.tempo_step)
-        slider.value = `${next_value}`
-        App.on_tempo_change(true)
+        let next_value = App.tempo_cpm + (direction * App.tempo_step)
+        App.on_tempo_change(true, next_value)
     }
 
     if (decrement_button) {
