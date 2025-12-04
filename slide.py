@@ -39,6 +39,7 @@ INSTRUCTIONS = ""
 INSTRUCTIONS_FILE = os.getenv("INSTRUCTIONS_FILE", "instructions.txt")
 REQUEST_INTERVAL_MINUTES = max(1, int(os.getenv("REQUEST_INTERVAL_MINUTES", f"{MINUTES}")))
 DEFAULT_ANSWER = ""
+SONG_LIST_LIMIT = 100
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
@@ -360,7 +361,7 @@ def list_songs() -> Response:
 
 	song_paths = list(songs_dir.glob("*.js"))
 	song_paths.sort(key=lambda path: path.stat().st_mtime, reverse=True)
-	song_files = [path.stem for path in song_paths]
+	song_files = [path.stem for path in song_paths[:SONG_LIST_LIMIT]]
 
 	import json
 	return Response(json.dumps(song_files), mimetype="application/json")

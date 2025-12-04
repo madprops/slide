@@ -34,7 +34,7 @@ body, html {
 }
 
 #image {
-    width: 3.1rem;
+    width: 3rem;
     border-radius: 25%;
     user-select: none;
     transition: filter 3s ease;
@@ -140,7 +140,7 @@ body, html {
 
 #code-input {
     width: var(--width);
-    height: 350px;
+    height: 360px;
     background: #111;
     color: var(--green);
     border: 1px solid #444;
@@ -237,6 +237,27 @@ button:hover {
     margin: 0;
     font-size: 1.5rem;
     color: var(--green);
+}
+
+#songs-filter-wrapper {
+    padding: 1rem;
+    border-bottom: 1px solid #444;
+}
+
+#songs-filter {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #555;
+    border-radius: 4px;
+    background-color: #222;
+    color: #fff;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+#songs-filter:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 #modal-close {

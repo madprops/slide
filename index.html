@@ -42,10 +42,10 @@
             <textarea id="code-input" spellcheck="false"></textarea>
 
             <div id="controls">
-                <button id="btn-play">Play</button>
-                <button id="btn-auto">Auto</button>
-                <button id="btn-stop">Stop</button>
-                <button id="btn-songs">Songs</button>
+                <button id="btn-play" title="Play the current code">Play</button>
+                <button id="btn-auto" title="Let the code be updated automatically">Auto</button>
+                <button id="btn-stop" title="Stop the beat">Stop</button>
+                <button id="btn-songs" title="Play an available song">Songs</button>
                 <div id="status">Not started</div>
             </div>
 
@@ -54,6 +54,10 @@
                     <div class="modal-header">
                         <div id="song-picker-title">Select a Song</div>
                         <button id="modal-close">&times;</button>
+                    </div>
+
+                    <div id="songs-filter-wrapper">
+                        <input id="songs-filter" type="text" placeholder="Filter songs..." autocomplete="off">
                     </div>
 
                     <div id="songs-list" class="songs-list">

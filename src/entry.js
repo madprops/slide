@@ -1,5 +1,6 @@
 import './main.js'
 import './scope.js'
+import './songs.js'
 
 const startAppEvents = () => {
 	if (!window?.App?.start_events) {
