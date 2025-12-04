@@ -75,6 +75,10 @@ App.update_tempo = (cpm) => {
     App.tempo_cpm = next_value
     App.refresh_tempo_ui()
     App.persist_tempo()
+
+    if (App.current_song) {
+        App.update_song_query_param(App.current_song)
+    }
 }
 
 App.on_tempo_change = (event) => {

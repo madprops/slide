@@ -33,6 +33,7 @@ const {evaluate, scheduler} = webaudioRepl({
 
 App.app_name = `Slide`
 App.song_query_key = `song`
+App.cpm_query_key = `cpm`
 App.current_song = ``
 App.events_started = false
 App.audio_started = false
@@ -769,6 +770,13 @@ App.update_song_query_param = (song_name = ``) => {
         next_url.searchParams.delete(App.song_query_key)
     }
 
+    if ((App.tempo_cpm !== App.default_cpm) && song_name) {
+        next_url.searchParams.set(App.cpm_query_key, `${App.tempo_cpm}`)
+    }
+    else {
+        next_url.searchParams.delete(App.cpm_query_key)
+    }
+
     window.history.replaceState({}, document.title, `${next_url.pathname}${next_url.search}${next_url.hash}`)
 }
 
@@ -785,6 +793,16 @@ App.load_song_from_query = async () => {
 
     let query_params = new URLSearchParams(window.location.search)
     let requested_song = query_params.get(App.song_query_key)
+    let requested_cpm = query_params.get(App.cpm_query_key)
+
+    if (requested_cpm) {
+        let parsed_cpm = parseInt(requested_cpm, 10)
+
+        if (Number.isFinite(parsed_cpm)) {
+            App.update_tempo(parsed_cpm)
+            App.set_tempo()
+        }
+    }
 
     if (!requested_song) {
         return
