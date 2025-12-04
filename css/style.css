@@ -34,11 +34,12 @@ body, html {
 }
 
 #image {
-    width: 3rem;
+    width: 2.22rem;
     border-radius: 25%;
     user-select: none;
     transition: filter 3s ease;
     cursor: pointer;
+    margin-left: 0.12rem;
 }
 
 #image:hover {
