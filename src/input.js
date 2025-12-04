@@ -2,10 +2,28 @@ App.get_input = () => {
     return DOM.el(`#code-input`)
 }
 
+App.reset_code_scroll_for_content = () => {
+    App.code_scroll_direction = 1
+    App.code_scroll_last_ts = 0
+
+    if (typeof window !== `undefined` && window.performance?.now) {
+        App.code_scroll_pause_until = window.performance.now()
+    }
+    else {
+        App.code_scroll_pause_until = 0
+    }
+}
+
 App.set_input = (code) => {
     const code_input = App.get_input()
+
+    if (!code_input) {
+        return
+    }
+
     code_input.value = code
     code_input.scrollTop = 0
+    App.reset_code_scroll_for_content()
 }
 
 App.set_code_scroll_button_active = (is_active) => {
@@ -39,6 +57,14 @@ App.code_scroll_tick = (timestamp) => {
     if (!App.code_scroll_last_ts) {
         App.code_scroll_last_ts = timestamp
     }
+
+    if (App.code_scroll_pause_until && (timestamp < App.code_scroll_pause_until)) {
+        App.code_scroll_last_ts = timestamp
+        App.code_scroll_frame = window.requestAnimationFrame(App.code_scroll_tick)
+        return
+    }
+
+    App.code_scroll_pause_until = 0
 
     let delta = timestamp - App.code_scroll_last_ts
     App.code_scroll_last_ts = timestamp
@@ -85,6 +111,7 @@ App.start_code_scroll = () => {
     App.code_scroll_active = true
     App.code_scroll_direction = 1
     App.code_scroll_last_ts = 0
+    App.code_scroll_pause_until = 0
     App.set_code_scroll_button_active(true)
     App.code_scroll_frame = window.requestAnimationFrame(App.code_scroll_tick)
 }
@@ -97,6 +124,7 @@ App.stop_code_scroll = () => {
     App.code_scroll_active = false
     App.code_scroll_direction = 1
     App.code_scroll_last_ts = 0
+    App.code_scroll_pause_until = 0
 
     if (App.code_scroll_frame) {
         window.cancelAnimationFrame(App.code_scroll_frame)
@@ -130,5 +158,20 @@ App.init_code_input_controls = () => {
 
             App.stop_code_scroll()
         })
+
+        DOM.ev(code_input, `wheel`, (event) => {
+            if (!App.code_scroll_active) {
+                return
+            }
+
+            App.code_scroll_pause_until = window.performance.now() + App.code_scroll_wheel_pause_ms
+
+            if (event.deltaY < 0) {
+                App.code_scroll_direction = -1
+            }
+            else if (event.deltaY > 0) {
+                App.code_scroll_direction = 1
+            }
+        }, {passive: true})
     }
 }

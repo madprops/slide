@@ -53,6 +53,8 @@ App.code_scroll_last_ts = 0
 App.code_scroll_direction = 1
 App.code_scroll_active = false
 App.code_scroll_speed_px_per_second = 80
+App.code_scroll_pause_until = 0
+App.code_scroll_wheel_pause_ms = 350
 
 App.cycle_colors = [
     `#94dd94`,
