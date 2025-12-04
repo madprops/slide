@@ -114,7 +114,7 @@ body, html {
 .control-stepper {
     display: flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.4rem;
 }
 
 .step-button {
