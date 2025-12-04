@@ -125,6 +125,7 @@ App.init_tempo_controls = () => {
 
     DOM.ev(container, `wheel`, (event) => {
         event.preventDefault()
+        let slider = App.get_tempo_slider()
         let step = parseInt(slider.step, 10) || 1
         let current = parseInt(slider.value, 10)
 
@@ -136,7 +137,7 @@ App.init_tempo_controls = () => {
         }
 
         App.on_tempo_change(true)
-    })
+    }, {passive: false})
 
     DOM.ev(container, `change`, (event) => {
         App.on_tempo_change(true)
