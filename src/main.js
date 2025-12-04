@@ -3,7 +3,7 @@ App.fetch_delay_seconds = 3
 
 import "./process-env.js"
 import * as strudelMini from "@strudel.cycles/mini"
-import {getSuperdoughAudioController, initAudio, samples, registerSynthSounds} from "superdough"
+import {initAudio, samples, registerSynthSounds} from "superdough"
 import {webaudioRepl} from "@strudel.cycles/webaudio"
 import {transpiler} from "@strudel.cycles/transpiler"
 import {registerSoundfonts} from "@strudel.cycles/soundfonts"
@@ -22,10 +22,13 @@ App.filter_code = (code) => {
   code = code.replace(/setcpm\s*\([^)]*\)/gi, ``)
 
   // Remove .cpm() calls with any arguments
-  code = code.replace(/\.cpm\s*\([^)]*\)/gi, ``)
+  code = code.replace(/\._?cpm\s*\([^)]*\)/gi, ``)
 
   // Remove .cpm() calls with any arguments
-  code = code.replace(/\.scope\s*\([^)]*\)/gi, ``)
+  code = code.replace(/\._?pianoroll\s*\([^)]*\)/gi, ``)
+
+  // Remove .cpm() calls with any arguments
+  code = code.replace(/\._?scope\s*\([^)]*\)/gi, ``)
 
   // Replace multiple empty lines with single empty line
   code = code.replace(/\n\s*\n\s*\n+/g, `\n\n`)
@@ -74,8 +77,6 @@ const {evaluate, scheduler} = webaudioRepl({
 App.events_started = false
 App.audio_started = false
 App.fetch_in_flight = false
-App.volume_percent = 100
-App.volume_storage_key = `slide.volumePercent`
 App.default_cpm = 60
 App.tempo_cpm = App.default_cpm
 App.tempo_storage_key = `slide.tempoCpm`
@@ -213,295 +214,6 @@ App.stop_color_cycle = () => {
     if (image_el) {
         image_el.style.filter = ``
     }
-}
-
-App.get_volume_slider = () => {
-    return DOM.el(`#volume-slider`)
-}
-
-App.get_volume_value = () => {
-    return DOM.el(`#volume-value`)
-}
-
-App.read_volume_value = (input_el) => {
-    if (!input_el) {
-        return App.volume_percent
-    }
-
-    const slider_value = input_el.valueAsNumber
-
-    if (Number.isFinite(slider_value)) {
-        return slider_value
-    }
-
-    const numeric_value = parseInt(input_el.value, 10)
-
-    if (Number.isFinite(numeric_value)) {
-        return numeric_value
-    }
-
-    return App.volume_percent
-}
-
-App.refresh_volume_ui = () => {
-    const slider = App.get_volume_slider()
-    const display = App.get_volume_value()
-
-    if (slider) {
-        slider.value = `${App.volume_percent}`
-    }
-
-    if (display) {
-        display.innerText = `${App.volume_percent}%`
-    }
-}
-
-App.persist_volume = () => {
-    if (typeof window === `undefined`) {
-        return
-    }
-
-    try {
-        window.localStorage?.setItem(App.volume_storage_key, `${App.volume_percent}`)
-    }
-    catch (err) {
-        console.warn(`Failed to persist volume`, err)
-    }
-}
-
-App.load_saved_volume = () => {
-    if (typeof window === `undefined`) {
-        return undefined
-    }
-
-    try {
-        const stored_value = window.localStorage?.getItem(App.volume_storage_key)
-
-        if (stored_value == null) {
-            return undefined
-        }
-
-        const parsed_value = Number(stored_value)
-
-        if (!Number.isFinite(parsed_value)) {
-            return undefined
-        }
-
-        return parsed_value
-    }
-    catch (err) {
-        console.warn(`Failed to load volume`, err)
-        return undefined
-    }
-}
-
-App.apply_volume = () => {
-    if (!App.audio_started) {
-        return
-    }
-
-    try {
-        const controller = getSuperdoughAudioController()
-        const destination_gain = controller?.output?.destinationGain
-
-        if (!destination_gain) {
-            console.warn(`Destination gain node missing`)
-            return
-        }
-
-        destination_gain.gain.value = App.volume_percent / 100
-    }
-    catch (err) {
-        console.error(`Failed to apply volume`, err)
-    }
-}
-
-App.update_volume = (percent) => {
-    let next_value = Number(percent)
-
-    if (!Number.isFinite(next_value)) {
-        next_value = App.volume_percent
-    }
-
-    next_value = Math.min(100, Math.max(0, next_value))
-    App.volume_percent = next_value
-    App.refresh_volume_ui()
-    App.persist_volume()
-    App.apply_volume()
-}
-
-App.init_volume_controls = () => {
-    const slider = App.get_volume_slider()
-
-    if (!slider) {
-        return
-    }
-
-    const saved_volume = App.load_saved_volume()
-    const slider_volume = App.read_volume_value(slider)
-
-    if (Number.isFinite(saved_volume)) {
-        App.volume_percent = saved_volume
-    }
-    else {
-        App.volume_percent = slider_volume
-    }
-
-    App.refresh_volume_ui()
-    App.persist_volume()
-
-    slider.addEventListener(`input`, (event) => {
-        App.update_volume(App.read_volume_value(event.target))
-    })
-
-    slider.addEventListener(`wheel`, (event) => {
-        event.preventDefault()
-        let step = parseInt(event.target.step, 10) || 1
-        let current = parseInt(event.target.value, 10)
-
-        if (event.deltaY < 0) {
-            event.target.value = current + step
-        }
-        else {
-            event.target.value = current - step
-        }
-
-        App.update_volume(App.read_volume_value(event.target))
-    })
-}
-
-App.get_tempo_slider = () => {
-    return DOM.el(`#tempo-slider`)
-}
-
-App.get_tempo_value = () => {
-    return DOM.el(`#tempo-value`)
-}
-
-App.refresh_tempo_ui = () => {
-    let slider = App.get_tempo_slider()
-    let display = App.get_tempo_value()
-
-    if (slider) {
-        slider.value = `${App.tempo_cpm}`
-    }
-
-    if (display) {
-        display.textContent = `${App.tempo_cpm} cpm`
-    }
-}
-
-App.persist_tempo = () => {
-    if (typeof window === `undefined`) {
-        return
-    }
-
-    try {
-        window.localStorage?.setItem(App.tempo_storage_key, `${App.tempo_cpm}`)
-    }
-    catch (err) {
-        console.warn(`Failed to persist tempo`, err)
-    }
-}
-
-App.load_saved_tempo = () => {
-    if (typeof window === `undefined`) {
-        return undefined
-    }
-
-    try {
-        let saved = window.localStorage?.getItem(App.tempo_storage_key)
-
-        if (saved == null) {
-            return undefined
-        }
-
-        let parsed = parseInt(saved, 10)
-
-        if (!Number.isFinite(parsed)) {
-            return undefined
-        }
-
-        return parsed
-    }
-    catch (err) {
-        console.warn(`Failed to load tempo`, err)
-        return undefined
-    }
-}
-
-App.update_tempo = (cpm) => {
-    let next_value = parseInt(cpm, 10)
-
-    if (!Number.isFinite(next_value)) {
-        next_value = App.tempo_cpm
-    }
-
-    next_value = Math.min(200, Math.max(20, next_value))
-    App.tempo_cpm = next_value
-    App.refresh_tempo_ui()
-    App.persist_tempo()
-}
-
-App.on_tempo_change = (event) => {
-    App.update_tempo(event.target.value)
-
-    if (App.tempo_debounce_timer) {
-        clearTimeout(App.tempo_debounce_timer)
-    }
-
-    App.tempo_debounce_timer = setTimeout(() => {
-        App.tempo_debounce_timer = undefined
-        App.set_tempo()
-    }, 10)
-}
-
-App.init_tempo_controls = () => {
-    let slider = App.get_tempo_slider()
-
-    if (!slider) {
-        return
-    }
-
-    let saved_tempo = App.load_saved_tempo()
-
-    if (Number.isFinite(saved_tempo)) {
-        App.tempo_cpm = saved_tempo
-    }
-
-    App.refresh_tempo_ui()
-    App.persist_tempo()
-
-    slider.addEventListener(`input`, (event) => {
-        App.update_tempo(event.target.value)
-    })
-
-    slider.addEventListener(`auxclick`, (event) => {
-        if (event.button === 1) {
-            event.target.value = App.default_cpm
-            App.update_tempo(App.default_cpm)
-            App.set_tempo()
-        }
-    })
-
-    slider.addEventListener(`wheel`, (event) => {
-        event.preventDefault()
-        let step = parseInt(event.target.step, 10) || 1
-        let current = parseInt(event.target.value, 10)
-
-        if (event.deltaY < 0) {
-            event.target.value = current + step
-        }
-        else {
-            event.target.value = current - step
-        }
-
-        App.on_tempo_change(event)
-    })
-
-    slider.addEventListener(`change`, (event) => {
-        App.on_tempo_change(event)
-    })
 }
 
 // 1. Export a setup function to the global window object
