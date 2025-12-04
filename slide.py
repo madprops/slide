@@ -4,7 +4,7 @@ import os
 import threading
 from pathlib import Path
 from typing import Dict, Optional, List
-from flask import Flask, Response, send_from_directory, redirect, url_for
+from flask import Flask, Response, send_from_directory, redirect, url_for, render_template, request
 from litellm import completion
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -317,10 +317,11 @@ def start_worker_if_needed() -> None:
 	worker_thread.start()
 
 @app.get("/")
-def index() -> Response:
+def index():
 	"""Serve the main HTML page."""
 
-	return send_from_directory(".", "index.html")
+	song_name = request.args.get("song", "")
+	return render_template("index.html", song_name=song_name)
 
 @app.get("/strudel/<path:path>")
 def strudel_files(path: str) -> Response:
@@ -373,9 +374,9 @@ def songs_assets(filename):
 
 @app.get("/song/<path:song_name>")
 def song_shortcut(song_name: str):
-	"""Redirect pretty song URLs to index with ?song parameter."""
+	"""Render HTML page with song name in title and meta tags."""
 
-	return redirect(url_for("index", song=song_name), code=302)
+	return render_template("index.html", song_name=song_name)
 
 def shutdown_worker() -> None:
 	stop_event.set()

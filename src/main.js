@@ -230,6 +230,10 @@ App.strudel_init = async () => {
 App.playing = (extra) => {
     let msg = `Playing 🥁`
 
+    if (App.current_song) {
+        msg = `Playing: ${App.current_song}`
+    }
+
     if (extra) {
         msg = `${msg} - ${extra}`.trim()
     }
@@ -677,7 +681,6 @@ App.start_events = () => {
         let code_input = App.get_input()
         let next_code = code_input ? code_input.value : ``
 
-        App.set_song_context()
         App.play_action(next_code, true)
     })
 
