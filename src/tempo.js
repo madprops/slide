@@ -136,7 +136,7 @@ App.init_tempo_controls = () => {
         }
 
         App.on_tempo_change(true)
-    })
+    }, {passive: false})
 
     DOM.ev(container, `change`, (event) => {
         App.on_tempo_change(true)

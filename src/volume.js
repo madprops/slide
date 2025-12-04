@@ -162,5 +162,5 @@ App.init_volume_controls = () => {
         }
 
         App.update_volume(App.read_volume_value(slider))
-    })
+    }, {passive: false})
 }
