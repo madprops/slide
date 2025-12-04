@@ -178,8 +178,16 @@ App.init_code_input_controls = () => {
     }
 
     if (code_input) {
-        DOM.ev(code_input, `pointerdown`, () => {
+        DOM.ev(code_input, `pointerdown`, (event) => {
             if (!App.code_scroll_active) {
+                return
+            }
+
+            let target = event.target
+            let rect = target.getBoundingClientRect()
+            let is_resize_handle = (event.clientX > (rect.right - 20)) && (event.clientY > (rect.bottom - 20))
+
+            if (is_resize_handle) {
                 return
             }
 
