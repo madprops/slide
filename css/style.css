@@ -400,9 +400,3 @@ a.popup:hover {
     gap: 0.5rem;
     justify-content: flex-end;
 }
-
-#endpoint-start,
-#endpoint-default {
-    padding: 0.8rem 1.2rem;
-    font-size: 1.1rem;
-}

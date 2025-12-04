@@ -148,10 +148,10 @@ App.init_volume_controls = () => {
         let current = parseInt(event.target.value, 10)
 
         if (event.deltaY < 0) {
-            event.target.value = current + step
+            event.target.value = current - step
         }
         else {
-            event.target.value = current - step
+            event.target.value = current + step
         }
 
         App.update_volume(App.read_volume_value(event.target))

@@ -128,10 +128,10 @@ App.init_tempo_controls = () => {
         let current = parseInt(event.target.value, 10)
 
         if (event.deltaY < 0) {
-            event.target.value = current + step
+            event.target.value = current - step
         }
         else {
-            event.target.value = current - step
+            event.target.value = current + step
         }
 
         App.on_tempo_change(event)
