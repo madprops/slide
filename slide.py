@@ -43,6 +43,9 @@ REQUEST_INTERVAL_MINUTES = max(1, int(os.getenv("REQUEST_INTERVAL_MINUTES", f"{M
 DEFAULT_ANSWER = ""
 SONG_LIST_LIMIT = 100
 
+CONFIG_FILE = "config.json"
+app_config = {}
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
 app = Flask(__name__)
@@ -51,6 +54,27 @@ answer_lock = threading.Lock()
 worker_thread: Optional[threading.Thread] = None
 status_observer: Optional[Observer] = None
 HISTORY: List[str] = []
+
+def load_config() -> None:
+	"""Load application configuration from config.json."""
+
+	global app_config
+
+	config_path = Path(CONFIG_FILE)
+
+	try:
+		config_content = config_path.read_text(encoding="utf-8")
+		app_config = json.loads(config_content)
+		logging.info("Loaded config: %s", app_config)
+	except FileNotFoundError:
+		logging.warning("Config file %s not found, using defaults", CONFIG_FILE)
+		app_config = {"version": "1.0"}
+	except json.JSONDecodeError as exc:
+		logging.error("Invalid JSON in config file %s: %s", CONFIG_FILE, exc)
+		app_config = {"version": "1.0"}
+	except OSError as exc:
+		logging.error("Failed to read config file %s: %s", CONFIG_FILE, exc)
+		app_config = {"version": "1.0"}
 
 def strip_markdown_code_fences(text: str) -> str:
 	"""Remove triple-backtick markdown fences that may wrap code blocks."""
@@ -324,7 +348,7 @@ def index():
 
 	song_name = request.args.get("song", "")
 	song_display = re.sub(r"_+", " ", song_name) if song_name else ""
-	return render_template("index.jinja", song_name=song_name, song_display=song_display)
+	return render_template("index.jinja", song_name=song_name, song_display=song_display, config=app_config)
 
 @app.get("/strudel/<path:path>")
 def strudel_files(path: str) -> Response:
@@ -389,6 +413,7 @@ def shutdown_worker() -> None:
 		worker_thread.join(timeout=2)
 
 def main() -> None:
+	load_config()
 	load_status()
 
 	if ENABLE_AI_INTERVAL:
