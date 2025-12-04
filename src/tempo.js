@@ -64,7 +64,7 @@ App.load_saved_tempo = () => {
     }
 }
 
-App.update_tempo = (cpm) => {
+App.update_tempo = (cpm, skip_heavy = false) => {
     let next_value = parseInt(cpm, 10)
 
     if (!Number.isFinite(next_value)) {
@@ -77,24 +77,20 @@ App.update_tempo = (cpm) => {
     next_value = Math.min(App.max_tempo, Math.max(App.min_tempo, next_value))
     App.tempo_cpm = next_value
     App.refresh_tempo_ui()
-    App.persist_tempo()
-
-    if (App.current_song) {
-        App.update_song_query_param(App.current_song)
-    }
 }
 
-App.on_tempo_change = (event) => {
-    App.update_tempo(event.target.value)
+App.on_tempo_change = (event, is_final = false) => {
+    App.update_tempo(event.target.value, true)
 
-    if (App.tempo_debounce_timer) {
-        clearTimeout(App.tempo_debounce_timer)
-    }
+    if (is_final) {
+        App.persist_tempo()
 
-    App.tempo_debounce_timer = setTimeout(() => {
-        App.tempo_debounce_timer = undefined
+        if (App.current_song) {
+            App.update_song_query_param(App.current_song)
+        }
+
         App.set_tempo()
-    }, 10)
+    }
 }
 
 App.init_tempo_controls = () => {
@@ -137,10 +133,10 @@ App.init_tempo_controls = () => {
             event.target.value = current + step
         }
 
-        App.on_tempo_change(event)
+        App.on_tempo_change(event, true)
     })
 
     DOM.ev(slider, `change`, (event) => {
-        App.on_tempo_change(event)
+        App.on_tempo_change(event, true)
     })
 }
