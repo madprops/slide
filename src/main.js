@@ -103,15 +103,15 @@ App.clear_status_watch = () => {
 }
 
 App.apply_color = (color) => {
-    let code_input = document.getElementById(`code-input`)
-    let volume_value = document.getElementById(`volume-value`)
-    let volume_slider = document.getElementById(`volume-slider`)
-    let tempo_value = document.getElementById(`tempo-value`)
-    let tempo_slider = document.getElementById(`tempo-slider`)
-    let status_el = document.getElementById(`status`)
-    let image_el = document.getElementById(`image`)
-    let scope_container = document.getElementById(`scope-visualizer`)
-    let scope_canvas = document.getElementById(`scope-canvas`)
+    let code_input = DOM.el(`#code-input`)
+    let volume_value = DOM.el(`#volume-value`)
+    let volume_slider = DOM.el(`#volume-slider`)
+    let tempo_value = DOM.el(`#tempo-value`)
+    let tempo_slider = DOM.el(`#tempo-slider`)
+    let status_el = DOM.el(`#status`)
+    let image_el = DOM.el(`#image`)
+    let scope_container = DOM.el(`#scope-visualizer`)
+    let scope_canvas = DOM.el(`#scope-canvas`)
 
     if (code_input) {
         code_input.style.color = color
@@ -178,13 +178,13 @@ App.stop_color_cycle = () => {
     App.color_index = 0
 
     let color = App.cycle_colors[0]
-    let code_input = document.getElementById(`code-input`)
-    let volume_value = document.getElementById(`volume-value`)
-    let volume_slider = document.getElementById(`volume-slider`)
-    let tempo_value = document.getElementById(`tempo-value`)
-    let tempo_slider = document.getElementById(`tempo-slider`)
-    let status_el = document.getElementById(`status`)
-    let image_el = document.getElementById(`image`)
+    let code_input = DOM.el(`#code-input`)
+    let volume_value = DOM.el(`#volume-value`)
+    let volume_slider = DOM.el(`#volume-slider`)
+    let tempo_value = DOM.el(`#tempo-value`)
+    let tempo_slider = DOM.el(`#tempo-slider`)
+    let status_el = DOM.el(`#status`)
+    let image_el = DOM.el(`#image`)
 
     if (code_input) {
         code_input.style.color = color
@@ -216,11 +216,11 @@ App.stop_color_cycle = () => {
 }
 
 App.get_volume_slider = () => {
-    return document.getElementById(`volume-slider`)
+    return DOM.el(`#volume-slider`)
 }
 
 App.get_volume_value = () => {
-    return document.getElementById(`volume-value`)
+    return DOM.el(`#volume-value`)
 }
 
 App.read_volume_value = (input_el) => {
@@ -371,11 +371,11 @@ App.init_volume_controls = () => {
 }
 
 App.get_tempo_slider = () => {
-    return document.getElementById(`tempo-slider`)
+    return DOM.el(`#tempo-slider`)
 }
 
 App.get_tempo_value = () => {
-    return document.getElementById(`tempo-value`)
+    return DOM.el(`#tempo-value`)
 }
 
 App.refresh_tempo_ui = () => {
@@ -693,7 +693,7 @@ App.strudel_watch_status = (seconds) => {
 }
 
 App.set_status = (status) => {
-    let status_el = document.getElementById(`status`)
+    let status_el = DOM.el(`#status`)
     status_el.innerText = status
 }
 
@@ -898,7 +898,7 @@ App.ensure_strudel_ready = async () => {
 }
 
 App.get_input = () => {
-    return document.getElementById(`code-input`)
+    return DOM.el(`#code-input`)
 }
 
 App.play_action = async (code = ``, force = false) => {
@@ -969,7 +969,7 @@ App.start_status_watch = () => {
 }
 
 App.open_about_modal = () => {
-    let modal = document.getElementById(`about-modal`)
+    let modal = DOM.el(`#about-modal`)
 
     if (!modal) {
         return
@@ -979,7 +979,7 @@ App.open_about_modal = () => {
 }
 
 App.close_about_modal = () => {
-    let modal = document.getElementById(`about-modal`)
+    let modal = DOM.el(`#about-modal`)
 
     if (!modal) {
         return
@@ -995,7 +995,7 @@ App.start_events = () => {
 
     App.events_started = true
 
-    document.getElementById(`btn-play`).addEventListener(`click`, () => {
+    DOM.el(`#btn-play`).addEventListener(`click`, () => {
         App.stop_status_watch()
 
         let code_input = App.get_input()
@@ -1004,7 +1004,7 @@ App.start_events = () => {
         App.play_action(next_code, true)
     })
 
-    document.getElementById(`btn-auto`).addEventListener(`click`, async () => {
+    DOM.el(`#btn-auto`).addEventListener(`click`, async () => {
         if (App.fetch_timer) {
             App.set_status(`Auto mode already running`)
             return
@@ -1020,27 +1020,27 @@ App.start_events = () => {
         App.set_status(`Auto mode running`)
     })
 
-    document.getElementById(`btn-stop`).addEventListener(`click`, () => {
+    DOM.el(`#btn-stop`).addEventListener(`click`, () => {
         App.stop_status_watch()
         App.stop_action()
     })
 
-    document.getElementById(`btn-songs`).addEventListener(`click`, () => {
+    DOM.el(`#btn-songs`).addEventListener(`click`, () => {
         App.stop_status_watch()
         App.open_songs_modal()
     })
 
-    document.getElementById(`modal-close`).addEventListener(`click`, () => {
+    DOM.el(`#modal-close`).addEventListener(`click`, () => {
         App.close_songs_modal()
     })
 
-    document.getElementById(`songs-modal`).addEventListener(`click`, (event) => {
+    DOM.el(`#songs-modal`).addEventListener(`click`, (event) => {
         if (event.target.id === `songs-modal`) {
             App.close_songs_modal()
         }
     })
 
-    let about_image = document.getElementById(`image`)
+    let about_image = DOM.el(`#image`)
 
     if (about_image) {
         about_image.addEventListener(`click`, () => {
@@ -1048,11 +1048,11 @@ App.start_events = () => {
         })
     }
 
-    document.getElementById(`about-close`).addEventListener(`click`, () => {
+    DOM.el(`#about-close`).addEventListener(`click`, () => {
         App.close_about_modal()
     })
 
-    document.getElementById(`about-modal`).addEventListener(`click`, (event) => {
+    DOM.el(`#about-modal`).addEventListener(`click`, (event) => {
         if (event.target.id === `about-modal`) {
             App.close_about_modal()
         }

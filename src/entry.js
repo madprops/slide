@@ -1,3 +1,4 @@
+import './dom.js'
 import './main.js'
 import './scope.js'
 import './songs.js'

@@ -40,9 +40,9 @@ App.fetch_song_content = async (song_name) => {
 }
 
 App.open_songs_modal = async () => {
-    let modal = document.getElementById(`songs-modal`)
-    let songs_list = document.getElementById(`songs-list`)
-    let filter_input = document.getElementById(`songs-filter`)
+    let modal = DOM.el(`#songs-modal`)
+    let songs_list = DOM.el(`#songs-list`)
+    let filter_input = DOM.el(`#songs-filter`)
 
     modal.classList.add(`active`)
     songs_list.innerHTML = `<div class="loading">Loading songs...</div>`
@@ -71,7 +71,7 @@ App.open_songs_modal = async () => {
         }
 
         for (let song of list) {
-            let item = document.createElement(`div`)
+            let item = DOM.create(`div`)
             item.className = `song-item`
             item.textContent = song
             item.addEventListener(`click`, () => App.load_song(song))
@@ -106,7 +106,7 @@ App.open_songs_modal = async () => {
         }
 
         event.preventDefault()
-        let first_item = songs_list.querySelector(`.song-item`)
+        let first_item = DOM.els(`.song-item`, songs_list)
 
         if (first_item) {
             first_item.click()
@@ -115,7 +115,7 @@ App.open_songs_modal = async () => {
 }
 
 App.close_songs_modal = () => {
-    let modal = document.getElementById(`songs-modal`)
+    let modal = DOM.el(`#songs-modal`)
     modal.classList.remove(`active`)
 }
 

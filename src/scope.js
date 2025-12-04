@@ -33,7 +33,7 @@ App.scope_color = `rgba(204, 198, 239, 1)`
 
 App.get_scope_container = () => {
     if (!App.scope_container_el) {
-        App.scope_container_el = document.getElementById(`scope-visualizer`)
+        App.scope_container_el = DOM.el(`#scope-visualizer`)
     }
 
     return App.scope_container_el
@@ -41,7 +41,7 @@ App.get_scope_container = () => {
 
 App.get_scope_canvas = () => {
     if (!App.scope_canvas_el) {
-        App.scope_canvas_el = document.getElementById(`scope-canvas`)
+        App.scope_canvas_el = DOM.el(`#scope-canvas`)
     }
 
     return App.scope_canvas_el
@@ -341,7 +341,7 @@ App.handle_scope_resize = () => {
 }
 
 App.init_scope_checkbox = () => {
-    let checkbox = document.getElementById(`scope-checkbox`)
+    let checkbox = DOM.el(`#scope-checkbox`)
 
     if (!checkbox) {
         return
