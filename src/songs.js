@@ -128,12 +128,12 @@ App.load_song = async (song_name) => {
     App.stop_status_watch()
     App.stop_color_cycle()
     App.clear_draw_context()
-    App.last_code = null
+
     if (App.code_scroll_active) {
       App.defer_code_scroll(App.code_scroll_song_pause_ms)
     }
 
-    await App.play_action(content)
+    await App.play_action(content, true)
     App.set_song_context(song_name)
     App.set_status(`Playing: ${App.underspace(song_name)}`)
   }
