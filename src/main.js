@@ -310,6 +310,7 @@ App.strudel_stop = () => {
     App.stop_color_cycle()
     App.clear_draw_context()
     evaluate(`hush`)
+    App.clean_canvas()
 }
 
 App.fetch_status_code = async () => {
@@ -630,6 +631,7 @@ App.play_action = async (code = ``, force = false) => {
     App.last_code = code
     App.clear_draw_context()
     App.start_color_cycle()
+    App.clean_canvas()
 
     try {
         await App.strudel_update(code)
@@ -1003,6 +1005,27 @@ App.load_song_from_query = async () => {
 
 App.underspace = (s) => {
     return s.replace(/_+/g, ` `).trim()
+}
+
+App.clean_canvas = () => {
+
+}
+
+App.clean_canvas = () => {
+  let body = document.body
+  let children = Array.from(body.children)
+  let ignored_tags = [`script`, `style`]
+  let ignored_ids = [`overlay`, `main`]
+
+  for (let child of children) {
+    let tag = child.tagName.toLowerCase()
+
+    if (ignored_tags.includes(tag) || ignored_ids.includes(child.id)) {
+      continue
+    }
+
+    body.removeChild(child)
+  }
 }
 
 // Export functions to window for use in HTML
