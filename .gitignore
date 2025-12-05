@@ -4,3 +4,4 @@ keys/*
 status.txt
 package-lock.json
 .eslintcache
+.directory
