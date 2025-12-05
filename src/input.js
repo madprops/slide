@@ -349,15 +349,13 @@ App.toggle_max = (mode = `toggle`) => {
   if (mode === `restore`) {
     wrapper.style.height = `${height}px`
   }
+  else if (App.input_is_maxed()) {
+    // Restore
+    wrapper.style.height = `${height}px`
+  }
   else {
-    if (App.input_is_maxed()) {
-      // Restore
-      wrapper.style.height = `${height}px`
-    }
-    else {
-      // Maximize
-      wrapper.style.height = `${max_height}px`
-    }
+    // Maximize
+    wrapper.style.height = `${max_height}px`
   }
 }
 
@@ -388,6 +386,6 @@ App.input_is_maxed = () => {
 
   let max_width_px = (max_width / 100) * main_width
 
-  return ((Math.abs(cheight - max_height) <= buffer) &&
-          (Math.abs(cwidth - max_width_px) <= buffer))
+  return (Math.abs(cheight - max_height) <= buffer) &&
+          (Math.abs(cwidth - max_width_px) <= buffer)
 }
