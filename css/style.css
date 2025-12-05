@@ -348,7 +348,7 @@ button:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #3b3737b8;
+    background-color: #1b1a1ab8;
 }
 
 .modal {
@@ -358,7 +358,6 @@ button:hover {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.8);
     align-items: center;
     justify-content: center;
     width: 90%;
@@ -378,7 +377,7 @@ button:hover {
     flex-direction: column;
 }
 
-#about-modal .modal-content {
+#about-modal {
     max-width: 720px;
 }
 
