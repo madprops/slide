@@ -1,3 +1,13 @@
+App.code_scroll_frame = undefined
+App.code_scroll_last_ts = 0
+App.code_scroll_direction = 1
+App.code_scroll_active = false
+App.code_scroll_speed_px_per_second = 80
+App.code_scroll_pause_until = 0
+App.code_scroll_wheel_pause_ms = 350
+App.code_scroll_song_pause_ms = 1.2 * 1000
+App.code_scroll_pending_delay_ms = 0
+
 App.get_input = () => {
   return DOM.el(`#code-input`)
 }
