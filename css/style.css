@@ -234,17 +234,11 @@ body, html {
     box-shadow: 0 0 0.2rem rgba(148, 221, 148, 0.5) !important;
 }
 
-.code-input-control:focus {
+.code-input-control.active {
     background: rgba(20, 20, 20, 0.9) !important;
     border-color: var(--green) !important;
     box-shadow: 0 0 0.2rem rgba(148, 221, 148, 0.5) !important;
     outline: none !important;
-}
-
-.code-input-control.active {
-    background: var(--green);
-    color: #111;
-    border-color: var(--green);
 }
 
 #resize-handle {
