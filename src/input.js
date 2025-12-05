@@ -11,7 +11,20 @@ App.defer_code_scroll = (delay_ms) => {
     App.code_scroll_pending_delay_ms = delay_ms
 }
 
-App.reset_code_scroll_for_content = (delay_ms = 0) => {
+App.reset_code_scroll_for_content = (options = {}) => {
+    let delay_ms = 0
+    let default_scroll_delay = options.scroll_delay_ms ?? App.code_scroll_song_pause_ms
+
+    if (App.code_scroll_active) {
+        if (Number.isFinite(App.code_scroll_pending_delay_ms) && (App.code_scroll_pending_delay_ms > 0)) {
+            delay_ms = App.code_scroll_pending_delay_ms
+        }
+        else if (Number.isFinite(default_scroll_delay) && (default_scroll_delay > 0)) {
+            delay_ms = default_scroll_delay
+        }
+    }
+
+    App.code_scroll_pending_delay_ms = 0
     App.code_scroll_direction = 1
     App.code_scroll_last_ts = 0
 
@@ -28,7 +41,7 @@ App.reset_code_scroll_for_content = (delay_ms = 0) => {
     }
 }
 
-App.set_input = (code, options = {}) => {
+App.set_input = (code) => {
     const code_input = App.get_input()
 
     if (!code_input) {
@@ -37,19 +50,7 @@ App.set_input = (code, options = {}) => {
 
     code_input.value = code
     code_input.scrollTop = 0
-    let delay_ms = 0
-
-    if (App.code_scroll_active) {
-        if (Number.isFinite(App.code_scroll_pending_delay_ms) && (App.code_scroll_pending_delay_ms > 0)) {
-            delay_ms = App.code_scroll_pending_delay_ms
-        }
-        else if (Number.isFinite(options.scroll_delay_ms) && (options.scroll_delay_ms > 0)) {
-            delay_ms = options.scroll_delay_ms
-        }
-    }
-
-    App.code_scroll_pending_delay_ms = 0
-    App.reset_code_scroll_for_content(delay_ms)
+    App.reset_code_scroll_for_content()
 }
 
 App.set_code_scroll_button_active = (is_active) => {
@@ -165,6 +166,24 @@ App.init_code_input_controls = () => {
     let code_input = App.get_input()
     let scroll_button = DOM.el(`#code-input-scroll`)
     let max_button = DOM.el(`#code-input-max`)
+    let top_button = DOM.el(`#code-input-top`)
+    let bottom_button = DOM.el(`#code-input-bottom`)
+
+    if (top_button) {
+        DOM.ev(top_button, `click`, (event) => {
+            event.preventDefault()
+            code_input.scrollTop = 0
+            App.reset_code_scroll_for_content()
+        })
+    }
+
+    if (bottom_button) {
+        DOM.ev(bottom_button, `click`, (event) => {
+            event.preventDefault()
+            code_input.scrollTop = code_input.scrollHeight
+            App.reset_code_scroll_for_content()
+        })
+    }
 
     if (scroll_button) {
         DOM.ev(scroll_button, `click`, (event) => {
