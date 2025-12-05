@@ -34,9 +34,10 @@ App.scope_border_color = `#444`
 App.scope_sine_time = 0
 App.scope_clicks = []
 App.scope_click_color = `rgba(162, 171, 234, 0.5)`
-App.scope_click_time = 3 * 1000
-App.scope_click_size = 6
+App.scope_click_time = 4 * 1000
+App.scope_click_size = 18
 App.scope_is_drawing = false
+App.scope_click_distance = 180
 
 App.get_scope_container = () => {
   if (!App.scope_container_el) {
@@ -236,12 +237,64 @@ App.handle_scope_mouse_down = (event) => {
 
 App.handle_scope_mouse_move = (event) => {
   if (App.scope_is_drawing) {
-    App.handle_scope_click(event)
+    // Increase frequency by adding intermediate points
+    let canvas = App.get_scope_canvas()
+
+    if (!canvas) {
+      return
+    }
+
+    let rect = canvas.getBoundingClientRect()
+    let x = event.clientX - rect.left
+    let y = event.clientY - rect.top
+
+    if (App.scope_last_point) {
+      let lastX = App.scope_last_point.x
+      let lastY = App.scope_last_point.y
+
+      let dx = x - lastX
+      let dy = y - lastY
+      let distance = Math.sqrt(dx * dx + dy * dy)
+      let steps = Math.ceil(distance / App.scope_click_distance)
+
+      for (let i = 1; i <= steps; i++) {
+        let intermediateX = lastX + (dx * i / steps)
+        let intermediateY = lastY + (dy * i / steps)
+        App.scope_clicks.push({x: intermediateX, y: intermediateY, timestamp: Date.now()})
+      }
+    }
+
+    App.scope_clicks.push({x, y, timestamp: Date.now()})
+    App.scope_last_point = {x, y}
   }
 }
 
 App.handle_scope_mouse_up = () => {
   App.scope_is_drawing = false
+  App.scope_last_point = null
+}
+
+App.draw_star = (ctx, x, y, radius, spikes, outerRadius) => {
+  let rot = Math.PI / 2 * 3
+  let step = Math.PI / spikes
+
+  ctx.beginPath()
+  ctx.moveTo(x, y - outerRadius)
+
+  for (let i = 0; i < spikes; i++) {
+    let x1 = x + Math.cos(rot) * outerRadius
+    let y1 = y + Math.sin(rot) * outerRadius
+    ctx.lineTo(x1, y1)
+    rot += step
+
+    let x2 = x + Math.cos(rot) * radius
+    let y2 = y + Math.sin(rot) * radius
+    ctx.lineTo(x2, y2)
+    rot += step
+  }
+
+  ctx.lineTo(x, y - outerRadius)
+  ctx.closePath()
 }
 
 App.draw_scope_frame = () => {
@@ -317,14 +370,13 @@ App.draw_scope_frame = () => {
 
   App.scope_canvas_ctx.stroke()
 
-  // Draw clicks
+  // Draw clicks as stars
   let now = Date.now()
   App.scope_clicks = App.scope_clicks.filter(click => (now - click.timestamp) < App.scope_click_time)
 
   for (let click of App.scope_clicks) {
     App.scope_canvas_ctx.fillStyle = App.scope_click_color
-    App.scope_canvas_ctx.beginPath()
-    App.scope_canvas_ctx.arc(click.x, click.y, App.scope_click_size, 0, Math.PI * 2)
+    App.draw_star(App.scope_canvas_ctx, click.x, click.y, 3, 5, App.scope_click_size)
     App.scope_canvas_ctx.fill()
   }
 
