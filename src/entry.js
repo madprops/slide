@@ -10,6 +10,7 @@ import "./modals.js"
 import "./about.js"
 import "./auto.js"
 import "./visual.js"
+import "./utils.js"
 
 const startAppEvents = () => {
   if (!window?.App?.start_events) {
