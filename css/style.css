@@ -29,6 +29,8 @@ body, html {
     flex-direction: column;
     padding: 0.8rem;
     box-sizing: border-box;
+    z-index: 99999999;
+    position: relative;
 }
 
 #top {
@@ -309,6 +311,7 @@ button:hover {
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
+    margin-bottom: 2rem;
 }
 
 #status {

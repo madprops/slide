@@ -1011,9 +1011,11 @@ window.strudel_update = App.strudel_update
 window.strudel_stop = App.strudel_stop
 window.strudel_watch_status = App.strudel_watch_status
 window.strudel_stop_status_watch = App.stop_status_watch
+
 // Expose hydra helpers (songs expect initHydra to be available globally)
 window.initHydra = initHydra
 window.clearHydra = clearHydra
+
 // H is a convenience helper used by hydra songs — rename locally to avoid collisions
 window.H = H_hydra
 
