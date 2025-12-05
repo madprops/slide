@@ -2,7 +2,9 @@
   "name": "slide",
   "version": "1.0.0",
   "devDependencies": {
-    "vite": "latest"
+    "vite": "latest",
+    "eslint": "~9.11.1",
+    "globals": "~15.9.0"
   },
   "dependencies": {
     "fraction.js": "^5.2.1",
@@ -14,5 +16,9 @@
     "chord-voicings": "^0.0.1",
     "sfumato": "^0.1.2",
     "soundfont2": "^0.5.0"
-  }
+  },
+	"scripts": {
+		"lint":	"eslint --cache -c eslint.config.mjs",
+		"fix": "eslint --fix -c eslint.config.mjs"
+	}
 }
