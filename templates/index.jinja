@@ -30,6 +30,7 @@
                             <input id="volume-slider" type="range" min="0" max="100" value="100" step="1">
                             <button id="volume-increment" class="step-button" type="button" aria-label="Increase volume">+</button>
                         </div>
+
                         <span id="volume-value">100%</span>
                     </div>
 
@@ -41,6 +42,7 @@
                             <input id="tempo-slider" type="range" min="20" max="120" value="60" step="5">
                             <button id="tempo-increment" class="step-button" type="button" aria-label="Increase tempo">+</button>
                         </div>
+
                         <span id="tempo-value">60 cpm</span>
                     </div>
 
@@ -49,7 +51,7 @@
                         <label for="scope-checkbox">Scope</label>
                     </div>
 
-                    <div id="visual-button" class="top-button">Visual</div>
+                    <div id="btn-visual" class="top-button">Visual</div>
                 </div>
             </div>
 
@@ -80,58 +82,40 @@
                 <div id="status">Not started</div>
             </div>
 
-            <div id="songs-modal" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <div id="songs-picker-title" class="modal-picker-title">Select a Song</div>
-                        <button id="songs-close" class="modal-close">&times;</button>
-                    </div>
+            <template id="template-modal">
+                <div class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="modal-title"></div>
+                            <button class="modal-close">&times;</button>
+                        </div>
 
-                    <div id="songs-filter-wrapper" class="modal-filter-wrapper">
-                        <input id="songs-filter" class="modal-filter" type="text" placeholder="Filter songs..." autocomplete="off">
-                    </div>
-
-                    <div id="songs-list" class="modal-list">
-                        <div class="loading">Loading songs...</div>
+                        <div class="modal-body"></div>
                     </div>
                 </div>
-            </div>
+            </template>
 
-            <div id="visual-modal" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <div id="song-picker-title">Select a Visual</div>
-                        <button id="modal-close">&times;</button>
-                    </div>
+            <template id="template-list-modal">
+                <div class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="modal-picker-title"></div>
+                            <button class="modal-close">&times;</button>
+                        </div>
 
-                    <div id="visual-filter-wrapper">
-                        <input id="visual-filter" type="text" placeholder="Filter visual..." autocomplete="off">
-                    </div>
+                        <div class="modal-filter-wrapper">
+                            <input class="modal-filter" type="text" placeholder="Filter" autocomplete="off">
+                        </div>
 
-                    <div id="visual-list" class="visual-list">
-                        <div>Auto</div>
-                        <div>None</div>
-                        <div>Scope</div>
-                        <div>Pianoroll</div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="about-modal" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <div id="about-title">Slide v{{ config.version }} | Merkoba | 2025</div>
-                        <button id="about-close">&times;</button>
-                    </div>
-
-                    <div id="about-body">
-                        <p>Slide is a player for <a target=_blank class="popup" href="https://strudel.cc">strudel</a> code.</p>
-                        <p>It's meant to allow automatic & seamless code updates.</a></p>
-                        <p>There's a song picker to play elaborate tunes.</a></p>
-                        <p>The code can be edited in real time and applied with Play.</a></p>
+                        <div class="modal-list">
+                            <div class="loading">Loading...</div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </template>
+
+            <div id="modal-overlay" class="hidden"></div>
+            <div id="modals"></div>
 
             <div id="endpoint-modal" class="modal">
                 <div class="modal-content">

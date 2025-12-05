@@ -1,3 +1,39 @@
+App.create_modal = () => {
+  let template = DOM.el(`#template-modal`)
+  let container = DOM.create(`div`)
+  container.innerHTML = template.innerHTML
+  DOM.el(`#modals`).appendChild(container)
+  return container
+}
+
+App.create_list_modal = () => {
+  let template = DOM.el(`#template-list-modal`)
+  let container = DOM.create(`div`)
+  container.innerHTML = template.innerHTML
+  DOM.el(`#modals`).appendChild(container)
+}
+
+App.create_modals = () => {
+  App.create_about_modal()
+  App.create_songs_modal()
+
+  DOM.ev(`#main`, `click`, (event) => {
+    let close_btn = event.target.closest(`.modal-close`)
+
+    if (close_btn) {
+      let modal = close_btn.closest(`.modal`)
+
+      if (modal) {
+        App.do_close_modal(modal)
+      }
+    }
+  })
+
+  DOM.ev(`#modal-overlay`, `click`, (event) => {
+    App.close_all_modals()
+  })
+}
+
 App.show_items_modal = async (what, args = {}) => {
   let loaded = args.loaded || false
   let modal = DOM.el(`#${what}-modal`)
@@ -74,4 +110,46 @@ App.show_items_modal = async (what, args = {}) => {
       break
     }
   }
+}
+
+App.open_modal = (what) => {
+  let modal = DOM.el(`#${what}-modal`)
+
+  if (!modal) {
+    return
+  }
+
+  App.show_overlay()
+  modal.classList.add(`active`)
+}
+
+App.close_modal = (what) => {
+  let modal = DOM.el(`#${what}-modal`)
+
+  if (!modal) {
+    return
+  }
+
+  App.do_close_modal(modal)
+}
+
+App.do_close_modal = (modal) => {
+  modal.classList.remove(`active`)
+  App.hide_overlay()
+}
+
+App.close_all_modals = () => {
+  let modals = DOM.els(`.modal`)
+
+  for (let modal of modals) {
+    App.do_close_modal(modal)
+  }
+}
+
+App.show_overlay = () => {
+  DOM.show(`#modal-overlay`)
+}
+
+App.hide_overlay = () => {
+  DOM.hide(`#modal-overlay`)
 }

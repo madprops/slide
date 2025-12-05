@@ -1,12 +1,13 @@
-import './dom.js'
-import './main.js'
-import './filter.js'
-import './input.js'
-import './volume.js'
-import './tempo.js'
-import './scope.js'
-import './songs.js'
-import './modals.js'
+import "./dom.js"
+import "./main.js"
+import "./filter.js"
+import "./input.js"
+import "./volume.js"
+import "./tempo.js"
+import "./scope.js"
+import "./songs.js"
+import "./modals.js"
+import "./about.js"
 
 const startAppEvents = () => {
   if (!window?.App?.start_events) {

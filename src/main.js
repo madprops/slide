@@ -664,26 +664,6 @@ App.stop_action = () => {
   App.set_song_context()
 }
 
-App.open_about_modal = () => {
-  let modal = DOM.el(`#about-modal`)
-
-  if (!modal) {
-    return
-  }
-
-  modal.classList.add(`active`)
-}
-
-App.close_about_modal = () => {
-  let modal = DOM.el(`#about-modal`)
-
-  if (!modal) {
-    return
-  }
-
-  modal.classList.remove(`active`)
-}
-
 App.open_endpoint_modal = () => {
   let modal = DOM.el(`#endpoint-modal`)
 
@@ -779,6 +759,7 @@ App.start_events = () => {
   }
 
   App.events_started = true
+  App.create_modals()
 
   DOM.ev(`#btn-play`, `click`, () => {
     App.stop_status_watch()
@@ -803,14 +784,8 @@ App.start_events = () => {
     App.open_songs_modal()
   })
 
-  DOM.ev(`#modal-close`, `click`, () => {
-    App.close_songs_modal()
-  })
-
-  DOM.ev(`#songs-modal`, `click`, (event) => {
-    if (event.target.id === `songs-modal`) {
-      App.close_songs_modal()
-    }
+  DOM.ev(`#btn-visual`, `click`, () => {
+    App.open_visual_modal()
   })
 
   let about_image = DOM.el(`#image`)
@@ -818,34 +793,6 @@ App.start_events = () => {
   if (about_image) {
     DOM.ev(about_image, `click`, () => {
       App.open_about_modal()
-    })
-  }
-
-  DOM.ev(`#about-close`, `click`, () => {
-    App.close_about_modal()
-  })
-
-  DOM.ev(`#about-modal`, `click`, (event) => {
-    if (event.target.id === `about-modal`) {
-      App.close_about_modal()
-    }
-  })
-
-  let endpoint_close = DOM.el(`#endpoint-close`)
-
-  if (endpoint_close) {
-    DOM.ev(endpoint_close, `click`, () => {
-      App.close_endpoint_modal()
-    })
-  }
-
-  let endpoint_modal = DOM.el(`#endpoint-modal`)
-
-  if (endpoint_modal) {
-    DOM.ev(endpoint_modal, `click`, (event) => {
-      if (event.target.id === `endpoint-modal`) {
-        App.close_endpoint_modal()
-      }
     })
   }
 
