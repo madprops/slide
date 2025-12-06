@@ -50,7 +50,7 @@ App.persist_volume = () => {
   }
 
   try {
-    App.save_volume()
+    App.stor_save_volume()
   }
   catch (err) {
     console.warn(`Failed to persist volume`, err)

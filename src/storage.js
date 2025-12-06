@@ -3,6 +3,17 @@ App.endpoint_storage_key = `slide.auto_endpoint`
 App.fetch_delay_storage_key = `slide.auto_delay`
 App.volume_storage_key = `slide.volume`
 
+App.load_storage = (what, on_value) => {
+  let value = localStorage.getItem(App[`${what}_storage_key`])
+  on_value(value)
+}
+
+App.save_storage = (what, value) => {
+  localStorage.setItem(App[`${what}_storage_key`], value)
+}
+
+// Load
+
 App.load_all_storage = () => {
   App.stor_load_auto_endpoint()
   App.stor_load_auto_delay()
@@ -33,27 +44,20 @@ App.stor_load_tempo = () => {
   )
 }
 
-App.save_auto_delay = () => {
+// Save
+
+App.stor_save_auto_delay = () => {
   App.save_storage(`auto_delay`, App.auto_delay)
 }
 
-App.save_auto_endpoint = () => {
+App.stor_save_auto_endpoint = () => {
   App.save_storage(`auto_endpoint`, App.auto_endpoint)
 }
 
-App.save_tempo = () => {
+App.stor_save_tempo = () => {
   App.save_storage(`tempo`, App.tempo_cpm)
 }
 
-App.save_volume = () => {
+App.stor_save_volume = () => {
   App.save_storage(`volume`, App.volume_percent)
-}
-
-App.load_storage = (what, on_value) => {
-  let value = localStorage.getItem(App[`${what}_storage_key`])
-  on_value(value)
-}
-
-App.save_storage = (what, value) => {
-  localStorage.setItem(App[`${what}_storage_key`], value)
 }
