@@ -133,7 +133,8 @@ App.code_scroll_tick = (timestamp) => {
   if (input.scrollTop >= max_scroll) {
     input.scrollTop = max_scroll
     App.reset_code_scroll_for_content({direction: -1})
-  } else if (input.scrollTop <= 0) {
+  }
+  else if (input.scrollTop <= 0) {
     input.scrollTop = 0
     App.reset_code_scroll_for_content({direction: 1})
   }
