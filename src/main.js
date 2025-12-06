@@ -30,13 +30,6 @@ const {evaluate, scheduler} = webaudioRepl({
   },
 })
 
-const {evaluate: visual_evaluate, scheduler: visual_scheduler} = webaudioRepl({
-  transpiler,
-  onEvalError: (err) => {
-    App.handle_eval_error(err)
-  },
-})
-
 App.app_name = `Slide`
 App.song_query_key = `song`
 App.cpm_query_key = `cpm`
@@ -751,6 +744,7 @@ App.start_events = () => {
 
   App.events_started = true
   App.create_modals()
+  App.start_visual()
 
   DOM.ev(`#btn-play`, `click`, () => {
     App.stop_status_watch()
@@ -982,8 +976,6 @@ App.create_debouncer = (func, delay) => {
   return obj
 }
 
-window.visual_scheduler = visual_scheduler
-window.visual_evaluate = visual_evaluate
 window.initHydra = initHydra
 window.clearHydra = clearHydra
 window.H = H_hydra

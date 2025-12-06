@@ -612,3 +612,13 @@ a.popup:hover {
     background-color: #575555;
     cursor: pointer;
 }
+
+#background-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99999997;
+    background-color: #000;
+}
