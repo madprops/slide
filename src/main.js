@@ -47,12 +47,6 @@ App.color_cycle_timer = undefined
 App.do_partial_updates = false
 App.fetch_delay_seconds = 5
 
-App.tempo_storage_key = `slide.tempoCpm`
-App.endpoint_storage_key = `slide.statusEndpoint`
-App.fetch_delay_storage_key = `slide.fetchDelaySeconds`
-App.tempo_storage_key = `slide.tempoCpm`
-App.volume_storage_key = `slide.volumePercent`
-
 App.cycle_colors = [
   `#94dd94`,
   `rgb(197, 187, 106)`,
@@ -628,9 +622,8 @@ App.start_events = () => {
     App.handle_scope_resize()
   })
 
-  App.load_endpoint_from_storage()
-  App.load_fetch_delay_from_storage()
   App.load_song_from_query()
+  App.load_all_storage()
 }
 
 App.set_title = (title) => {
@@ -664,53 +657,6 @@ App.update_song_query_param = (song_name = ``) => {
   }
 
   window.history.replaceState({}, document.title, `${next_url.pathname}${next_url.search}${next_url.hash}`)
-}
-
-App.set_song_context = (song_name = ``) => {
-  App.current_song = song_name || ``
-  App.set_title(App.underspace(App.current_song))
-  App.update_song_query_param(App.current_song)
-}
-
-App.load_song_from_query = async () => {
-  if (!window || !window.location) {
-    return
-  }
-
-  let query_params = new URLSearchParams(window.location.search)
-  let requested_song = query_params.get(App.song_query_key)
-  let requested_cpm = query_params.get(App.cpm_query_key)
-
-  if (requested_cpm) {
-    let parsed_cpm = parseInt(requested_cpm, 10)
-
-    if (Number.isFinite(parsed_cpm)) {
-      App.update_tempo(parsed_cpm)
-      App.set_tempo()
-    }
-  }
-
-  if (!requested_song) {
-    return
-  }
-
-  try {
-    App.set_status(`Loading ${requested_song}...`)
-    let content = await App.fetch_song_content(requested_song)
-    App.restart_code_scroll()
-    App.set_input(content)
-    App.set_song_context(requested_song)
-    App.code_to_play = content
-    App.set_status(`Loaded: ${App.underspace(requested_song)}`)
-  }
-  catch (err) {
-    App.set_status(`Failed to load song: ${err.message}`)
-    console.error(`Failed to load song:`, err)
-  }
-}
-
-App.underspace = (s) => {
-  return s.replace(/_+/g, ` `).trim()
 }
 
 App.create_debouncer = (func, delay) => {

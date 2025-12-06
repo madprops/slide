@@ -40,7 +40,7 @@ App.setup_auto = () => {
 
   if (auto_delay_select) {
     DOM.ev(auto_delay_select, `change`, (event) => {
-      App.fetch_delay_seconds = parseInt(event.target.value, 10)
+      App.auto_delay = parseInt(event.target.value, 10)
       App.persist_fetch_delay()
 
       // Restart interval if it's currently running
@@ -116,17 +116,9 @@ App.start_auto = async (endpoint) => {
   App.set_status(`Auto mode running (${display_endpoint})`)
 }
 
-App.load_endpoint_from_storage = () => {
-  let stored_endpoint = localStorage.getItem(App.endpoint_storage_key)
-
-  if (stored_endpoint) {
-    App.auto_endpoint = stored_endpoint
-  }
-}
-
 App.persist_fetch_delay = () => {
   try {
-    localStorage.setItem(App.fetch_delay_storage_key, `${App.fetch_delay_seconds}`)
+    localStorage.setItem(App.fetch_delay_storage_key, `${App.auto_delay}`)
   }
   catch (err) {
     console.warn(`Failed to persist fetch delay`, err)
@@ -141,7 +133,7 @@ App.load_fetch_delay_from_storage = () => {
       let parsed = parseInt(stored, 10)
 
       if (Number.isFinite(parsed) && (parsed > 0)) {
-        App.fetch_delay_seconds = parsed
+        App.auto_delay = parsed
       }
     }
   }
@@ -170,13 +162,13 @@ App.strudel_watch_status = () => {
     return
   }
 
-  if (!App.fetch_delay_seconds || (App.fetch_delay_seconds <= 0)) {
+  if (!App.auto_delay || (App.auto_delay <= 0)) {
     console.error(`Provide a fetch interval in seconds greater than zero`)
     return
   }
 
   App.status_watch_cancelled = false
-  const interval_ms = App.fetch_delay_seconds * 1000
+  const interval_ms = App.auto_delay * 1000
 
   const fetch_status = async () => {
     console.info(`Fetching status...`)
