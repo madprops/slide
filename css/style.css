@@ -67,6 +67,7 @@ body, html {
 }
 
 #title {
+    cursor: pointer;
     font-size: 1.8rem;
     text-shadow: 0 0 0.18rem currentcolor;
     user-select: none;

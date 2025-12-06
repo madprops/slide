@@ -598,14 +598,18 @@ App.start_events = async () => {
     App.open_songs_modal()
   })
 
-  DOM.ev(`#btn-visual`, `click`, () => {
-    App.open_visual_modal()
-  })
-
   let about_image = DOM.el(`#image`)
 
   if (about_image) {
     DOM.ev(about_image, `click`, () => {
+      App.open_visual_modal()
+    })
+  }
+
+  let title = DOM.el(`#title`)
+
+  if (title) {
+    DOM.ev(title, `click`, () => {
       App.open_about_modal()
     })
   }

@@ -42,7 +42,7 @@ App.scope_click_distance = 180
 App.setup_scope = () => {
   App.scope_debouncer = App.create_debouncer(() => {
     App.resize_scope_canvas()
-  }, 100)
+  }, 80)
 }
 
 App.get_scope_container = () => {
@@ -101,7 +101,7 @@ App.setup_scope_canvas = () => {
     App.scope_canvas_ctx = context
   }
 
-  App.resize_scope_canvas()
+  App.scope_debouncer.call()
   return canvas
 }
 
@@ -460,7 +460,7 @@ App.handle_scope_resize = () => {
     return
   }
 
-  App.resize_scope_canvas()
+  App.scope_debouncer.call()
 
   if (!App.scope_enabled) {
     App.clear_scope_canvas()
