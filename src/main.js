@@ -39,7 +39,7 @@ App.audio_started = false
 App.fetch_in_flight = false
 App.status_watch_cancelled = false
 App.default_cpm = 60
-App.tempo_cpm = App.default_cpm
+App.tempo = App.default_cpm
 App.tempo_debounce_timer = undefined
 App.is_playing = false
 App.color_index = 0
@@ -249,7 +249,7 @@ App.playing = (extra) => {
 
 App.set_tempo = () => {
   try {
-    scheduler.setCps(App.tempo_cpm / 60)
+    scheduler.setCps(App.tempo / 60)
   }
   catch (err) {
     console.debug(`Tempo will be applied when audio starts`, err)
@@ -611,6 +611,8 @@ App.start_events = () => {
     })
   }
 
+  App.load_all_storage()
+  App.setup_volume()
   App.setup_auto()
   App.init_volume_controls()
   App.init_tempo_controls()
@@ -623,7 +625,6 @@ App.start_events = () => {
   })
 
   App.load_song_from_query()
-  App.load_all_storage()
 }
 
 App.set_title = (title) => {
@@ -650,7 +651,7 @@ App.update_song_query_param = (song_name = ``) => {
   }
 
   if (song_name) {
-    next_url.searchParams.set(App.cpm_query_key, `${App.tempo_cpm}`)
+    next_url.searchParams.set(App.cpm_query_key, `${App.tempo}`)
   }
   else {
     next_url.searchParams.delete(App.cpm_query_key)

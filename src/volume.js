@@ -1,7 +1,11 @@
 import {getSuperdoughAudioController} from "superdough"
 
-App.volume_percent = 100
+App.volume = 100
 App.volume_step = 1
+
+App.setup_volume = () => {
+  App.update_volume(App.volume)
+}
 
 App.get_volume_slider = () => {
   return DOM.el(`#volume-slider`)
@@ -13,7 +17,7 @@ App.get_volume_value = () => {
 
 App.read_volume_value = (input_el) => {
   if (!input_el) {
-    return App.volume_percent
+    return App.volume
   }
 
   const slider_value = input_el.valueAsNumber
@@ -28,7 +32,7 @@ App.read_volume_value = (input_el) => {
     return numeric_value
   }
 
-  return App.volume_percent
+  return App.volume
 }
 
 App.refresh_volume_ui = () => {
@@ -36,24 +40,11 @@ App.refresh_volume_ui = () => {
   const display = App.get_volume_value()
 
   if (slider) {
-    slider.value = `${App.volume_percent}`
+    slider.value = `${App.volume}`
   }
 
   if (display) {
-    display.innerText = `${App.volume_percent}%`
-  }
-}
-
-App.persist_volume = () => {
-  if (typeof window === `undefined`) {
-    return
-  }
-
-  try {
-    App.stor_save_volume()
-  }
-  catch (err) {
-    console.warn(`Failed to persist volume`, err)
+    display.innerText = `${App.volume}%`
   }
 }
 
@@ -71,7 +62,7 @@ App.apply_volume = () => {
       return
     }
 
-    destination_gain.gain.value = App.volume_percent / 100
+    destination_gain.gain.value = App.volume / 100
   }
   catch (err) {
     console.error(`Failed to apply volume`, err)
@@ -82,13 +73,13 @@ App.update_volume = (percent) => {
   let next_value = Number(percent)
 
   if (!Number.isFinite(next_value)) {
-    next_value = App.volume_percent
+    next_value = App.volume
   }
 
   next_value = Math.min(100, Math.max(0, next_value))
-  App.volume_percent = next_value
+  App.volume = next_value
   App.refresh_volume_ui()
-  App.persist_volume()
+  App.stor_save_volume()
   App.apply_volume()
 }
 
@@ -103,14 +94,14 @@ App.init_volume_controls = () => {
   }
 
   App.refresh_volume_ui()
-  App.persist_volume()
+  App.stor_save_volume()
 
   DOM.ev(slider, `input`, (event) => {
     App.update_volume(App.read_volume_value(event.target))
   })
 
   const step_volume = (direction) => {
-    App.update_volume(App.volume_percent + (direction * App.volume_step))
+    App.update_volume(App.volume + (direction * App.volume_step))
   }
 
   if (decrement_button) {

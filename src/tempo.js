@@ -1,4 +1,4 @@
-App.tempo_cpm = App.default_cpm
+App.tempo = App.default_cpm
 App.tempo_debounce_timer = undefined
 App.tempo_commit_delay_ms = 500
 App.min_tempo = 20
@@ -25,7 +25,7 @@ App.schedule_tempo_commit = (callback) => {
 
 App.schedule_tempo_wheel_commit = () => {
   if (typeof window === `undefined`) {
-    App.on_tempo_change(true, App.tempo_cpm)
+    App.on_tempo_change(true, App.tempo)
     return
   }
 
@@ -35,7 +35,7 @@ App.schedule_tempo_wheel_commit = () => {
 
   App.tempo_wheel_commit_timer = window.setTimeout(() => {
     App.tempo_wheel_commit_timer = undefined
-    App.on_tempo_change(true, App.tempo_cpm)
+    App.on_tempo_change(true, App.tempo)
   }, App.tempo_wheel_commit_delay_ms)
 }
 
@@ -52,11 +52,11 @@ App.refresh_tempo_ui = () => {
   let display = App.get_tempo_value()
 
   if (slider) {
-    slider.value = `${App.tempo_cpm}`
+    slider.value = `${App.tempo}`
   }
 
   if (display) {
-    display.textContent = `${App.tempo_cpm} cpm`
+    display.textContent = `${App.tempo} cpm`
   }
 }
 
@@ -77,12 +77,12 @@ App.update_tempo = (cpm) => {
   let next_value = parseInt(cpm, 10)
 
   if (!Number.isFinite(next_value)) {
-    next_value = App.tempo_cpm
+    next_value = App.tempo
   }
 
   next_value = Math.round(next_value / App.tempo_step) * App.tempo_step
   next_value = Math.min(App.max_tempo, Math.max(App.min_tempo, next_value))
-  App.tempo_cpm = next_value
+  App.tempo = next_value
   App.refresh_tempo_ui()
 }
 
@@ -150,7 +150,7 @@ App.init_tempo_controls = () => {
     let current_value = slider.valueAsNumber
 
     if (!Number.isFinite(current_value)) {
-      current_value = App.tempo_cpm
+      current_value = App.tempo
     }
 
     if (event.deltaY < 0) {
@@ -172,7 +172,7 @@ App.init_tempo_controls = () => {
   })
 
   let step_tempo = (direction) => {
-    let next_value = App.tempo_cpm + (direction * App.tempo_step)
+    let next_value = App.tempo + (direction * App.tempo_step)
     App.on_tempo_change(true, next_value)
   }
 
