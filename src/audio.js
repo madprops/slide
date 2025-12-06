@@ -9,7 +9,7 @@ App.beep_sound = () => {
     let gain_node = audio_ctx.createGain()
 
     // Make the sound more interesting
-    oscillator.type = 'triangle' // Or 'sawtooth', 'square' for different timbres
+    oscillator.type = `triangle` // Or 'sawtooth', 'square' for different timbres
 
     // Modulate the frequency slightly for a richer sound.
     oscillator.frequency.setValueAtTime(440, audio_ctx.currentTime)
@@ -29,7 +29,7 @@ App.beep_sound = () => {
 
   }
   catch (err) {
-    console.error("Failed to play sound", err)
+    console.error(`Failed to play sound`, err)
   }
 }
 
@@ -44,4 +44,16 @@ App.get_audio_context = () => {
     }
   }
   return App.audio_context
+}
+
+App.add_reverb = (seconds) => {
+  window.master_fx.splash_reverb(seconds)
+}
+
+App.set_panning = (value) => {
+  window.master_fx.set_panning(value)
+}
+
+App.set_gain = (value) => {
+  window.master_fx.set_volume(value)
 }

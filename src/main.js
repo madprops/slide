@@ -1,4 +1,132 @@
-const App = {}
+const App = {};
+
+(function() {
+  let OriginalAudioContext = window.AudioContext || window.webkitAudioContext
+
+  // helper to generate a reverb impulse (simple noise decay)
+  function create_reverb_buffer(ctx, duration = 3, decay = 2) {
+    let rate = ctx.sampleRate
+    let length = rate * duration
+    let impulse = ctx.createBuffer(2, length, rate)
+    let left = impulse.getChannelData(0)
+    let right = impulse.getChannelData(1)
+
+    for (let i = 0; i < length; i++) {
+      // create noise with exponential decay
+      let n = i / length
+      let volume = Math.pow(1 - n, decay)
+      // white noise * volume
+      left[i] = (Math.random() * 2 - 1) * volume
+      right[i] = (Math.random() * 2 - 1) * volume
+    }
+    return impulse
+  }
+
+  class InterceptedAudioContext extends OriginalAudioContext {
+    constructor(...args) {
+      super(...args)
+      let ctx = this
+      console.log('Intercepted new AudioContext with FX')
+
+      // --- 1. Create Nodes ---
+
+      // low shelf (EQ)
+      let low_shelf = ctx.createBiquadFilter()
+      low_shelf.type = 'lowshelf'
+      low_shelf.frequency.value = 320
+      low_shelf.gain.value = 3
+
+      // panning ("padding"?)
+      let panner = ctx.createStereoPanner()
+      panner.pan.value = 0 // -1 (left) to 1 (right)
+
+      // reverb (convolver)
+      let convolver = ctx.createConvolver()
+      convolver.buffer = create_reverb_buffer(ctx) // generate 3s reverb
+
+      // reverb volume (wet mix)
+      let reverb_gain = ctx.createGain()
+      reverb_gain.gain.value = 0 // start with reverb off
+
+      // master volume
+      let master_gain = ctx.createGain()
+
+      // --- 2. Routing ---
+
+      // DRY PATH: Input -> LowShelf -> Panner -> Master -> Output
+      // We start logically at low_shelf (which we pretend is destination)
+      low_shelf.connect(panner)
+      panner.connect(master_gain)
+
+      // WET PATH (Reverb): Panner -> Convolver -> ReverbGain -> Master
+      // We branch off after the panner so reverb follows the stereo position
+      panner.connect(convolver)
+      convolver.connect(reverb_gain)
+      reverb_gain.connect(master_gain)
+
+      // Final connection to hardware
+      master_gain.connect(super.destination)
+
+      // --- 3. Strudel Compatibility Hacks ---
+
+      // forward maxChannelCount to the input node
+      Object.defineProperty(low_shelf, 'maxChannelCount', {
+        get: () => super.destination.maxChannelCount
+      })
+
+      // intercept the destination property
+      Object.defineProperty(ctx, 'destination', {
+        get: () => low_shelf,
+        configurable: true
+      })
+
+      // --- 4. Expose Controls to Window ---
+
+      window.master_fx = {
+        // Change Master Volume
+        set_volume: (val) => {
+          let now = ctx.currentTime
+          master_gain.gain.setTargetAtTime(val, now, 0.1)
+          console.log(`Volume set to ${val}`)
+        },
+
+        // Change Panning (-1 to 1)
+        set_panning: (val) => {
+          let now = ctx.currentTime
+          panner.pan.setTargetAtTime(val, now, 0.1)
+          console.log(`Panning set to ${val}`)
+        },
+
+        // Enable Reverb for X seconds then fade out
+        splash_reverb: (duration = 3) => {
+          let now = ctx.currentTime
+
+          // fade in reverb to 0.5 volume quickly
+          reverb_gain.gain.cancelScheduledValues(now)
+          reverb_gain.gain.setValueAtTime(0, now)
+          reverb_gain.gain.linearRampToValueAtTime(0.5, now + 0.1)
+
+          console.log("Reverb attached")
+
+          // schedule fade out after duration
+          reverb_gain.gain.setTargetAtTime(0, now + duration, 0.5)
+
+          setTimeout(() => {
+             console.log("Reverb detaching...")
+          }, duration * 1000)
+        },
+
+        // Direct access if you need to tweak specific nodes
+        nodes: {low_shelf, panner, reverb_gain, master_gain}
+      }
+    }
+  }
+
+  window.AudioContext = InterceptedAudioContext
+  if (window.webkitAudioContext) {
+    window.webkitAudioContext = InterceptedAudioContext
+  }
+})()
 
 import "./process-env.js"
 import * as strudelMini from "@strudel.cycles/mini"
