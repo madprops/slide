@@ -611,3 +611,7 @@ a.popup:hover {
     z-index: 99999997;
     background-color: #000;
 }
+
+#background-canvas.under {
+    z-index: -1;
+}

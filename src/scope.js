@@ -43,6 +43,9 @@ App.setup_scope = () => {
   App.scope_debouncer = App.create_debouncer(() => {
     App.resize_scope_canvas()
   }, 80)
+
+  App.init_scope_checkbox()
+  App.setup_scope_canvas()
 }
 
 App.get_scope_container = () => {
@@ -409,10 +412,10 @@ App.set_scope_visibility = (visible) => {
   }
 
   if (visible) {
-    container.classList.add(`active`)
+    DOM.show(container)
   }
   else {
-    container.classList.remove(`active`)
+    DOM.hide(container)
   }
 }
 

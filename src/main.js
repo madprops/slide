@@ -74,7 +74,7 @@ App.apply_color = (color) => {
   let tempo_slider = DOM.el(`#tempo-slider`)
   let status_el = DOM.el(`#status`)
   let image_el = DOM.el(`#image`)
-  let scope_container = DOM.el(`#scope-visualizer`)
+  let scope_container = DOM.el(`#scope-container`)
   let scope_canvas = DOM.el(`#scope-canvas`)
 
   if (code_input) {
@@ -572,6 +572,7 @@ App.start_events = async () => {
 
   App.events_started = true
   await App.get_config()
+  App.load_all_storage()
   App.create_modals()
   App.start_visual()
 
@@ -614,7 +615,6 @@ App.start_events = async () => {
     })
   }
 
-  App.load_all_storage()
   App.setup_volume()
   App.setup_auto()
   App.setup_input()
@@ -622,8 +622,6 @@ App.start_events = async () => {
   App.init_volume_controls()
   App.init_tempo_controls()
   App.init_code_input_controls()
-  App.init_scope_checkbox()
-  App.setup_scope_canvas()
 
   DOM.ev(window, `resize`, () => {
     App.handle_scope_resize()

@@ -1,7 +1,7 @@
-App.visual = `flux surface`
 App.animation_frames = 0
 
 App.start_visual = () => {
+  App.visual = App.visual || `flux surface`
   App.background_canvas = DOM.el(`#background-canvas`)
   App.background_canvas_ctx = App.background_canvas.getContext(`2d`)
 
@@ -22,7 +22,7 @@ App.start_visual = () => {
   App.background_canvas.width = window.innerWidth
   App.background_canvas.height = window.innerHeight
 
-  App.render_animation()
+  App.apply_visual(App.visual)
 }
 
 App.create_visual_modal = () => {
@@ -33,7 +33,7 @@ App.create_visual_modal = () => {
 
 App.open_visual_modal = async () => {
   let items = [
-    `No Visual`,
+    `Auto`,
     `Flux Surface`,
     `Hyper Rose`,
     `Bio Tunnel`,
@@ -55,12 +55,14 @@ App.apply_visual = (mode) => {
   App.visual = mode
   App.stor_save_visual()
 
-  if (mode === `no visual`) {
+  if (mode === `auto`) {
     App.clear_visual()
-    return
+    App.background_canvas.classList.add(`under`)
   }
-
-  App.render_animation()
+  else {
+    App.background_canvas.classList.remove(`under`)
+    App.render_animation()
+  }
 }
 
 App.anim_bio_tunnel = (c, w, h, f) => {
@@ -292,7 +294,7 @@ App.anim_aurora_borealis = (c, w, h, f) => {
 }
 
 App.render_animation = () => {
-  if (App.visual === `no visual`) {
+  if (App.visual === `auto`) {
     return
   }
 
@@ -317,6 +319,10 @@ App.render_animation = () => {
   }
   else if (App.visual === `aurora borealis`) {
     App.anim_aurora_borealis(App.background_canvas_ctx, width, height, App.animation_frames)
+  }
+  else {
+    App.apply_visual(`auto`)
+    return
   }
 
   App.animation_frames++
