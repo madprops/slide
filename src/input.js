@@ -8,6 +8,10 @@ App.code_scroll_wheel_pause_ms = 350
 App.code_scroll_song_pause_ms = 1.2 * 1000
 App.code_scroll_pending_delay_ms = 0
 
+App.setup_input = () => {
+  App.start_input_resize_observer()
+}
+
 App.get_input = () => {
   return DOM.el(`#code-input`)
 }
@@ -341,6 +345,22 @@ App.init_code_input_controls = () => {
       }
     }, {passive: true})
   }
+}
+
+// Add a ResizeObserver to resize the scope canvas when the wrapper is resized
+App.start_input_resize_observer = () => {
+  let wrapper = DOM.el(`#code-input-wrapper`)
+  let scope = DOM.el(`#scope-wrapper`)
+
+  if (!wrapper || !scope) {
+    return
+  }
+
+  const resizeObserver = new ResizeObserver(() => {
+    App.scope_debouncer.call()
+  })
+
+  resizeObserver.observe(wrapper)
 }
 
 App.toggle_max = (mode = `toggle`) => {

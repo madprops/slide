@@ -613,6 +613,8 @@ App.start_events = async () => {
   App.load_all_storage()
   App.setup_volume()
   App.setup_auto()
+  App.setup_input()
+  App.setup_scope()
   App.init_volume_controls()
   App.init_tempo_controls()
   App.init_code_input_controls()
