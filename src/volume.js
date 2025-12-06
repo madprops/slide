@@ -57,32 +57,6 @@ App.persist_volume = () => {
   }
 }
 
-App.load_saved_volume = () => {
-  if (typeof window === `undefined`) {
-    return undefined
-  }
-
-  try {
-    const stored_value = window.localStorage?.getItem(App.volume_storage_key)
-
-    if (stored_value === null) {
-      return undefined
-    }
-
-    const parsed_value = Number(stored_value)
-
-    if (!Number.isFinite(parsed_value)) {
-      return undefined
-    }
-
-    return parsed_value
-  }
-  catch (err) {
-    console.warn(`Failed to load volume`, err)
-    return undefined
-  }
-}
-
 App.apply_volume = () => {
   if (!App.audio_started) {
     return
@@ -126,16 +100,6 @@ App.init_volume_controls = () => {
 
   if (!slider) {
     return
-  }
-
-  const saved_volume = App.load_saved_volume()
-  const slider_volume = App.read_volume_value(slider)
-
-  if (Number.isFinite(saved_volume)) {
-    App.volume_percent = saved_volume
-  }
-  else {
-    App.volume_percent = slider_volume
   }
 
   App.refresh_volume_ui()
