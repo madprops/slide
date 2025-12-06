@@ -32,9 +32,9 @@ App.create_visual_modal = () => {
 App.open_visual_modal = async () => {
   let items = [
     `No Visual`,
-    `Bio Tunnel`,
     `Flux Surface`,
     `Hyper Rose`,
+    `Bio Tunnel`,
     `Liquid Aether`,
     `Aurora Borealis`,
   ]
@@ -51,6 +51,12 @@ App.open_visual_modal = async () => {
 
 App.apply_visual = (mode) => {
   App.current_animation = mode
+
+  if (mode === `no visual`) {
+    App.clear_visual()
+    return
+  }
+
   App.render_animation()
 }
 
@@ -264,6 +270,10 @@ App.anim_aurora_borealis = (c, w, h, f) => {
 }
 
 App.render_animation = () => {
+  if (App.current_animation === `no visual`) {
+    return
+  }
+
   let width = window.innerWidth
   let height = window.innerHeight
   let bg_fade = `rgba(0, 0, 0, 0.12)`
@@ -271,11 +281,7 @@ App.render_animation = () => {
   App.background_canvas_ctx.fillStyle = bg_fade
   App.background_canvas_ctx.fillRect(0, 0, width, height)
 
-  if (App.current_animation === `no visual`) {
-    App.background_canvas_ctx.clearRect(0, 0, width, height)
-
-  }
-  else if (App.current_animation === `bio tunnel`) {
+  if (App.current_animation === `bio tunnel`) {
     App.anim_bio_tunnel(App.background_canvas_ctx, width, height, App.animation_frames)
   }
   else if (App.current_animation === `flux surface`) {
@@ -293,4 +299,10 @@ App.render_animation = () => {
 
   App.animation_frames++
   requestAnimationFrame(App.render_animation)
+}
+
+App.clear_visual = () => {
+  let width = window.innerWidth
+  let height = window.innerHeight
+  App.background_canvas_ctx.clearRect(0, 0, width, height)
 }
