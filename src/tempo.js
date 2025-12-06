@@ -66,7 +66,7 @@ App.persist_tempo = () => {
   }
 
   try {
-    App.save_storage(`tempo`, App.tempo_cpm)
+    App.save_tempo()
   }
   catch (err) {
     console.warn(`Failed to persist tempo`, err)

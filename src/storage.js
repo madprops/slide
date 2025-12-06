@@ -33,6 +33,22 @@ App.stor_load_tempo = () => {
   )
 }
 
+App.save_auto_delay = () => {
+  App.save_storage(`auto_delay`, App.auto_delay)
+}
+
+App.save_auto_endpoint = () => {
+  App.save_storage(`auto_endpoint`, App.auto_endpoint)
+}
+
+App.save_tempo = () => {
+  App.save_storage(`tempo`, App.tempo_cpm)
+}
+
+App.save_volume = () => {
+  App.save_storage(`volume`, App.volume_percent)
+}
+
 App.load_storage = (what, on_value) => {
   let value = localStorage.getItem(App[`${what}_storage_key`])
   on_value(value)

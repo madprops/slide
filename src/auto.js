@@ -104,7 +104,7 @@ App.start_auto = async (endpoint) => {
   }
 
   App.auto_endpoint = endpoint.trim()
-  App.save_storage(`auto_endpoint`, App.auto_endpoint)
+  App.save_auto_endpoint()
   let ready = await App.ensure_strudel_ready()
 
   if (!ready) {
@@ -118,7 +118,7 @@ App.start_auto = async (endpoint) => {
 
 App.persist_fetch_delay = () => {
   try {
-    App.save_storage(`auto_delay`, App.auto_delay)
+    App.save_auto_delay()
   }
   catch (err) {
     console.warn(`Failed to persist fetch delay`, err)
