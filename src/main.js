@@ -710,7 +710,8 @@ App.create_debouncer = (func, delay) => {
   return obj
 }
 
+window.H = H_hydra
 window.initHydra = initHydra
 window.clearHydra = clearHydra
-window.H = H_hydra
+
 window.App = App

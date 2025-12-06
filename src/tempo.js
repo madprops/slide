@@ -66,36 +66,10 @@ App.persist_tempo = () => {
   }
 
   try {
-    window.localStorage?.setItem(App.tempo_storage_key, `${App.tempo_cpm}`)
+    App.save_storage(`tempo`, App.tempo_cpm)
   }
   catch (err) {
     console.warn(`Failed to persist tempo`, err)
-  }
-}
-
-App.load_saved_tempo = () => {
-  if (typeof window === `undefined`) {
-    return undefined
-  }
-
-  try {
-    let saved = window.localStorage?.getItem(App.tempo_storage_key)
-
-    if (saved === null) {
-      return undefined
-    }
-
-    let parsed = parseInt(saved, 10)
-
-    if (!Number.isFinite(parsed)) {
-      return undefined
-    }
-
-    return parsed
-  }
-  catch (err) {
-    console.warn(`Failed to load tempo`, err)
-    return undefined
   }
 }
 
@@ -143,12 +117,6 @@ App.init_tempo_controls = () => {
 
   if (!slider) {
     return
-  }
-
-  let saved_tempo = App.load_saved_tempo()
-
-  if (Number.isFinite(saved_tempo)) {
-    App.tempo_cpm = saved_tempo
   }
 
   App.refresh_tempo_ui()

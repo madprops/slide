@@ -58,7 +58,7 @@ App.create_auto_modal = () => {
   let body = DOM.el(`.modal-body`, modal)
   let info = DOM.create(`div`, ``, `auto-info`)
   info.textContent = `Code will be fetched periodically`
-  let select = DOM.create(`select`, ``, `auto-delay-select`)
+  let select = DOM.create(`select`, `modal-select`, `auto-delay-select`)
 
   select.innerHTML = `
     <option value="1">1 second</option>
@@ -104,7 +104,7 @@ App.start_auto = async (endpoint) => {
   }
 
   App.auto_endpoint = endpoint.trim()
-  localStorage.setItem(App.endpoint_storage_key, App.auto_endpoint)
+  App.save_storage(`auto_endpoint`, App.auto_endpoint)
   let ready = await App.ensure_strudel_ready()
 
   if (!ready) {
@@ -118,27 +118,10 @@ App.start_auto = async (endpoint) => {
 
 App.persist_fetch_delay = () => {
   try {
-    localStorage.setItem(App.fetch_delay_storage_key, `${App.auto_delay}`)
+    App.save_storage(`auto_delay`, App.auto_delay)
   }
   catch (err) {
     console.warn(`Failed to persist fetch delay`, err)
-  }
-}
-
-App.load_fetch_delay_from_storage = () => {
-  try {
-    let stored = localStorage.getItem(App.fetch_delay_storage_key)
-
-    if (stored) {
-      let parsed = parseInt(stored, 10)
-
-      if (Number.isFinite(parsed) && (parsed > 0)) {
-        App.auto_delay = parsed
-      }
-    }
-  }
-  catch (err) {
-    console.warn(`Failed to load fetch delay`, err)
   }
 }
 

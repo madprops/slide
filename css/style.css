@@ -522,11 +522,7 @@ a.popup:hover {
     box-sizing: border-box;
 }
 
-#endpoint-input:focus {
-    outline: none;
-}
-
-#endpoint-delay-select {
+.modal-select {
     width: 100%;
     padding: 0.8rem;
     border: 1px solid #555;

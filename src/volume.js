@@ -50,7 +50,7 @@ App.persist_volume = () => {
   }
 
   try {
-    window.localStorage?.setItem(App.volume_storage_key, `${App.volume_percent}`)
+    App.save_storage(`volume`, App.volume_percent)
   }
   catch (err) {
     console.warn(`Failed to persist volume`, err)
