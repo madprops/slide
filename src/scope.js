@@ -1,10 +1,9 @@
+const {evalScope} = strudelCore
 import * as strudelCore from "@strudel.cycles/core"
 import * as strudelMini from "@strudel.cycles/mini"
-import {getAudioContext, getSuperdoughAudioController} from "superdough"
 import * as strudelWebAudio from "@strudel.cycles/webaudio"
 import * as strudelTonal from "@strudel.cycles/tonal"
-
-const {evalScope} = strudelCore
+import {getAudioContext, getSuperdoughAudioController} from "superdough"
 
 const resolveSharedApp = () => {
   if (typeof globalThis !== `object`) {
@@ -38,6 +37,10 @@ App.scope_click_time = 4 * 1000
 App.scope_click_size = 18
 App.scope_is_drawing = false
 App.scope_click_distance = 180
+App.scope_mousedown_date = 0
+App.scope_beep_delay = 300
+App.scope_slide_delay = 800
+App.scope_slide_distance = 300
 
 App.setup_scope = () => {
   App.scope_debouncer = App.create_debouncer(() => {
@@ -244,6 +247,8 @@ App.handle_scope_click = (event) => {
 }
 
 App.handle_scope_mouse_down = (event) => {
+  App.mouse_down_coords = App.get_scope_coords(event)
+  App.scope_mousedown_date = Date.now()
   App.scope_is_drawing = true
   App.handle_scope_click(event)
 }
@@ -282,9 +287,18 @@ App.handle_scope_mouse_move = (event) => {
   }
 }
 
-App.handle_scope_mouse_up = () => {
+App.handle_scope_mouse_up = (event) => {
   App.scope_is_drawing = false
   App.scope_last_point = null
+  App.mouse_up_coords = App.get_scope_coords(event)
+
+  if ((Date.now() - App.scope_mousedown_date) <= App.scope_beep_delay) {
+    App.beep_sound()
+  }
+
+  if ((Date.now() - App.scope_mousedown_date) <= App.scope_slide_delay) {
+    App.check_scope_slide()
+  }
 }
 
 App.draw_star = (ctx, x, y, radius, spikes, outerRadius) => {
@@ -459,6 +473,7 @@ App.init_scope_click_handler = () => {
     DOM.ev(canvas, `mousedown`, App.handle_scope_mouse_down)
     DOM.ev(canvas, `mousemove`, App.handle_scope_mouse_move)
     DOM.ev(window, `mouseup`, App.handle_scope_mouse_up)
+    DOM.ev(window, `click`, App.handle_scope_click)
   }
 }
 
@@ -530,4 +545,24 @@ App.ensure_scope = () => {
   }
 
   return App.scope_promise
+}
+
+App.get_scope_coords = (event) => {
+  let canvas = App.get_scope_canvas()
+
+  if (canvas) {
+    let rect = canvas.getBoundingClientRect()
+    let x = event.clientX - rect.left
+    let y = event.clientY - rect.top
+    return {x, y}
+  }
+}
+
+App.check_scope_slide = () => {
+  let a = App.mouse_down_coords
+  let b = App.mouse_up_coords
+
+  if (Math.abs(a.x - b.x) >= App.scope_slide_distance) {
+    App.random_song()
+  }
 }

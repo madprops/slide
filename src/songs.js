@@ -122,3 +122,32 @@ App.set_song_context = (song_name = ``) => {
   App.set_title(App.underspace(App.current_song))
   App.update_song_query_param(App.current_song)
 }
+
+App.random_song = async () => {
+  try {
+    let songs = await App.fetch_songs_list()
+
+    if (!songs.length) {
+      console.error(`No songs available to pick from`)
+      return
+    }
+
+    // Filter out the currently loaded song
+    let filtered_songs = songs.filter(song => song !== App.current_song)
+
+    if (!filtered_songs.length) {
+      console.error(`No songs available after filtering out the current song`)
+      return
+    }
+
+    // Pick a random song
+    let random_index = App.random_int({min: 0, max: filtered_songs.length - 1})
+    let random_song = filtered_songs[random_index]
+
+    // Load the random song
+    await App.load_song(random_song)
+  }
+  catch (err) {
+    console.error(`Error selecting a random song`, err)
+  }
+}
