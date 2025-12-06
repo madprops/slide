@@ -40,8 +40,8 @@ App.scope_click_distance = 180
 App.scope_mousedown_date = 0
 App.scope_beep_delay = 300
 App.scope_slide_delay = 800
-App.scope_slide_distance = 300
-App.scope_panning_zone = 120
+App.scope_slide_distance = 250
+App.scope_panning_zone = 100
 
 App.setup_scope = () => {
   App.scope_debouncer = App.create_debouncer(() => {

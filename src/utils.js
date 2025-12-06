@@ -73,3 +73,54 @@ App.random_int = (args = {}) => {
 
   return Math.floor(Math.random() * (args.max - args.min + 1) + args.min)
 }
+
+App.create_debouncer = (func, delay) => {
+  if (typeof func !== `function`) {
+    App.error(`Invalid debouncer function`)
+    return
+  }
+
+  if ((typeof delay !== `number`) || (delay < 1)) {
+    App.error(`Invalid debouncer delay`)
+    return
+  }
+
+  let timer
+  let obj = {}
+
+  function clear() {
+    clearTimeout(timer)
+    timer = undefined
+  }
+
+  function run(...args) {
+    func(...args)
+  }
+
+  obj.call = (...args) => {
+    clear()
+
+    timer = setTimeout(() => {
+      run(...args)
+    }, delay)
+  }
+
+  obj.call_2 = (...args) => {
+    if (timer) {
+      return
+    }
+
+    obj.call(args)
+  }
+
+  obj.now = (...args) => {
+    clear()
+    run(...args)
+  }
+
+  obj.cancel = () => {
+    clear()
+  }
+
+  return obj
+}

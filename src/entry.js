@@ -13,6 +13,7 @@ import "./visual.js"
 import "./utils.js"
 import "./storage.js"
 import "./audio.js"
+import "./player.js"
 
 const start_app_events = () => {
   if (!window?.App?.start_events) {

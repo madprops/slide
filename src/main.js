@@ -703,59 +703,6 @@ App.restart_code_scroll = () => {
   }
 }
 
-App.play_action = async (code = ``, force = false) => {
-  let ready = await App.ensure_strudel_ready()
-
-  if (!ready) {
-    return
-  }
-
-  if (!code) {
-    let code_input = App.get_input()
-    code = code_input.value
-  }
-
-  if (!code) {
-    return
-  }
-
-  if (!force && (code === App.last_code)) {
-    return
-  }
-
-  App.stop_strudel()
-  App.restart_code_scroll()
-  App.last_code = code
-  App.clear_draw_context()
-  App.start_color_cycle()
-  App.clean_canvas()
-
-  try {
-    await App.strudel_update(code)
-  }
-  catch (e) {
-    App.set_status(`Error: ${e.message}`)
-  }
-}
-
-App.stop_action = () => {
-  if (!App.stop_strudel) {
-    App.set_status(`Bundle not loaded. Cannot stop audio`)
-    return
-  }
-
-  if (App.strudel_stop_status_watch) {
-    App.strudel_stop_status_watch()
-  }
-
-  App.stop_strudel()
-  App.stop_code_scroll()
-  App.last_code = null
-  App.clear_draw_context()
-  App.set_status(`Stopped`)
-  App.set_song_context()
-}
-
 App.start_events = async () => {
   if (App.events_started) {
     return
@@ -852,57 +799,6 @@ App.update_song_query_param = (song_name = ``) => {
   }
 
   window.history.replaceState({}, document.title, `${next_url.pathname}${next_url.search}${next_url.hash}`)
-}
-
-App.create_debouncer = (func, delay) => {
-  if (typeof func !== `function`) {
-    App.error(`Invalid debouncer function`)
-    return
-  }
-
-  if ((typeof delay !== `number`) || (delay < 1)) {
-    App.error(`Invalid debouncer delay`)
-    return
-  }
-
-  let timer
-  let obj = {}
-
-  function clear() {
-    clearTimeout(timer)
-    timer = undefined
-  }
-
-  function run(...args) {
-    func(...args)
-  }
-
-  obj.call = (...args) => {
-    clear()
-
-    timer = setTimeout(() => {
-      run(...args)
-    }, delay)
-  }
-
-  obj.call_2 = (...args) => {
-    if (timer) {
-      return
-    }
-
-    obj.call(args)
-  }
-
-  obj.now = (...args) => {
-    clear()
-    run(...args)
-  }
-
-  obj.cancel = () => {
-    clear()
-  }
-
-  return obj
 }
 
 window.H = H_hydra
