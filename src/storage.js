@@ -1,6 +1,6 @@
 App.tempo_storage_key = `slide.tempo`
-App.endpoint_storage_key = `slide.auto_endpoint`
-App.fetch_delay_storage_key = `slide.auto_delay`
+App.auto_endpoint_storage_key = `slide.auto_endpoint`
+App.auto_delay_storage_key = `slide.auto_delay`
 App.volume_storage_key = `slide.volume`
 
 App.load_storage = (what, on_value) => {

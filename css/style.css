@@ -538,7 +538,7 @@ a.popup:hover {
     outline: none;
 }
 
-#endpoint-buttons {
+.modal-buttons {
     display: flex;
     gap: 0.5rem;
     justify-content: flex-end;

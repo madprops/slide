@@ -77,7 +77,7 @@ App.create_auto_modal = () => {
   let input = DOM.create(`input`, ``, `auto-input`)
   input.classList.add(`modal-input`)
   input.placeholder = `Endpoint URL`
-  let buttons = DOM.create(`auto-buttons`)
+  let buttons = DOM.create(`div`, `modal-buttons`, `auto-buttons`)
 
   buttons.innerHTML = `
     <button id="auto-default">Default</button>
