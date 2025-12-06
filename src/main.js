@@ -105,9 +105,17 @@ const App = {};
           set_eq: (low_db, mid_db, high_db) => {
             let now = ctx.currentTime
             let ramp = 0.1
-            if (low_db !== undefined) eq_low.gain.setTargetAtTime(low_db, now, ramp)
-            if (mid_db !== undefined) eq_mid.gain.setTargetAtTime(mid_db, now, ramp)
-            if (high_db !== undefined) eq_high.gain.setTargetAtTime(high_db, now, ramp)
+            if (low_db !== undefined) {
+              eq_low.gain.setTargetAtTime(low_db, now, ramp)
+            }
+
+            if (mid_db !== undefined) {
+              eq_mid.gain.setTargetAtTime(mid_db, now, ramp)
+            }
+
+            if (high_db !== undefined) {
+              eq_high.gain.setTargetAtTime(high_db, now, ramp)
+            }
           },
           set_volume: (val) => {
             master_gain.gain.setTargetAtTime(val, ctx.currentTime, 0.1)
@@ -139,7 +147,7 @@ const App = {};
               // Start from 0 if fresh connection
               reverb_gain.gain.setValueAtTime(0, now)
               reverb_state.is_connected = true
-              console.log("Reverb Connected")
+              console.log(`Reverb Connected`)
             }
             else {
               // If already connected, we might be fading out.
@@ -165,9 +173,9 @@ const App = {};
               reverb_gain.disconnect()
               convolver.disconnect()
               reverb_state.is_connected = false
-              console.log("Reverb Disconnected (Clean)")
+              console.log(`Reverb Disconnected (Clean)`)
             }, (duration + fade_out_time) * 1000 + 100) // Buffer ms for safety
-          }
+          },
         }
       }
     }

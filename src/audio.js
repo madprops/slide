@@ -26,7 +26,6 @@ App.beep_sound = () => {
     // Start and stop the oscillator
     oscillator.start()
     oscillator.stop(audio_ctx.currentTime + 0.2)
-
   }
   catch (err) {
     console.error(`Failed to play sound`, err)
@@ -46,27 +45,27 @@ App.get_audio_context = () => {
 
   // 3. Last Resort: Create new (Only if Strudel hasn't loaded yet)
   try {
-    App.audio_context = new (window.AudioContext || window.webkitAudioContext)()
+    App.audio_context = new (AudioContext || window.webkitAudioContext)()
     return App.audio_context
   }
   catch (e) {
-    console.error("Web Audio API is not supported")
+    console.error(`Web Audio API is not supported`)
     return null
   }
 }
 
 App.splash_reverb = (seconds) => {
-  master_fx.splash_reverb(seconds)
+  window.master_fx.splash_reverb(seconds)
 }
 
 App.set_panning = (value) => {
-  master_fx.set_panning(value)
+  window.master_fx.set_panning(value)
 }
 
 App.set_gain = (value) => {
-  master_fx.set_volume(value)
+  window.master_fx.set_volume(value)
 }
 
 App.set_eq = (low, mid, high) => {
-  master_fx.set_eq_freqs(low, mid, high)
+  window.master_fx.set_eq_freqs(low, mid, high)
 }
