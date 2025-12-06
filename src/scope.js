@@ -33,7 +33,7 @@ App.scope_border_color = `#444`
 App.scope_sine_time = 0
 App.scope_clicks = []
 App.scope_click_color = `rgba(162, 171, 234, 0.5)`
-App.scope_click_time = 4 * 1000
+App.scope_click_time = 3 * 1000
 App.scope_click_size = 18
 App.scope_is_drawing = false
 App.scope_click_distance = 180
@@ -294,7 +294,7 @@ App.handle_scope_mouse_up = (event) => {
 
   if ((Date.now() - App.scope_mousedown_date) <= App.scope_beep_delay) {
     App.beep_sound()
-    App.splash_reverb(3)
+    App.splash_reverb(2)
   }
 
   if ((Date.now() - App.scope_mousedown_date) <= App.scope_slide_delay) {
