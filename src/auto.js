@@ -1,3 +1,4 @@
+App.auto_delay = 5
 App.auto_endpoint = `/status`
 
 App.setup_auto = () => {

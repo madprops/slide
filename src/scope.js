@@ -47,7 +47,7 @@ App.setup_scope = () => {
 
 App.get_scope_container = () => {
   if (!App.scope_container_el) {
-    App.scope_container_el = DOM.el(`#scope-visualizer`)
+    App.scope_container_el = DOM.el(`#scope-container`)
   }
 
   return App.scope_container_el
@@ -106,11 +106,35 @@ App.setup_scope_canvas = () => {
 }
 
 App.resize_scope_canvas = () => {
-  let scope_wrapper = DOM.el(`#scope-wrapper`)
-  let input_wrapper = DOM.el(`#code-input-wrapper`)
-  let input_width = input_wrapper.offsetWidth
-  let new_width = `${input_width}px`
-  scope_wrapper.style.width = new_width
+  if (!App.scope_canvas_el || !App.scope_canvas_ctx) {
+    return
+  }
+
+  let ratio = 1
+
+  if (typeof window !== `undefined`) {
+    ratio = window.devicePixelRatio || 1
+  }
+
+  App.scope_pixel_ratio = ratio
+
+  // Get the wrapper element
+  let wrapper_el = DOM.el(`#code-input-wrapper`)
+
+  // Use wrapper width if found, otherwise fall back to existing logic
+  let width = (wrapper_el && wrapper_el.clientWidth) || App.scope_canvas_el.clientWidth || (App.scope_canvas_el.width / ratio) || 320
+  let height = App.scope_canvas_el.clientHeight || (App.scope_canvas_el.height / ratio) || 80
+
+  let scaled_width = Math.max(1, Math.round(width * ratio))
+  let scaled_height = Math.max(1, Math.round(height * ratio))
+
+  if ((App.scope_canvas_el.width !== scaled_width) || (App.scope_canvas_el.height !== scaled_height)) {
+    App.scope_canvas_el.width = scaled_width
+    App.scope_canvas_el.height = scaled_height
+  }
+
+  App.scope_canvas_ctx.setTransform(1, 0, 0, 1, 0, 0)
+  App.scope_canvas_ctx.scale(ratio, ratio)
   App.clear_scope_canvas()
 }
 

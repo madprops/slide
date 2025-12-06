@@ -350,9 +350,8 @@ App.init_code_input_controls = () => {
 // Add a ResizeObserver to resize the scope canvas when the wrapper is resized
 App.start_input_resize_observer = () => {
   let wrapper = DOM.el(`#code-input-wrapper`)
-  let scope = DOM.el(`#scope-wrapper`)
 
-  if (!wrapper || !scope) {
+  if (!wrapper) {
     return
   }
 
