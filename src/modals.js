@@ -13,7 +13,10 @@ App.create_modal = (id) => {
 }
 
 App.create_list_modal = (id) => {
-  return App.modal_factory(id, `template-list-modal`)
+  let modal = App.modal_factory(id, `template-list-modal`)
+  let filter = DOM.el(`.modal-filter`, modal)
+  filter.id = `${id}-modal-filter`
+  return modal
 }
 
 App.create_modals = () => {
@@ -39,9 +42,9 @@ App.create_modals = () => {
   })
 }
 
-App.show_items_modal = async (what, args = {}) => {
+App.show_items_modal = async (id, args = {}) => {
   let loaded = args.loaded || false
-  let modal = DOM.el(`#${what}-modal`)
+  let modal = DOM.el(`#${id}-modal`)
   let modal_list = DOM.el(`.modal-list`, modal)
   let filter_input = DOM.el(`.modal-filter`, modal)
 
@@ -115,10 +118,11 @@ App.show_items_modal = async (what, args = {}) => {
   }
 
   App.do_open_modal(modal)
+  App.focus_modal_filter(id)
 }
 
-App.open_modal = (what) => {
-  let modal = DOM.el(`#${what}-modal`)
+App.open_modal = (id) => {
+  let modal = DOM.el(`#${id}-modal`)
 
   if (!modal) {
     return
@@ -132,8 +136,8 @@ App.do_open_modal = (modal) => {
   modal.classList.add(`active`)
 }
 
-App.close_modal = (what) => {
-  let modal = DOM.el(`#${what}-modal`)
+App.close_modal = (id) => {
+  let modal = DOM.el(`#${id}-modal`)
 
   if (!modal) {
     return
@@ -161,4 +165,12 @@ App.show_overlay = () => {
 
 App.hide_overlay = () => {
   DOM.hide(`#modal-overlay`)
+}
+
+App.focus_modal_filter = (id) => {
+  let filter = DOM.el(`#${id}-modal-filter`)
+
+  if (filter) {
+    filter.focus()
+  }
 }
