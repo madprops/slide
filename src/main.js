@@ -105,6 +105,7 @@ const App = {};
           set_eq: (low_db, mid_db, high_db) => {
             let now = ctx.currentTime
             let ramp = 0.1
+
             if (low_db !== undefined) {
               eq_low.gain.setTargetAtTime(low_db, now, ramp)
             }

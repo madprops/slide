@@ -41,6 +41,7 @@ App.scope_mousedown_date = 0
 App.scope_beep_delay = 300
 App.scope_slide_delay = 800
 App.scope_slide_distance = 300
+App.scope_panning_zone = 120
 
 App.setup_scope = () => {
   App.scope_debouncer = App.create_debouncer(() => {
@@ -295,6 +296,7 @@ App.handle_scope_mouse_up = (event) => {
   if ((Date.now() - App.scope_mousedown_date) <= App.scope_beep_delay) {
     App.beep_sound()
     App.splash_reverb(2)
+    App.check_scope_panning()
   }
 
   if ((Date.now() - App.scope_mousedown_date) <= App.scope_slide_delay) {
@@ -565,5 +567,20 @@ App.check_scope_slide = () => {
 
   if (Math.abs(a.x - b.x) >= App.scope_slide_distance) {
     App.random_song()
+  }
+}
+
+App.check_scope_panning = () => {
+  let a = App.mouse_down_coords
+  let b = App.mouse_up_coords
+  let {width, height} = App.get_scope_dimensions()
+  let zone = App.scope_panning_zone
+
+  if ((a.x <= zone) || (b.x <= zone)) {
+    App.set_panning(-0.9, 3)
+  }
+  else if ((a.x >= (width - zone)) ||
+    (b.x >= (width - zone))) {
+    App.set_panning(0.9, 3)
   }
 }

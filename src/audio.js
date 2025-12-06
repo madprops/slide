@@ -58,8 +58,16 @@ App.splash_reverb = (seconds) => {
   window.master_fx.splash_reverb(seconds)
 }
 
-App.set_panning = (value) => {
+App.set_panning = (value, delay = 0) => {
   window.master_fx.set_panning(value)
+
+  if (delay > 0) {
+    clearTimeout(App.panning_timeout)
+
+    App.panning_timeout = setTimeout(() => {
+      window.master_fx.set_panning(0)
+    }, delay * 1000)
+  }
 }
 
 App.set_gain = (value) => {
