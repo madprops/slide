@@ -90,9 +90,13 @@ App.apply_visual = (mode) => {
   App.visual = mode
   App.stor_save_visual()
 
-  if ([`auto`, `none`].includes(mode)) {
+  if ([`auto`].includes(mode)) {
     App.clear_visual()
     App.background_canvas.classList.add(`under`)
+  }
+  else if ([`none`].includes(mode)) {
+    App.clear_visual()
+    App.background_canvas.classList.remove(`under`)
   }
   else {
     App.background_canvas.classList.remove(`under`)
@@ -528,5 +532,5 @@ App.clear_visual = () => {
 }
 
 App.get_active_visual_index = () => {
-  return App.visual_items.indexOf(App.visual)
+  return App.visual_items.map(x => x.text).indexOf(App.visual)
 }
