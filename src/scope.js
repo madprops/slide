@@ -14,11 +14,14 @@ App.scope_animation_id = undefined
 App.scope_connected = false
 App.scope_pixel_ratio = 1
 App.scope_enabled = true
+
+App.scope_background = `#111111da`
 App.scope_color = `rgba(204, 198, 239, 1)`
+App.scope_click_color = `rgba(162, 171, 234, 0.5)`
 App.scope_border_color = `#444`
+
 App.scope_sine_time = 0
 App.scope_clicks = []
-App.scope_click_color = `rgba(162, 171, 234, 0.5)`
 App.scope_click_time = 3 * 1000
 App.scope_click_size = 18
 App.scope_is_drawing = false
@@ -158,7 +161,7 @@ App.clear_scope_canvas = () => {
     return
   }
 
-  App.scope_canvas_ctx.fillStyle = `rgba(21, 21, 21, 0.75)`
+  App.scope_canvas_ctx.fillStyle = App.scope_background
   App.scope_canvas_ctx.fillRect(0, 0, width, height)
 }
 
@@ -347,7 +350,11 @@ App.draw_scope_frame = () => {
     return
   }
 
-  App.scope_canvas_ctx.fillStyle = `rgba(21, 21, 21, 0.33)`
+  // 1. Clear previous frame completely
+  App.scope_canvas_ctx.clearRect(0, 0, width, height)
+
+  // 2. Fill with your semi-transparent color
+  App.scope_canvas_ctx.fillStyle = App.scope_background
   App.scope_canvas_ctx.fillRect(0, 0, width, height)
 
   App.scope_canvas_ctx.strokeStyle = App.scope_color
