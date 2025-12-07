@@ -191,5 +191,8 @@ App.get_matched_song = () => {
     if (cache.filtered === App.last_code) {
       return cache
     }
+    else if (cache.raw === App.last_code) {
+      return cache
+    }
   }
 }
