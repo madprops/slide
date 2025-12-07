@@ -1,6 +1,4 @@
-const App = {};
-
-// ---------------------------
+const App = {}
 
 import "./process-env.js"
 import * as strudelMini from "@strudel.cycles/mini"
