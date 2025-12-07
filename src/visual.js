@@ -39,6 +39,7 @@ App.open_visual_modal = async () => {
     `Bio Tunnel`,
     `Liquid Aether`,
     `Aurora Borealis`,
+    `Orb Balloons`,
   ]
 
   App.show_items_modal(`visual`, {
@@ -204,7 +205,7 @@ App.anim_hyper_rose = (c, w, h, f) => {
 }
 
 App.anim_liquid_aether = (c, w, h, f) => {
-  const particle_count = 100
+  const particle_count = 1000
   const orb_count = 5
 
   // --- INIT ---
@@ -271,7 +272,7 @@ App.anim_liquid_aether = (c, w, h, f) => {
   })
 
   // 5. Draw Foreground Liquid (High Detail)
-  c.lineWidth = 1.5
+  c.lineWidth = 0.5
   let zoom = 0.002 + Math.sin(t * 0.5) * 0.001
 
   App.flow_particles.forEach((p) => {
@@ -308,6 +309,76 @@ App.anim_liquid_aether = (c, w, h, f) => {
 
   // Cleanup
   c.globalCompositeOperation = 'source-over'
+}
+
+App.anim_orb_balloons = (c, w, h, f) => {
+  // 1. Setup: Fewer objects, but much larger
+  let orb_count = 8
+
+  if (!App.bg_orbs || App.bg_orbs.length !== orb_count) {
+    App.bg_orbs = Array(orb_count).fill().map((_, i) => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 3, // Faster movement
+      vy: (Math.random() - 0.5) * 3,
+      base_radius: Math.random() * 150 + 100, // Base size
+      hue: Math.random() * 360,
+      phase: Math.random() * Math.PI * 2 // Different starting point for pulsing
+    }))
+  }
+
+  // 2. The Trail: A faster fade prevents the screen from turning completely white
+  c.globalCompositeOperation = `source-over`
+  // Dark indigo fade for a space-like backdrop
+  c.fillStyle = `rgba(15, 5, 25, 0.2)`
+  c.fillRect(0, 0, w, h)
+
+  let t = f * 0.01
+
+  // 3. The Plasma Effect
+  c.globalCompositeOperation = `lighter`
+
+  App.bg_orbs.forEach((orb) => {
+    // Move
+    orb.x += orb.vx
+    orb.y += orb.vy
+
+    // Bounce off walls
+    if (orb.x < -orb.base_radius) orb.vx *= -1
+    if (orb.x > w + orb.base_radius) orb.vx *= -1
+    if (orb.y < -orb.base_radius) orb.vy *= -1
+    if (orb.y > h + orb.base_radius) orb.vy *= -1
+
+    // Breathe: Radius expands and contracts smoothly using Sine waves
+    // This makes it feel like "living" liquid
+    let current_radius = orb.base_radius + Math.sin(t + orb.phase) * 50
+
+    // Draw
+    // We create a gradient from the center of the orb outwards
+    let gradient = c.createRadialGradient(
+      orb.x,
+      orb.y,
+      0,
+      orb.x,
+      orb.y,
+      current_radius
+    )
+
+    // Color Logic: Rotate hue slowly over time so it never gets boring
+    let dynamic_hue = (orb.hue + f * 0.5) % 360
+
+    // Core is brighter, Edge is transparent
+    gradient.addColorStop(0, `hsla(${dynamic_hue}, 80%, 60%, 0.6)`)
+    gradient.addColorStop(1, `hsla(${dynamic_hue}, 80%, 40%, 0)`)
+
+    c.fillStyle = gradient
+    c.beginPath()
+    c.arc(orb.x, orb.y, current_radius, 0, Math.PI * 2)
+    c.fill()
+  })
+
+  // Restore defaults
+  c.globalCompositeOperation = `source-over`
 }
 
 App.anim_aurora_borealis = (c, w, h, f) => {
@@ -370,6 +441,9 @@ App.render_animation = () => {
   }
   else if (App.visual === `aurora borealis`) {
     App.anim_aurora_borealis(App.background_canvas_ctx, width, height, App.animation_frames)
+  }
+  else if (App.visual === `orb balloons`) {
+    App.anim_orb_balloons(App.background_canvas_ctx, width, height, App.animation_frames)
   }
   else {
     App.apply_visual(`auto`)
