@@ -431,3 +431,16 @@ App.input_is_maxed = () => {
 
   return true
 }
+
+App.restart_code_scroll = () => {
+  let code_input = App.get_input()
+
+  if (code_input) {
+    code_input.scrollTop = 0
+  }
+
+  if (App.code_scroll_active) {
+    App.defer_code_scroll(App.code_scroll_song_pause_ms)
+    App.reset_code_scroll_for_content(App.code_scroll_song_pause_ms)
+  }
+}

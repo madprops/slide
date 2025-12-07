@@ -136,7 +136,7 @@ App.load_song_from_query = async () => {
 App.set_song_context = (song_name = ``) => {
   App.current_song = song_name || ``
   App.set_title(App.underspace(App.current_song))
-  App.update_song_query_param(App.current_song)
+  App.update_url(App.current_song)
 }
 
 App.random_song = async () => {

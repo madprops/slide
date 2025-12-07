@@ -101,7 +101,7 @@ App.on_tempo_change = (is_final = false, value_override = undefined) => {
       App.persist_tempo()
 
       if (App.current_song) {
-        App.update_song_query_param(App.current_song)
+        App.update_url(App.current_song)
       }
 
       App.set_tempo()

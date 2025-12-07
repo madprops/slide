@@ -626,30 +626,6 @@ App.apply_partial_update = async (code) => {
   return true
 }
 
-App.ensure_strudel_ready = async () => {
-  if (!App.strudel_init) {
-    App.set_status(`Bundle not loaded. Check console for errors`)
-    console.error(`strudel.bundle.js is missing or failed to load`)
-    return false
-  }
-
-  await App.strudel_init()
-  return true
-}
-
-App.restart_code_scroll = () => {
-  let code_input = App.get_input()
-
-  if (code_input) {
-    code_input.scrollTop = 0
-  }
-
-  if (App.code_scroll_active) {
-    App.defer_code_scroll(App.code_scroll_song_pause_ms)
-    App.reset_code_scroll_for_content(App.code_scroll_song_pause_ms)
-  }
-}
-
 App.start_events = async () => {
   if (App.events_started) {
     return
@@ -730,7 +706,7 @@ App.set_title = (title) => {
   document.title = App.app_name
 }
 
-App.update_song_query_param = (song_name = ``) => {
+App.update_url = (song_name = ``) => {
   if (!window?.history?.replaceState) {
     return
   }
