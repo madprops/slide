@@ -32,6 +32,8 @@ App.scope_slide_delay = 800
 App.scope_slide_distance = 250
 App.scope_panning_zone = 100
 App.scope_padding_amount = 0.9
+App.scope_enable_date = 0
+App.scope_click_lock = 250
 
 App.setup_scope = () => {
   App.scope_debouncer = App.create_debouncer(() => {
@@ -463,15 +465,40 @@ App.start_scope_visualizer = () => {
   }
 }
 
+App.scope_mouse_enabled = () => {
+  return (Date.now() - App.scope_enable_date) >= App.scope_click_lock
+}
+
 App.init_scope_click_handler = () => {
   let canvas = App.get_scope_canvas()
 
-  if (canvas) {
-    DOM.ev(canvas, `mousedown`, App.handle_scope_mouse_down)
-    DOM.ev(canvas, `mousemove`, App.handle_scope_mouse_move)
-    DOM.ev(window, `mouseup`, App.handle_scope_mouse_up)
-    DOM.ev(window, `click`, App.handle_scope_click)
+  if (!canvas) {
+    return
   }
+
+  DOM.ev(canvas, `mousedown`, (event) => {
+    if (App.scope_mouse_enabled()) {
+      App.handle_scope_mouse_down(event)
+    }
+  })
+
+  DOM.ev(canvas, `mousemove`, (event) => {
+    if (App.scope_mouse_enabled()) {
+      App.handle_scope_mouse_move(event)
+    }
+  })
+
+  DOM.ev(canvas, `mouseup`, (event) => {
+    if (App.scope_mouse_enabled()) {
+      App.handle_scope_mouse_up(event)
+    }
+  })
+
+  DOM.ev(canvas, `click`, (event) => {
+    if (App.scope_mouse_enabled()) {
+      App.handle_scope_click(event)
+    }
+  })
 }
 
 App.toggle_scope = () => {
@@ -494,6 +521,7 @@ App.enable_scope_visualizer = () => {
     App.start_scope_loop()
   }
 
+  App.scope_enable_date = Date.now()
   App.start_scope_visualizer()
   App.init_scope_click_handler()
   App.stor_save_scope()
