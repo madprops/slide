@@ -302,9 +302,11 @@ App.handle_scope_mouse_up = (event) => {
   App.mouse_up_coords = App.get_scope_coords(event)
 
   if ((Date.now() - App.scope_mousedown_date) <= App.scope_beep_delay) {
-    App.beep_sound()
     App.splash_reverb(2)
-    App.check_scope_panning()
+
+    if (!App.check_scope_panning()) {
+      App.beep_sound()
+    }
   }
 
   if ((Date.now() - App.scope_mousedown_date) <= App.scope_slide_delay) {
@@ -613,9 +615,13 @@ App.check_scope_panning = () => {
 
   if ((a.x <= zone) || (b.x <= zone)) {
     App.set_panning(-amount, 3)
+    return true
   }
   else if ((a.x >= (width - zone)) ||
     (b.x >= (width - zone))) {
     App.set_panning(amount, 3)
+    return true
   }
+
+  return false
 }

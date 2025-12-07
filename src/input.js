@@ -110,18 +110,10 @@ App.code_scroll_tick = (timestamp) => {
 
   let delta = timestamp - App.code_scroll_last_ts
   App.code_scroll_last_ts = timestamp
-  let distance = (App.code_scroll_speed_px_per_second * delta) / 1000
-  let target = input.scrollTop + (distance * App.code_scroll_direction)
+  let distance = ((App.code_scroll_speed_px_per_second * delta) / 1000)
+  let target = (input.scrollTop + (distance * App.code_scroll_direction))
 
-  let max_scroll = Math.max(0, input.scrollHeight - input.clientHeight)
-  let buffer = 2 // Small buffer to ensure boundary crossing
-
-  if ((App.code_scroll_direction > 0) && (target >= max_scroll)) {
-    target = max_scroll + buffer
-  }
-  else if ((App.code_scroll_direction < 0) && (target <= 0)) {
-    target = -buffer
-  }
+  let max_scroll = Math.max(0, (input.scrollHeight - input.clientHeight))
 
   input.scrollTop = target
 
@@ -130,11 +122,14 @@ App.code_scroll_tick = (timestamp) => {
     return
   }
 
-  if (input.scrollTop >= max_scroll) {
+  // FIX: Only check the bottom boundary if we are actually moving DOWN (direction > 0).
+  // Otherwise, the tolerance calculation will snag us as we try to scroll up/away.
+  if ((App.code_scroll_direction > 0) && ((Math.ceil(input.scrollTop) + 1) >= max_scroll)) {
     input.scrollTop = max_scroll
     App.reset_code_scroll_for_content({direction: -1})
   }
-  else if (input.scrollTop <= 0) {
+  // FIX: Only check top boundary if moving UP (direction < 0).
+  else if ((App.code_scroll_direction < 0) && (input.scrollTop <= 0)) {
     input.scrollTop = 0
     App.reset_code_scroll_for_content({direction: 1})
   }
