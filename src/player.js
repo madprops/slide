@@ -38,15 +38,6 @@ App.play_action = async (code = ``, force = false) => {
 }
 
 App.stop_action = () => {
-  if (!App.stop_strudel) {
-    App.set_status(`Bundle not loaded. Cannot stop audio`)
-    return
-  }
-
-  if (App.strudel_stop_status_watch) {
-    App.strudel_stop_status_watch()
-  }
-
   App.stop_strudel()
   App.stop_code_scroll()
   App.last_code = null
