@@ -62,11 +62,22 @@ App.set_panning = (value, delay = 0) => {
   window.master_fx.set_panning(value)
 
   if (delay > 0) {
-    clearTimeout(App.panning_timeout)
+    clearInterval(App.panning_interval)
 
-    App.panning_timeout = setTimeout(() => {
-      window.master_fx.set_panning(0)
-    }, delay * 1000)
+    let step = value / (delay * 1000 / 50) // Calculate step size for 50ms intervals
+    let current_value = value
+
+    App.panning_interval = setInterval(() => {
+      current_value -= step
+
+      if (Math.abs(current_value) <= Math.abs(step)) {
+        window.master_fx.set_panning(0)
+        clearInterval(App.panning_interval)
+      }
+      else {
+        window.master_fx.set_panning(current_value)
+      }
+    }, 50)
   }
 }
 
