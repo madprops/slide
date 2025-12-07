@@ -204,59 +204,110 @@ App.anim_hyper_rose = (c, w, h, f) => {
 }
 
 App.anim_liquid_aether = (c, w, h, f) => {
-  // Initialize 400 particles if they don't exist
-  if (!App.flow_particles || (App.flow_particles.length === 0)) {
-    App.flow_particles = Array(400).fill().map(() => ({
+  const particle_count = 100
+  const orb_count = 5
+
+  // --- INIT ---
+  // 1. Initialize Foreground Particles (The Liquid)
+  if (!App.flow_particles || (App.flow_particles.length !== particle_count)) {
+    App.flow_particles = Array(particle_count).fill().map(() => ({
       x: Math.random() * w,
       y: Math.random() * h,
+      speed: Math.random() * 1.5 + 0.5,
+      life: Math.random() * 100
     }))
   }
 
-  // Fade trick: We draw a very faint black rect on top to slowly erase old trails
-  // This interacts with your main render loop's fade for a double-fade effect
-  c.fillStyle = `rgba(0, 0, 0, 0.02)`
+  // 2. Initialize Background Orbs (The Atmosphere)
+  if (!App.bg_orbs || App.bg_orbs.length !== orb_count) {
+    App.bg_orbs = Array(orb_count).fill().map((_, i) => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2,
+      radius: Math.random() * 200 + 300, // Huge radius
+      hue: i * 120 // Spread colors
+    }))
+  }
+
+  // --- RENDER ---
+
+  // 3. The Fade: Use a dark purple/blue tint instead of pure black
+  // This gives the "void" a subtle color instead of emptiness
+  c.globalCompositeOperation = 'source-over'
+  c.fillStyle = `rgba(10, 5, 20, 0.1)`
   c.fillRect(0, 0, w, h)
 
-  const t = f * 0.005
-  c.lineWidth = 2
+  const t = f * 0.002
 
-  App.flow_particles.forEach((p, i) => {
+  // 4. Draw Background Orbs
+  // These are huge, soft gradients that drift behind everything
+  c.globalCompositeOperation = 'lighter' // Additive blending for glow
+
+  App.bg_orbs.forEach(orb => {
+    // Move orbs slowly
+    orb.x += orb.vx + Math.sin(t) * 2
+    orb.y += orb.vy + Math.cos(t) * 2
+
+    // Bounce off walls
+    if (orb.x < -orb.radius) orb.x = w + orb.radius
+    if (orb.x > w + orb.radius) orb.x = -orb.radius
+    if (orb.y < -orb.radius) orb.y = h + orb.radius
+    if (orb.y > h + orb.radius) orb.y = -orb.radius
+
+    // Draw the soft gradient
+    const gradient = c.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.radius)
+
+    // Pulse the alpha for a "breathing" effect
+    const pulse = 0.1 + Math.sin(t * 3 + orb.hue) * 0.05
+
+    gradient.addColorStop(0, `hsla(${orb.hue + f * 0.1}, 60%, 40%, ${pulse})`)
+    gradient.addColorStop(1, 'rgba(0,0,0,0)')
+
+    c.fillStyle = gradient
+    c.beginPath()
+    c.arc(orb.x, orb.y, orb.radius, 0, Math.PI * 2)
+    c.fill()
+  })
+
+  // 5. Draw Foreground Liquid (High Detail)
+  c.lineWidth = 1.5
+  let zoom = 0.002 + Math.sin(t * 0.5) * 0.001
+
+  App.flow_particles.forEach((p) => {
+    p.life--
+    if (p.life <= 0) {
+      p.x = Math.random() * w
+      p.y = Math.random() * h
+      p.life = 100 + Math.random() * 100
+    }
+
     c.beginPath()
 
-    // Color: Shifts across the screen width
-    let hue = (p.x * 0.1 + f * 0.5) % 360
-    c.strokeStyle = `hsla(${hue}, 70%, 50%, 0.5)`
+    // Color: Sync particle hue with the background loop slightly
+    let hue = (f * 0.2 + p.x * 0.05 + p.y * 0.05) % 360
+    let light = 40 + (p.speed * 30)
+
+    // Higher opacity for foreground to pop against the new background
+    c.strokeStyle = `hsla(${hue}, 80%, ${light}%, 0.6)`
     c.moveTo(p.x, p.y)
 
-    // The "Flow" Math:
-    // Determine angle based on position (Perlin noise simulation)
-    const angle = (Math.cos(p.x * 0.005 + t) + Math.sin(p.y * 0.005 + t)) * Math.PI * 2
+    const angle = (Math.cos(p.x * zoom + t) + Math.sin(p.y * zoom + t)) * Math.PI * 2
 
-    // Move particle
-    p.x += Math.cos(angle) * 2
-    p.y += Math.sin(angle) * 2
+    p.x += Math.cos(angle) * p.speed * 2
+    p.y += Math.sin(angle) * p.speed * 2
 
     c.lineTo(p.x, p.y)
     c.stroke()
 
-    // Wrap around screen edges so we never run out of particles
-
-    if (p.x < 0) {
-      p.x = w
-    }
-
-    if (p.x > w) {
-      p.x = 0
-    }
-
-    if (p.y < 0) {
-      p.y = h
-    }
-
-    if (p.y > h) {
-      p.y = 0
-    }
+    if (p.x < 0) p.x = w
+    if (p.x > w) p.x = 0
+    if (p.y < 0) p.y = h
+    if (p.y > h) p.y = 0
   })
+
+  // Cleanup
+  c.globalCompositeOperation = 'source-over'
 }
 
 App.anim_aurora_borealis = (c, w, h, f) => {
