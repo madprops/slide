@@ -34,11 +34,12 @@ App.scope_panning_zone = 100
 App.scope_padding_amount = 0.9
 App.scope_enable_date = 0
 App.scope_click_lock = 250
+App.scope_debouncer_delay = 50
 
 App.setup_scope = () => {
   App.scope_debouncer = App.create_debouncer(() => {
     App.resize_scope_canvas()
-  }, 80)
+  }, App.scope_debouncer_delay)
 
   App.stor_load_scope()
   App.init_scope_checkbox()
