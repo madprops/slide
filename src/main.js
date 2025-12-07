@@ -14,13 +14,7 @@ App.last_eval_error = ``
 App.handle_eval_error = (err) => {
   App.has_error = true
   App.last_eval_error = err?.message || `${err}`
-
-  if (typeof App.set_status === `function`) {
-    App.set_status(App.last_eval_error)
-  }
-  else {
-    console.error(`Strudel evaluation error`, App.last_eval_error)
-  }
+  App.set_status(App.last_eval_error)
 }
 
 const {evaluate, scheduler} = webaudioRepl({

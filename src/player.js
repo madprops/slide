@@ -1,7 +1,19 @@
+App.play_running = false
+
+App.reset_playing = () => {
+  App.play_running = false
+}
+
 App.play_action = async (code = ``, force = false) => {
+  if (App.play_running) {
+    return
+  }
+
+  App.play_running = true
   let ready = await App.ensure_strudel_ready()
 
   if (!ready) {
+    App.reset_playing()
     return
   }
 
@@ -11,10 +23,12 @@ App.play_action = async (code = ``, force = false) => {
   }
 
   if (!code) {
+    App.reset_playing()
     return
   }
 
   if (!force && (code === App.last_code)) {
+    App.reset_playing()
     return
   }
 
@@ -31,15 +45,16 @@ App.play_action = async (code = ``, force = false) => {
   catch (e) {
     App.set_status(`Error: ${e.message}`)
   }
+
+  App.reset_playing()
 }
 
 App.stop_action = () => {
   App.stop_strudel()
   App.stop_code_scroll()
-  App.last_code = null
   App.clear_draw_context()
   App.set_status(`Stopped`)
-  App.set_song_context()
+  App.set_song_context(``)
 }
 
 App.stop_strudel = () => {
@@ -79,15 +94,11 @@ App.strudel_update = async (code) => {
 
 App.playing = (extra) => {
   let msg = ``
+  let matched_song = App.get_matched_song()
 
-  for (let name in App.song_cache) {
-    let cache = App.song_cache[name]
-
-    if (cache.filtered === App.last_code) {
-      msg = `Playing: ${App.underspace(cache.name)}`
-      App.update_url(cache.name)
-      break
-    }
+  if (matched_song) {
+    msg = `Playing: ${App.underspace(matched_song.name)}`
+    App.update_url(matched_song.name)
   }
 
   if (!msg) {
