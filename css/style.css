@@ -45,6 +45,11 @@ body, html {
     box-sizing: border-box;
     z-index: 99999999;
     position: relative;
+    transition: opacity 1500ms linear;
+}
+
+#main.invisible {
+    opacity: 0;
 }
 
 #top {

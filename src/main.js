@@ -731,6 +731,11 @@ App.start_events = async () => {
   })
 
   App.load_song_from_query()
+  App.make_main_visible()
+}
+
+App.make_main_visible = () => {
+  DOM.el(`#main`).classList.remove(`invisible`)
 }
 
 App.set_title = (title) => {
