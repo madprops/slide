@@ -3,10 +3,12 @@ App.animation_frames = 0
 App.visual_items = [
   {
     text: `auto`,
+    alt_text: `Auto - The code sets it`,
     title: `Let the code decide`,
   },
   {
     text: `none`,
+    alt_text: `None - Solid background`,
     title: `Use a solid background`,
   },
   {

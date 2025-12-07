@@ -83,7 +83,7 @@ App.show_items_modal = async (id, args = {}) => {
     for (let [i, item] of list.entries()) {
       let item_div = DOM.create(`div`)
       item_div.className = `modal-item`
-      let name = item.text
+      let name = item.alt_text || item.text
 
       if (args.capitalize) {
         name = App.capitalize(name)
