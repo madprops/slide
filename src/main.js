@@ -299,8 +299,8 @@ App.split_by_newlines = (block) => {
   }
 
   for (let i = 0; i < block.length; i += 1) {
-    const char = block[i]
-    const prev = block[i - 1]
+    let char = block[i]
+    let prev = block[i - 1]
     buffer += char
 
     if (quote) {
