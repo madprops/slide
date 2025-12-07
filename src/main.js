@@ -1,8 +1,13 @@
-const App = {}
+const App = {};
+
+// ---------------------------
 
 import "./process-env.js"
+import * as strudelMini from "@strudel.cycles/mini"
+import {initAudio, samples, registerSynthSounds} from "superdough"
 import {webaudioRepl} from "@strudel.cycles/webaudio"
 import {transpiler} from "@strudel.cycles/transpiler"
+import {registerSoundfonts} from "@strudel.cycles/soundfonts"
 import {cleanupDraw} from "@strudel.cycles/draw"
 import {initHydra, clearHydra, H as H_hydra} from "@strudel.cycles/hydra"
 
@@ -176,6 +181,64 @@ App.stop_color_cycle = () => {
   }
 }
 
+// 1. Export a setup function to the global window object
+// This allows your HTML/Flask templates to call it easily.
+App.strudel_init = async () => {
+  if (App.audio_started) {
+    console.info(`Audio already initialized`)
+    return
+  }
+
+  console.info(`Initializing Audio...`)
+
+  try {
+    console.info(`Loading scope...`)
+    await App.ensure_scope()
+    console.info(`Scope loaded`)
+
+    // This must be called in response to a user interaction
+    console.info(`Initializing audio context...`)
+    await initAudio()
+
+    // Enable mini-notation for strings
+    strudelMini.miniAllStrings()
+
+    // Load samples and sounds in parallel
+    const ds = `https://raw.githubusercontent.com/felixroos/dough-samples/main`
+
+    console.info(`Loading samples and soundfonts...`)
+
+    await Promise.all([
+      registerSynthSounds(),
+      registerSoundfonts(),
+      samples(`github:tidalcycles/dirt-samples`),
+      samples(`${ds}/tidal-drum-machines.json`),
+    ])
+
+    App.audio_started = true
+    App.apply_volume()
+    console.info(`Audio Ready.`)
+
+    if (App.code_to_play) {
+      App.play_action(App.code_to_play)
+      App.code_to_play = ``
+    }
+  }
+  catch (err) {
+    console.error(`Audio Failed:`, err)
+    throw err
+  }
+}
+
+App.set_tempo = () => {
+  try {
+    App.scheduler.setCps(App.tempo / 60)
+  }
+  catch (err) {
+    console.debug(`Tempo will be applied when audio starts`, err)
+  }
+}
+
 App.clear_draw_context = () => {
   try {
     cleanupDraw(true)
@@ -183,6 +246,35 @@ App.clear_draw_context = () => {
   catch (err) {
     console.warn(`Failed to clear draw context`, err)
   }
+}
+
+App.reset_eval_state = () => {
+  App.has_error = false
+}
+
+App.report_eval_failure = (error) => {
+  const message = error?.message || App.last_eval_error || `Failed to evaluate Strudel code`
+  App.last_eval_error = message
+  App.set_status(message)
+}
+
+App.run_eval = async (code) => {
+  App.reset_eval_state()
+  code = App.filter_code(code)
+  App.set_input(code)
+
+  try {
+    await evaluate(code)
+  }
+  catch (err) {
+    return {ok: false, error: err}
+  }
+
+  if (App.has_error) {
+    return {ok: false, error: new Error(App.last_eval_error || `Evaluation error`)}
+  }
+
+  return {ok: true}
 }
 
 App.normalize_code = (code = ``) => {
@@ -343,6 +435,30 @@ App.apply_partial_update = async (code) => {
   }
 
   return true
+}
+
+App.ensure_strudel_ready = async () => {
+  if (!App.strudel_init) {
+    App.set_status(`Bundle not loaded. Check console for errors`)
+    console.error(`strudel.bundle.js is missing or failed to load`)
+    return false
+  }
+
+  await App.strudel_init()
+  return true
+}
+
+App.restart_code_scroll = () => {
+  let code_input = App.get_input()
+
+  if (code_input) {
+    code_input.scrollTop = 0
+  }
+
+  if (App.code_scroll_active) {
+    App.defer_code_scroll(App.code_scroll_song_pause_ms)
+    App.reset_code_scroll_for_content(App.code_scroll_song_pause_ms)
+  }
 }
 
 App.start_events = async () => {
