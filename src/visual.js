@@ -3,7 +3,7 @@ App.animation_frames = 0
 App.visual_items = [
   {
     text: `auto`,
-    title: `Let the code decide,`
+    title: `Let the code decide,`,
   },
   {
     text: `flux surface`,
