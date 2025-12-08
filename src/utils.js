@@ -23,6 +23,12 @@ App.clean_canvas = () => {
       continue
     }
 
+    let classList = Array.from(canvas.classList)
+
+    if (classList.some(cls => [`modal-icon`].includes(cls))) {
+      continue
+    }
+
     body.removeChild(canvas)
   }
 }
