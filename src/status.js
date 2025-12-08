@@ -6,7 +6,7 @@ App.setup_status = () => {
   }, 300)
 
   DOM.ev(`#status`, `click`, () => {
-    App.set_title()
+    App.ask_for_title()
   })
 }
 
@@ -23,7 +23,7 @@ App.do_set_status = (status) => {
   status_el.innerText = status
 }
 
-App.set_title = () => {
+App.ask_for_title = () => {
   let ms = App.get_matched_song()
 
   if (ms) {
