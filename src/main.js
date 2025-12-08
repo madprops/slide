@@ -37,7 +37,6 @@ App.status_watch_cancelled = false
 App.default_cpm = 60
 App.tempo = App.default_cpm
 App.tempo_debounce_timer = undefined
-App.is_playing = false
 App.color_index = 0
 App.color_cycle_timer = undefined
 App.do_partial_updates = false
@@ -59,117 +58,6 @@ App.get_config = async () => {
   catch (err) {
     console.error(`Failed to parse config.json`, err)
     App.config = {}
-  }
-}
-
-App.apply_color = (color) => {
-  let code_input = App.get_input()
-  let volume_value = DOM.el(`#volume-value`)
-  let volume_slider = DOM.el(`#volume-slider`)
-  let tempo_value = DOM.el(`#tempo-value`)
-  let tempo_slider = DOM.el(`#tempo-slider`)
-  let status_el = DOM.el(`#status`)
-  let image_el = DOM.el(`#image`)
-  let scope_container = DOM.el(`#scope-container`)
-  let scope_canvas = DOM.el(`#scope-canvas`)
-
-  if (code_input) {
-    code_input.style.color = color
-  }
-
-  if (volume_value) {
-    volume_value.style.color = color
-  }
-
-  if (volume_slider) {
-    volume_slider.style.accentColor = color
-  }
-
-  if (tempo_value) {
-    tempo_value.style.color = color
-  }
-
-  if (tempo_slider) {
-    tempo_slider.style.accentColor = color
-  }
-
-  if (status_el) {
-    status_el.style.color = color
-  }
-
-  if (image_el) {
-    image_el.style.filter = `drop-shadow(0 0 0.15rem ${color})`
-  }
-
-  if (scope_container) {
-    scope_container.style.borderColor = App.scope_border_color
-    scope_container.style.boxShadow = `0 0 0.35rem ${App.scope_border_color}33`
-  }
-
-  if (scope_canvas) {
-    scope_canvas.style.boxShadow = `inset 0 0 0.4rem ${App.scope_border_color}1a`
-  }
-}
-
-App.start_color_cycle = () => {
-  if (App.color_cycle_timer) {
-    return
-  }
-
-  App.is_playing = true
-  App.color_index = 0
-  App.apply_color(App.cycle_colors[0], 0)
-
-  App.color_cycle_timer = setInterval(() => {
-    App.color_index = (App.color_index + 1) % App.cycle_colors.length
-    App.apply_color(App.cycle_colors[App.color_index], App.color_index)
-  }, 3 * 1000)
-}
-
-App.stop_color_cycle = () => {
-  if (App.color_cycle_timer) {
-    clearInterval(App.color_cycle_timer)
-    App.color_cycle_timer = undefined
-  }
-
-  App.is_playing = false
-  App.color_index = 0
-
-  let color = App.cycle_colors[0]
-  let code_input = App.get_input()
-  let volume_value = DOM.el(`#volume-value`)
-  let volume_slider = DOM.el(`#volume-slider`)
-  let tempo_value = DOM.el(`#tempo-value`)
-  let tempo_slider = DOM.el(`#tempo-slider`)
-  let status_el = DOM.el(`#status`)
-  let image_el = DOM.el(`#image`)
-
-  if (code_input) {
-    code_input.style.color = color
-  }
-
-  if (volume_value) {
-    volume_value.style.color = color
-  }
-
-  if (volume_slider) {
-    volume_slider.style.accentColor = color
-  }
-
-  if (tempo_value) {
-    tempo_value.style.color = color
-  }
-
-  if (tempo_slider) {
-    tempo_slider.style.accentColor = color
-  }
-
-  if (status_el) {
-    status_el.style.color = color
-  }
-
-  if (image_el) {
-    image_el.style.filter = ``
   }
 }
 

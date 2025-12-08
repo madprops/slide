@@ -24,6 +24,7 @@ import "./context.js"
 import "./banks.js"
 import "./sounds.js"
 import "./notes.js"
+import "./colors.js"
 
 const start_app_events = () => {
   if (!window?.App?.start_events) {

@@ -28,6 +28,7 @@ App.load_all_storage = () => {
   App.stor_load_volume()
   App.stor_load_visual()
   App.stor_load_scope()
+  App.stor_load_colors()
 }
 
 App.stor_load_auto_endpoint = () => {
@@ -78,6 +79,14 @@ App.stor_load_scope = () => {
   )
 }
 
+App.stor_load_colors = () => {
+  App.load_storage(`colors`,
+    (value) => {
+      App.colors_enabled = App.boolstring(value)
+    },
+  )
+}
+
 // Save
 
 App.stor_save_auto_delay = () => {
@@ -102,4 +111,8 @@ App.stor_save_visual = () => {
 
 App.stor_save_scope = () => {
   App.save_storage(`scope`, App.scope_enabled)
+}
+
+App.stor_save_colors = () => {
+  App.save_storage(`colors`, App.colors_enabled)
 }

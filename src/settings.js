@@ -4,26 +4,37 @@ App.create_settings_modal = () => {
   title.textContent = `Settings`
   let body = DOM.el(`.modal-body`, modal)
 
-  let scope = DOM.create(`button`)
-  scope.textContent = `Toggle Scope`
-  scope.title = `Show or hide the scope visualizer`
-
-  DOM.ev(scope, `click`, () => {
-    App.toggle_scope()
-    App.close_modal(`settings`)
+  let visual = App.register_setting(`Select Visual`,
+    `Change the background animation`, () => {
+    App.open_visual_modal()
   })
 
-  let visual = DOM.create(`button`)
-  visual.textContent = `Select Visual`
-  visual.title = `Change the background animation`
+  let scope = App.register_setting(`Toggle Scope`,
+    `Show or hide the scope visualizer`, () => {
+    App.toggle_scope()
+  })
 
-  DOM.ev(visual, `click`, () => {
-    App.open_visual_modal()
-    App.close_modal(`settings`)
+  let colors = App.register_setting(`Toggle Colors`,
+    `Enable or disable the color animation`, () => {
+    App.toggle_colors()
   })
 
   body.appendChild(visual)
   body.appendChild(scope)
+  body.appendChild(colors)
+}
+
+App.register_setting = (text, title, action) => {
+  let el = DOM.create(`button`)
+  el.textContent = text
+  el.title = title
+
+  DOM.ev(el, `click`, () => {
+    action()
+    App.close_modal(`settings`)
+  })
+
+  return el
 }
 
 App.open_settings_modal = () => {

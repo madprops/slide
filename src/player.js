@@ -1,3 +1,4 @@
+App.is_playing = false
 App.play_running = false
 
 App.reset_playing = () => {
@@ -38,6 +39,7 @@ App.play_action = async (code = ``, force = false) => {
   App.clear_draw_context()
   App.start_color_cycle()
   App.clean_canvas()
+  App.is_playing = true
 
   try {
     await App.strudel_update(code)
@@ -56,6 +58,7 @@ App.stop_action = () => {
   App.clear_draw_context()
   App.set_stop_status()
   App.set_song_context(``)
+  App.is_playing = false
 }
 
 App.stop_strudel = () => {
