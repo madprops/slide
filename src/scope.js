@@ -297,8 +297,6 @@ App.handle_scope_mouse_move = (event) => {
 }
 
 App.handle_scope_mouse_up = (event) => {
-  App.scope_is_drawing = false
-  App.scope_last_point = null
   App.mouse_up_coords = App.get_scope_coords(event)
 
   if ((Date.now() - App.scope_mousedown_date) <= App.scope_beep_delay) {
@@ -501,6 +499,11 @@ App.init_scope_click_handler = () => {
     if (App.scope_mouse_enabled()) {
       App.handle_scope_click(event)
     }
+  })
+
+  DOM.ev(document, `mouseup`, (event) => {
+    App.scope_is_drawing = false
+    App.scope_last_point = null
   })
 }
 

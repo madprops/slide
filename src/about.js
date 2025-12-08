@@ -12,10 +12,10 @@ App.create_about_modal = () => {
     <div class="about-item">The code can be edited in real time and applied with Play.</a></div>
     <div class="about-item">The scope visualizer can be clicked in the left/center/right.</a></div>
     <div class="about-item">Clicking the scope produces a tone and a reverb affect.</a></div>
-    <div class="about-item">Clicking scope on the left produces left panning.</a></div>
-    <div class="about-item">Clicking scope on the right produces right panning.</a></div>
-    <div class="about-item">Ctrl+s = Save/update the code.</a></div>
-    <div class="about-item">Escape = Close modal or stop playback.</a></div>
+    <div class="about-item">Clicking the scope on the left produces left panning.</a></div>
+    <div class="about-item">Clicking the scope on the right produces right panning.</a></div>
+    <div class="about-item">Ctrl+s = Starts playback / Updates code.</a></div>
+    <div class="about-item">Escape = Closes top modal or stops playback.</a></div>
   `
 }
 
