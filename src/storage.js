@@ -129,5 +129,9 @@ App.stor_save_colors = () => {
 }
 
 App.stor_save_code = () => {
+  if (!App.last_code) {
+    return
+  }
+
   App.save_storage(`code`, App.last_code)
 }
