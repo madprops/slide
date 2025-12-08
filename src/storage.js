@@ -92,7 +92,7 @@ App.stor_load_colors = () => {
 
 App.stor_load_code = () => {
   App.load_storage(`code`,
-    (value) => {7
+    (value) => {
       App.last_code = value
     },
   )
