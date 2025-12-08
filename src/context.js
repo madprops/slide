@@ -4,7 +4,7 @@ NeedContext.after_hide = () => {
   App.focus_input()
 }
 
-App.show_sound_context = () => {
+App.show_sounds_context = (event) => {
   let items = []
 
   for (let sound of App.strudel_sounds) {
@@ -16,10 +16,10 @@ App.show_sound_context = () => {
     })
   }
 
-  NeedContext.show({items})
+  App.show_context(items, event)
 }
 
-App.show_note_context = () => {
+App.show_notes_context = (event) => {
   let items = []
 
   for (let note of App.strudel_notes) {
@@ -31,10 +31,10 @@ App.show_note_context = () => {
     })
   }
 
-  NeedContext.show({items})
+  App.show_context(items, event)
 }
 
-App.show_bank_context = () => {
+App.show_banks_context = (event) => {
   let items = []
 
   for (let bank of App.strudel_banks) {
@@ -46,5 +46,14 @@ App.show_bank_context = () => {
     })
   }
 
-  NeedContext.show({items})
+  App.show_context(items, event)
+}
+
+App.show_context = (items, event) => {
+  if (event) {
+    NeedContext.show({x: event.x, y: event.y, items})
+  }
+  else {
+    NeedContext.show({items})
+  }
 }

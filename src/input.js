@@ -187,6 +187,9 @@ App.init_code_input_controls = () => {
   let max_button = DOM.el(`#code-input-max`)
   let top_button = DOM.el(`#code-input-top`)
   let bottom_button = DOM.el(`#code-input-bottom`)
+  let sounds_button = DOM.el(`#code-input-sounds`)
+  let notes_button = DOM.el(`#code-input-notes`)
+  let banks_button = DOM.el(`#code-input-banks`)
 
   if (top_button) {
     DOM.ev(top_button, `click`, (event) => {
@@ -223,6 +226,27 @@ App.init_code_input_controls = () => {
     })
   }
 
+  if (sounds_button) {
+    DOM.ev(sounds_button, `click`, (event) => {
+      event.preventDefault()
+      App.show_sounds_context(event)
+    })
+  }
+
+  if (notes_button) {
+    DOM.ev(notes_button, `click`, (event) => {
+      event.preventDefault()
+      App.show_notes_context(event)
+    })
+  }
+
+  if (banks_button) {
+    DOM.ev(banks_button, `click`, (event) => {
+      event.preventDefault()
+      App.show_banks_context(event)
+    })
+  }
+
   if (code_input) {
     DOM.ev(code_input, `pointerdown`, (event) => {
       if (!App.code_scroll_active) {
@@ -252,13 +276,8 @@ App.init_code_input_controls = () => {
           document.body.style.userSelect = `none`
           document.body.style.cursor = `se-resize`
 
-          let controls = DOM.el(`#code-input-controls`)
-
-          if (controls) {
-            controls.style.opacity = `1`
-            controls.style.pointerEvents = `auto`
-            controls.classList.add(`active`)
-          }
+          App.activate_top_input_controls()
+          App.activate_bottom_input_controls()
 
           resize_handle.style.opacity = `1`
           resize_handle.style.pointerEvents = `auto`
@@ -292,13 +311,8 @@ App.init_code_input_controls = () => {
             document.body.style.userSelect = ``
             document.body.style.cursor = ``
 
-            let controls = DOM.el(`#code-input-controls`)
-
-            if (controls) {
-              controls.style.opacity = ``
-              controls.style.pointerEvents = ``
-              controls.classList.remove(`active`)
-            }
+            App.deactivate_top_input_controls()
+            App.deactivate_bottom_input_controls()
 
             resize_handle.style.opacity = ``
             resize_handle.style.pointerEvents = ``
@@ -456,4 +470,44 @@ App.add_word_to_input = (word) => {
 
 App.focus_input = () => {
   App.get_input().focus()
+}
+
+App.activate_top_input_controls = () => {
+  let controls = DOM.el(`#code-input-controls-top`)
+
+  if (controls) {
+    controls.style.opacity = `1`
+    controls.style.pointerEvents = `auto`
+    controls.classList.add(`active`)
+  }
+}
+
+App.activate_bottom_input_controls = () => {
+  let controls = DOM.el(`#code-input-controls-bottom`)
+
+  if (controls) {
+    controls.style.opacity = `1`
+    controls.style.pointerEvents = `auto`
+    controls.classList.add(`active`)
+  }
+}
+
+App.deactivate_top_input_controls = () => {
+  let controls = DOM.el(`#code-input-controls-top`)
+
+  if (controls) {
+    controls.style.opacity = `1`
+    controls.style.pointerEvents = `auto`
+    controls.classList.remove(`active`)
+  }
+}
+
+App.deactivate_bottom_input_controls = () => {
+  let controls = DOM.el(`#code-input-controls-bottom`)
+
+  if (controls) {
+    controls.style.opacity = `1`
+    controls.style.pointerEvents = `auto`
+    controls.classList.remove(`active`)
+  }
 }

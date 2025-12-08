@@ -7,8 +7,8 @@
   --input_max_width: 88%;
   --input_max_height: 680px;
 
-  --input_min_width: 500px;
-  --input_min_height: 100px;
+  --input_min_width: 600px;
+  --input_min_height: 200px;
 
   --alpha_background: #111111da;
 }
@@ -207,13 +207,20 @@ body, html {
 
 .code-input-controls {
     position: absolute;
-    bottom: 0.6rem;
     right: 2rem;
     display: flex;
     gap: 0.4rem;
     opacity: 0;
     pointer-events: none;
     transition: opacity 1s ease;
+}
+
+#code-input-controls-top {
+    top: 0.6rem;
+}
+
+#code-input-controls-bottom {
+    bottom: 0.6rem;
 }
 
 .code-input-wrapper:hover .code-input-controls {
