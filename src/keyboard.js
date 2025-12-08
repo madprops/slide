@@ -41,6 +41,10 @@ App.start_keyboard = () => {
     else if (e.key === `Escape`) {
       e.preventDefault()
 
+      if (NeedContext.open) {
+        return
+      }
+
       if (App.modal_open()) {
         App.close_current_modal()
       }

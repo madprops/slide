@@ -1,6 +1,6 @@
 NeedContext.init()
 
-NeedContext.after_hide = function () {
+NeedContext.after_hide = () => {
   App.focus_input()
 }
 
