@@ -83,11 +83,14 @@ body, html {
 }
 
 #top-controls {
-    margin-left: 1rem;
-    margin-bottom: -8px;
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
+  margin-left: 1rem;
+  margin-bottom: -8px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between; /* Added to ensure proper spacing */
+  padding: 0.5rem; /* Added padding for consistent spacing */
 }
 
 .control-container {
