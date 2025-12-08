@@ -16,7 +16,7 @@ App.create_about_modal = () => {
     <div class="about-item">Clicking the scope produces a tone and a reverb affect.</a></div>
     <div class="about-item">Clicking the scope on the left produces left panning.</a></div>
     <div class="about-item">Clicking the scope on the right produces right panning.</a></div>
-    <div class="about-item">A straight line to the left on the scope sets a random visual.</a></div>
+    <div class="about-item">A straight line to the left on the scope sets the next visual.</a></div>
     <div class="about-item">A straight line to the right on the scope opens a random song.</a></div>
     <div class="about-item">Ctrl+s = Starts playback / Updates code.</a></div>
     <div class="about-item">Escape = Closes top modal or stops playback.</a></div>
