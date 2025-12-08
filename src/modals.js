@@ -160,8 +160,10 @@ App.open_modal = (id) => {
 }
 
 App.do_open_modal = (modal) => {
+  let body = DOM.el(`.modal-body`, modal)
   App.show_overlay()
   modal.classList.add(`active`)
+  body.scrollTop = 0
 }
 
 App.close_modal = (id) => {
