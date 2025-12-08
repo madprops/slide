@@ -119,7 +119,11 @@ App.show_items_modal = async (id, args = {}) => {
       return
     }
 
-    let filtered = args.items.filter((item) => item.toLowerCase().includes(query))
+    let filtered = args.items.filter((item) => {
+      let text = item.alt_text || item.text
+      return text.toLowerCase().includes(query)
+    })
+
     render_items(filtered)
   }
 

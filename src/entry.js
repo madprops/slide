@@ -17,6 +17,7 @@ import "./audio.js"
 import "./player.js"
 import "./settings.js"
 import "./status.js"
+import "./keyboard.js"
 
 const start_app_events = () => {
   if (!window?.App?.start_events) {
