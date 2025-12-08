@@ -19,11 +19,11 @@ App.start_keyboard = () => {
     let recent_text = input_buffer.map((item) => item.char).join(``)
 
     if (recent_text.endsWith(`sound(`)) {
-      App.show_sound_context()
+      App.show_sound_context(e)
       input_buffer = []
     }
     else if (recent_text.endsWith(`bank(`)) {
-      App.show_bank_context()
+      App.show_bank_context(e)
       input_buffer = []
     }
 
