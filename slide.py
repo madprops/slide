@@ -347,7 +347,10 @@ def index():
 	"""Serve the main HTML page."""
 
 	song_name = request.args.get("song", "")
-	song_display = re.sub(r"_+", " ", song_name) if song_name else ""
+	song_value = re.sub(r"_+", " ", song_name) if song_name else ""
+	beat_title = request.args.get("beat", "")
+	beat_value = re.sub(r"_+", " ", beat_title) if beat_title else ""
+	song_display = song_name or beat_title or ""
 	return render_template("index.jinja", song_name=song_name, song_display=song_display, config=app_config)
 
 @app.get("/strudel/<path:path>")
