@@ -643,3 +643,8 @@ a.popup:hover {
     width: 25px;
     height: 25px;
 }
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}

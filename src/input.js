@@ -321,10 +321,10 @@ App.init_code_input_controls = () => {
         let max_button = DOM.el(`#code-input-max`)
 
         if (App.input_is_maxed()) {
-          max_button.classList.add(`hidden`)
+          max_button.classList.add(`disabled`)
         }
         else {
-          max_button.classList.remove(`hidden`)
+          max_button.classList.remove(`disabled`)
         }
       })
     }
