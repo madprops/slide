@@ -99,7 +99,7 @@ App.load_song = async (song_name) => {
 
 App.load_song_from_query = async () => {
   if (!window || !window.location) {
-    return
+    return false
   }
 
   let query_params = new URLSearchParams(window.location.search)
@@ -116,7 +116,7 @@ App.load_song_from_query = async () => {
   }
 
   if (!requested_song) {
-    return
+    return false
   }
 
   try {
@@ -127,11 +127,14 @@ App.load_song_from_query = async () => {
     App.set_song_context(requested_song)
     App.code_to_play = content
     App.set_status(`Loaded: ${App.underspace(requested_song)}`)
+    return true
   }
   catch (err) {
     App.set_status(`Failed to load song: ${err.message}`)
     console.error(`Failed to load song:`, err)
   }
+
+  return false
 }
 
 App.set_song_context = (song_name = ``) => {

@@ -400,8 +400,11 @@ App.start_events = async () => {
     App.handle_scope_resize()
   })
 
-  App.load_song_from_query()
   App.make_main_visible()
+
+  if (!await App.load_song_from_query()) {
+    App.load_last_code()
+  }
 }
 
 App.make_main_visible = () => {

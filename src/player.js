@@ -36,6 +36,7 @@ App.play_action = async (code = ``, force = false) => {
   App.stop_status_watch()
   App.restart_code_scroll()
   App.last_code = code
+  App.stor_save_code()
   App.clear_draw_context()
   App.start_color_cycle()
   App.clean_canvas()
@@ -126,4 +127,8 @@ App.set_stop_status = () => {
   else {
     App.set_status(`Stopped`)
   }
+}
+
+App.load_last_code = () => {
+  App.set_input(App.last_code)
 }
