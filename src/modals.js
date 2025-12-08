@@ -191,6 +191,15 @@ App.close_all_modals = () => {
   }
 }
 
+App.close_current_modal = () => {
+  let active_modals = DOM.els(`.modal.active`)
+
+  if (active_modals.length > 0) {
+    let top_modal = active_modals[active_modals.length - 1]
+    App.do_close_modal(top_modal)
+  }
+}
+
 App.show_overlay = () => {
   DOM.show(`#modal-overlay`)
 }

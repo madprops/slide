@@ -4,5 +4,9 @@ App.start_keyboard = () => {
       App.play_action()
       e.preventDefault()
     }
+    else if (e.key === `Escape`) {
+      App.close_current_modal()
+      e.preventDefault()
+    }
   })
 }
