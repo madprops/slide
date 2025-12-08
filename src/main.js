@@ -1,5 +1,4 @@
 const App = {}
-NeedContext.init()
 
 import "./process-env.js"
 import * as strudelMini from "@strudel.cycles/mini"
@@ -64,7 +63,7 @@ App.get_config = async () => {
 }
 
 App.apply_color = (color) => {
-  let code_input = DOM.el(`#code-input`)
+  let code_input = App.get_input()
   let volume_value = DOM.el(`#volume-value`)
   let volume_slider = DOM.el(`#volume-slider`)
   let tempo_value = DOM.el(`#tempo-value`)
@@ -137,7 +136,7 @@ App.stop_color_cycle = () => {
   App.color_index = 0
 
   let color = App.cycle_colors[0]
-  let code_input = DOM.el(`#code-input`)
+  let code_input = App.get_input()
   let volume_value = DOM.el(`#volume-value`)
   let volume_slider = DOM.el(`#volume-slider`)
   let tempo_value = DOM.el(`#tempo-value`)

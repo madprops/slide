@@ -1,3 +1,9 @@
+NeedContext.init()
+
+NeedContext.after_hide = function () {
+  App.focus_input()
+}
+
 App.show_sound_context = () => {
   let items = []
 

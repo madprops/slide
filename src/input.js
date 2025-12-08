@@ -446,10 +446,14 @@ App.restart_code_scroll = () => {
 }
 
 App.add_word_to_input = (word) => {
-  let textarea = DOM.el(`#code-input`)
+  let textarea = App.get_input()
   let start_pos = textarea.selectionStart
   let end_pos = textarea.selectionEnd
   textarea.value = textarea.value.substring(0, start_pos) + word + textarea.value.substring(end_pos)
   textarea.selectionStart = textarea.selectionEnd = start_pos + word.length
   textarea.focus()
+}
+
+App.focus_input = () => {
+  App.get_input().focus()
 }

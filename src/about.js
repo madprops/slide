@@ -17,8 +17,8 @@ App.create_about_modal = () => {
     <div class="about-item">Ctrl+s = Starts playback / Updates code.</a></div>
     <div class="about-item">Escape = Closes top modal or stops playback.</a></div>
     <div class="about-item">Typing bank(" triggers an autocomplete context menu that is filterable.</a></div>
-    <div class="about-item">Ctrl+1 = Show sound context.</a></div>
-    <div class="about-item">Ctrl+2 = Show bank context.</a></div>
+    <div class="about-item">Ctrl+1 = Show the sound context.</a></div>
+    <div class="about-item">Ctrl+2 = Show the bank context.</a></div>
   `
 }
 
