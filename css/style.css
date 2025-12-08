@@ -509,6 +509,7 @@ button:hover {
 a.popup:visited, a.popup:link, a.popup:hover {
     color: white;
     text-decoration: underline;
+    font-family: monospace;
 }
 
 a.popup:hover {
