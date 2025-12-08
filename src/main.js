@@ -447,7 +447,7 @@ App.update_url = (song_name = ``) => {
   let code = App.get_input().value.trim()
 
   if (code) {
-    if ((!song_name) && (code.length <= 1200)) {
+    if (!song_name && (code.length <= 1200)) {
       next_url.searchParams.set(`code`, code)
     }
     else {
