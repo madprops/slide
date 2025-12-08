@@ -65,5 +65,10 @@ App.start_keyboard = () => {
         App.show_bank_context()
       }
     }
+    else if (e.key === `3`) {
+      if (e.ctrlKey) {
+        App.show_note_context()
+      }
+    }
   })
 }

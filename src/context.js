@@ -11,7 +11,22 @@ App.show_sound_context = () => {
     items.push({
       text: sound,
       action: () => {
-        App.add_word_to_input(sound)
+        App.add_word_to_input(`${sound} `)
+      },
+    })
+  }
+
+  NeedContext.show({items})
+}
+
+App.show_note_context = () => {
+  let items = []
+
+  for (let note of App.strudel_notes) {
+    items.push({
+      text: note,
+      action: () => {
+        App.add_word_to_input(`${note} `)
       },
     })
   }
