@@ -4,12 +4,12 @@ App.visual_items = [
   {
     text: `auto`,
     alt_text: `Auto - The code sets it`,
-    title: `Let the code decide`,
+    title: `Let the code decide. If the code contains animation calls they will be visible, else it will be a solid background`,
   },
   {
     text: `none`,
     alt_text: `None - Solid background`,
-    title: `Use a solid background`,
+    title: `Use a solid background. Most performant option`,
   },
   {
     text: `flux surface`,
