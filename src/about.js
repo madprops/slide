@@ -1,5 +1,9 @@
 App.create_about_modal = () => {
   let modal = App.create_modal(`about`)
+  let header = DOM.el(`.modal-header`, modal)
+  let image = DOM.create(`img`, ``, `modal-about-image`)
+  image.src = `/img/slide.png`
+  header.prepend(image)
   let title = DOM.el(`.modal-title`, modal)
   let version = `v${App.config.version}`
   title.textContent = `Slide ${version} | Merkoba | 2025`

@@ -390,10 +390,11 @@ button:hover {
 
 .modal-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     padding: 1rem;
     border-bottom: 1px solid #444;
+    gap: 1rem;
 }
 
 .modal-header h2 {
@@ -481,6 +482,8 @@ button:hover {
     font-size: 1.2rem;
     color: var(--green);
     user-select: none;
+    flex-grow: 1;
+    flex-shrink: 1;
 }
 
 .modal-body-list {
@@ -651,8 +654,16 @@ a.popup:hover {
 
 #modal-title-about {
     font-family: sans-serif;
+    user-select: initial;
 }
 
 #modal-body-about {
     font-family: sans-serif;
+}
+
+#modal-about-image {
+    width: 33px;
+    height: 33px;
+    border-radius: 10px;
+    user-select: none;
 }
