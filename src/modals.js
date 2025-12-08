@@ -200,6 +200,11 @@ App.close_current_modal = () => {
   }
 }
 
+App.modal_open = () => {
+  let active_modals = DOM.els(`.modal.active`)
+  return active_modals.length > 0
+}
+
 App.show_overlay = () => {
   DOM.show(`#modal-overlay`)
 }

@@ -465,11 +465,8 @@ App.start_events = async () => {
   App.start_visual()
 
   DOM.ev(`#btn-play`, `click`, () => {
-    App.stop_status_watch()
-
     let code_input = App.get_input()
     let next_code = code_input ? code_input.value : ``
-
     App.play_action(next_code, true)
   })
 
@@ -478,12 +475,10 @@ App.start_events = async () => {
   })
 
   DOM.ev(`#btn-stop`, `click`, () => {
-    App.stop_status_watch()
     App.stop_action()
   })
 
   DOM.ev(`#btn-songs`, `click`, () => {
-    App.stop_status_watch()
     App.open_songs_modal()
   })
 
