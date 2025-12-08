@@ -6,18 +6,18 @@ App.create_settings_modal = () => {
 
   let visual = App.register_setting(`Select Visual`,
     `Change the background animation`, () => {
-    App.open_visual_modal()
-  })
+      App.open_visual_modal()
+    })
 
   let scope = App.register_setting(`Toggle Scope`,
     `Show or hide the scope visualizer`, () => {
-    App.toggle_scope()
-  })
+      App.toggle_scope()
+    })
 
   let colors = App.register_setting(`Toggle Colors`,
     `Enable or disable the color animation`, () => {
-    App.toggle_colors()
-  })
+      App.toggle_colors()
+    })
 
   body.appendChild(visual)
   body.appendChild(scope)
