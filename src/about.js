@@ -12,7 +12,7 @@ App.create_about_modal = () => {
   body.id = `modal-body-about`
 
   body.innerHTML = `
-    <div class="about-item">Slide is a player for <a target=_blank class="popup" href="https://strudel.cc">strudel</a> code.</div>
+    <div class="about-item">Slide is a music player that uses <a target=_blank class="popup" href="https://strudel.cc">strudel</a> code.</div>
     <div class="about-item">It's meant to allow automatic & seamless code updates.</a></div>
     <div class="about-item">There's a song picker to play elaborate tunes.</a></div>
     <div class="about-item">The code can be edited in real time and applied with Play.</a></div>
