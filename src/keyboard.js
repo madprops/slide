@@ -1,6 +1,5 @@
 App.keyboard_popup_delay = 5 * 1000
 App.max_keboard_buffer = 25
-App.context_mode = `sound`
 
 App.start_keyboard = () => {
   let input_buffer = []
@@ -23,12 +22,7 @@ App.start_keyboard = () => {
     let recent_text = input_buffer.map((item) => item.char).join(``)
 
     if (recent_text.endsWith(`sound("`)) {
-      setTimeout(() => {
-        App.show_sound_context()
-      }, 10)
-
       input_buffer = []
-      App.context_mode = `sound`
     }
     else if (recent_text.endsWith(`bank("`)) {
       setTimeout(() => {
@@ -36,11 +30,8 @@ App.start_keyboard = () => {
       }, 10)
 
       input_buffer = []
-      App.context_mode = `bank`
     }
-  })
 
-  DOM.ev(document, `keyup`, (e) => {
     if (e.key === `s`) {
       if (e.ctrlKey) {
         e.preventDefault()
@@ -57,16 +48,17 @@ App.start_keyboard = () => {
         App.stop_action()
       }
     }
-    else if (e.key === `Enter`) {
+    else if (e.key === `Backspace`) {
+      input_buffer.pop()
+    }
+    else if (e.key === `1`) {
       if (e.ctrlKey) {
-        e.preventDefault()
-
-        if (App.context_mode === `sound`) {
-          App.show_sound_context()
-        }
-        else if (App.context_mode === `bank`) {
-          App.show_bank_context()
-        }
+        App.show_sound_context()
+      }
+    }
+    else if (e.key === `2`) {
+      if (e.ctrlKey) {
+        App.show_bank_context()
       }
     }
   })
