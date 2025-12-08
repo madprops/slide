@@ -511,6 +511,7 @@ App.start_events = async () => {
   App.init_volume_controls()
   App.init_tempo_controls()
   App.init_code_input_controls()
+  App.start_keyboard()
 
   DOM.ev(window, `resize`, () => {
     App.handle_scope_resize()

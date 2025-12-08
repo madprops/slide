@@ -32,7 +32,6 @@ App.play_action = async (code = ``, force = false) => {
     return
   }
 
-  App.stop_strudel()
   App.restart_code_scroll()
   App.last_code = code
   App.clear_draw_context()
