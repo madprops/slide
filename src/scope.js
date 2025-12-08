@@ -348,17 +348,18 @@ App.draw_scope_frame = () => {
 
   let {width, height} = App.get_scope_dimensions()
 
-  if (!width || !height) {
+  if ((!width) || (!height)) {
     App.scope_animation_id = requestAnimationFrame(App.draw_scope_frame)
     return
   }
 
-  // 1. Clear previous frame completely
-  App.scope_canvas_ctx.clearRect(0, 0, width, height)
+  // Overshoot the clear/fill area by 10px to catch edge artifacts
+  // caused by rounding errors in high-DPI scaling
+  let pad = 10
+  App.scope_canvas_ctx.clearRect(-pad, -pad, (width + (pad * 2)), (height + (pad * 2)))
 
-  // 2. Fill with your semi-transparent color
   App.scope_canvas_ctx.fillStyle = App.scope_background
-  App.scope_canvas_ctx.fillRect(0, 0, width, height)
+  App.scope_canvas_ctx.fillRect(-pad, -pad, (width + (pad * 2)), (height + (pad * 2)))
 
   App.scope_canvas_ctx.strokeStyle = App.scope_color
   App.scope_canvas_ctx.lineWidth = 2
@@ -367,7 +368,7 @@ App.draw_scope_frame = () => {
   let analyser = App.scope_analyser
   let waveform = App.ensure_scope_waveform()
 
-  if (App.is_playing && analyser && waveform) {
+  if ((App.is_playing) && (analyser) && (waveform)) {
     analyser.getByteTimeDomainData(waveform)
     let slice_width = width / waveform.length
     let x = 0
@@ -396,7 +397,7 @@ App.draw_scope_frame = () => {
     for (let i = 0; i < num_points; i += 1) {
       let phase = (i / num_points) * (Math.PI * 2) * 6
       let amplitude = 0.3
-      let normalized = Math.sin(phase + App.scope_sine_time) * amplitude
+      let normalized = Math.sin((phase + App.scope_sine_time)) * amplitude
       let y = (height / 2) + (normalized * (height / 2))
 
       if (i === 0) {
@@ -414,7 +415,7 @@ App.draw_scope_frame = () => {
 
   // Draw clicks as stars
   let now = Date.now()
-  App.scope_clicks = App.scope_clicks.filter(click => (now - click.timestamp) < App.scope_click_time)
+  App.scope_clicks = App.scope_clicks.filter(click => ((now - click.timestamp) < App.scope_click_time))
 
   for (let click of App.scope_clicks) {
     App.scope_canvas_ctx.fillStyle = App.scope_click_color
