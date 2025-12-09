@@ -336,3 +336,9 @@ App.cycle_panning = (amount, iterations) => {
     }
   }, speed_ms)
 }
+
+App.gesture_function = (level, action) => {
+  App.increase_scope_click_level(level)
+  App.cycle_panning(0.9, 12)
+  action()
+}

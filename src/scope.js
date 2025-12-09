@@ -334,19 +334,19 @@ App.handle_scope_mouse_up = (event) => {
   }
 
   if (App.triangle_gesture()) {
-    App.increase_scope_click_level(2)
-    App.cycle_panning(0.9, 12)
-    App.grow_input()
+    App.gesture_function(2, () => {
+      App.grow_input()
+    })
   }
   else if (App.square_gesture()) {
-    App.increase_scope_click_level(3)
-    App.cycle_panning(0.9, 12)
-    App.mirror_input()
+    App.gesture_function(3, () => {
+      App.cursive_input()
+    })
   }
   else if (App.circle_gesture()) {
-    App.increase_scope_click_level(4)
-    App.cycle_panning(0.9, 12)
-    App.cursive_input()
+    App.gesture_function(4, () => {
+      App.mirror_input()
+    })
   }
 }
 
