@@ -19,8 +19,10 @@ App.scope_min_y = -1
 
 App.scope_background = `#111111da`
 App.scope_color = `rgba(204, 198, 239, 1)`
-App.scope_click_color = `rgba(162, 171, 234, 0.5)`
+App.scope_click_color_1 = `rgba(162, 171, 234, 0.5)`
+App.scope_click_color_2 = `rgba(255, 137, 204, 1)`
 App.scope_border_color = `#444`
+App.scope_click_level = 1
 
 App.scope_sine_time = 0
 App.scope_clicks = []
@@ -327,6 +329,16 @@ App.handle_scope_mouse_up = (event) => {
   if ((Date.now() - App.scope_mousedown_date) <= App.scope_slide_delay) {
     App.check_scope_slide()
   }
+
+  if (App.triangle_gesture()) {
+    App.cycle_panning(0.9, 12)
+    App.scope_click_level = 2
+    clearTimeout(App.scope_click_level_timeout)
+
+    App.scope_click_level_timeout = setTimeout(() => {
+      App.scope_click_level = 1
+    }, 3 * 1000)
+  }
 }
 
 App.draw_star = (ctx, x, y, radius, spikes, outerRadius) => {
@@ -435,7 +447,13 @@ App.draw_scope_frame = () => {
   App.scope_clicks = App.scope_clicks.filter(click => (now - click.timestamp) < App.scope_click_time)
 
   for (let click of App.scope_clicks) {
-    App.scope_canvas_ctx.fillStyle = App.scope_click_color
+    if (App.scope_click_level === 1) {
+      App.scope_canvas_ctx.fillStyle = App.scope_click_color_1
+    }
+    else {
+      App.scope_canvas_ctx.fillStyle = App.scope_click_color_2
+    }
+
     App.draw_star(App.scope_canvas_ctx, click.x, click.y, 3, 5, App.scope_click_size)
     App.scope_canvas_ctx.fill()
   }
@@ -623,49 +641,8 @@ App.get_scope_coords = (event) => {
   }
 }
 
-App.check_scope_slide = () => {
-  let a = App.mouse_down_coords
-  let b = App.mouse_up_coords
-  let y_diff = Math.abs(App.scope_max_y - App.scope_min_y)
-
-  if (y_diff >= App.max_scope_slide_y_dff) {
-    return
-  }
-
-  if (Math.abs(a.x - b.x) >= App.scope_slide_distance) {
-    if (a.x < b.x) {
-      App.random_song()
-    }
-    else {
-      App.next_visual()
-    }
-
-    App.clear_clicks()
-  }
-}
-
 App.clear_clicks = () => {
   setTimeout(() => {
     App.scope_clicks = []
   }, 100)
-}
-
-App.check_scope_panning = () => {
-  let a = App.mouse_down_coords
-  let b = App.mouse_up_coords
-  let {width, height} = App.get_scope_dimensions()
-  let zone = App.scope_panning_zone
-  let amount = App.scope_padding_amount
-
-  if ((a.x <= zone) || (b.x <= zone)) {
-    App.set_panning(-amount, 3)
-    return true
-  }
-  else if ((a.x >= (width - zone)) ||
-    (b.x >= (width - zone))) {
-    App.set_panning(amount, 3)
-    return true
-  }
-
-  return false
 }

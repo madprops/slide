@@ -81,6 +81,10 @@ App.set_panning = (value, delay = 0) => {
   }
 }
 
+App.get_panning = () => {
+  return App.panning.pan.value
+}
+
 App.set_gain = (value) => {
   window.master_fx.set_volume(value)
 }

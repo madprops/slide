@@ -51,8 +51,8 @@
       eq_high.frequency.value = 4000
       eq_high.gain.value = 0
 
-      let panner = ctx.createStereoPanner()
-      panner.pan.value = 0
+      App.panning = ctx.createStereoPanner()
+      App.panning.pan.value = 0
 
       // Reverb setup
       let convolver = ctx.createConvolver()
@@ -69,8 +69,8 @@
       // Dry Chain
       eq_low.connect(eq_mid)
       eq_mid.connect(eq_high)
-      eq_high.connect(panner)
-      panner.connect(master_gain)
+      eq_high.connect(App.panning)
+      App.panning.connect(master_gain)
       master_gain.connect(super.destination)
 
       // Wet chain is disconnected initially
@@ -97,7 +97,7 @@
 
         window.master_fx = {
           context: ctx,
-          nodes: {eq_low, eq_mid, eq_high, panner, reverb_gain, master_gain},
+          nodes: {eq_low, eq_mid, eq_high, panner: App.panning, reverb_gain, master_gain},
           set_eq: (low_db, mid_db, high_db) => {
             let now = ctx.currentTime
             let ramp = 0.1
@@ -118,7 +118,7 @@
             master_gain.gain.setTargetAtTime(val, ctx.currentTime, 0.1)
           },
           set_panning: (val) => {
-            panner.pan.setTargetAtTime(val, ctx.currentTime, 0.1)
+            App.panning.pan.setTargetAtTime(val, ctx.currentTime, 0.1)
           },
           splash_reverb: (duration = 3) => {
             let now = ctx.currentTime
@@ -137,7 +137,7 @@
 
             // 3. Connect if not already connected
             if (!reverb_state.is_connected) {
-              panner.connect(convolver)
+              App.panning.connect(convolver)
               convolver.connect(reverb_gain)
               reverb_gain.connect(master_gain)
 

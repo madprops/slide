@@ -1,3 +1,4 @@
+import "./app.js"
 import "./dom.js"
 import "./needcontext.js"
 import "./jdenticon.js"
@@ -25,6 +26,7 @@ import "./banks.js"
 import "./sounds.js"
 import "./notes.js"
 import "./colors.js"
+import "./gestures.js"
 
 const start_app_events = () => {
   if (!window?.App?.start_events) {

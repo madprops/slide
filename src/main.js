@@ -1,5 +1,3 @@
-const App = {}
-
 import "./process-env.js"
 import * as strudelMini from "@strudel.cycles/mini"
 import {initAudio, samples, registerSynthSounds} from "superdough"
@@ -487,5 +485,3 @@ App.update_title = () => {
 window.H = H_hydra
 window.initHydra = initHydra
 window.clearHydra = clearHydra
-
-window.App = App
