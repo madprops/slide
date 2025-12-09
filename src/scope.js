@@ -19,11 +19,11 @@ App.scope_min_y = -1
 
 App.scope_background = `#111111da`
 App.scope_color = `rgba(204, 198, 239, 1)`
-App.scope_click_color_0 = `rgba(255, 255, 255, 1)`
 App.scope_click_color_1 = `rgba(162, 171, 234, 0.5)`
 App.scope_click_color_2 = `rgba(255, 137, 204, 1)`
 App.scope_click_color_3 = `rgba(222, 242, 92, 1)`
 App.scope_click_color_4 = `rgba(91, 163, 240, 1)`
+App.scope_click_color_5 = `rgba(255, 255, 255, 1)`
 App.scope_click_level = 1
 
 App.scope_sine_time = 0
@@ -361,12 +361,7 @@ App.handle_scope_mouse_up = (event) => {
       }
     }
 
-    if (App.scope_clicks.length >= App.many_clicks_amount) {
-      App.gesture_function(0, () => {
-        App.grow_input()
-      })
-    }
-    else if (App.triangle_gesture()) {
+    if (App.triangle_gesture()) {
       App.gesture_function(2, () => {
         App.grow_input()
       })
@@ -379,6 +374,11 @@ App.handle_scope_mouse_up = (event) => {
     else if (App.circle_gesture()) {
       App.gesture_function(4, () => {
         App.mirror_input()
+      })
+    }
+    else if (App.scope_clicks.length >= App.many_clicks_amount) {
+      App.gesture_function(5, () => {
+        App.grow_input()
       })
     }
   }
