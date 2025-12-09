@@ -27,9 +27,9 @@ App.create_about_modal = () => {
     <div class="about-item">Ctrl+1 = Show the sound context.</a></div>
     <div class="about-item">Ctrl+2 = Show the note context.</a></div>
     <div class="about-item">Ctrl+3 = Show the bank context.</a></div>
-    <div class="about-item">Try draging a triangle on the scope.</a></div>
-    <div class="about-item">Try draging a square on the scope.</a></div>
-    <div class="about-item">Try draging a circle on the scope.</a></div>
+    <div class="about-item">Try drawing a triangle on the scope.</a></div>
+    <div class="about-item">Try drawing a square on the scope.</a></div>
+    <div class="about-item">Try drawing a circle on the scope.</a></div>
   `
 }
 
