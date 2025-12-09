@@ -533,3 +533,13 @@ App.grow_input = () => {
     code_input.classList.remove(`grow`)
   }, App.input_grow_time)
 }
+
+App.cursive_input = () => {
+  let code_input = DOM.el(`#code-input`)
+  code_input.classList.add(`cursive`)
+  clearTimeout(App.input_grow_timeout)
+
+  App.input_grow_timeout = setTimeout(() => {
+    code_input.classList.remove(`cursive`)
+  }, App.input_grow_time)
+}

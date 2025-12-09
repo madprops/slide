@@ -227,6 +227,105 @@ App.circle_gesture = () => {
   return score < 0.3
 }
 
+App.square_gesture = () => {
+  let clicks = App.scope_clicks
+
+  // Safety check
+  if (!clicks || !Array.isArray(clicks)) { return false }
+
+  let len = clicks.length
+
+  if (len < 10) {
+    return false
+  }
+
+  // --- Helper Functions (defined locally to keep it self-contained) ---
+
+  let get_sq_dist = (p1, p2) => {
+    let dx = p1.x - p2.x
+    let dy = p1.y - p2.y
+    return (dx * dx) + (dy * dy)
+  }
+
+  let get_point_line_dist = (p, a, b) => {
+    let len_sq = get_sq_dist(a, b)
+    if (len_sq === 0) return get_sq_dist(p, a)
+
+    let t = ((p.x - a.x) * (b.x - a.x) + (p.y - a.y) * (b.y - a.y)) / len_sq
+    t = Math.max(0, Math.min(1, t))
+
+    return get_sq_dist(p, {
+      x: a.x + (t * (b.x - a.x)),
+      y: a.y + (t * (b.y - a.y))
+    })
+  }
+
+  let simplify_path = (points, tolerance) => {
+    if (points.length <= 2) return points
+    let max_sq_dist = 0
+    let index = 0
+    let end = points.length - 1
+
+    for (let i = 1; i < end; i++) {
+      let sq_dist = get_point_line_dist(points[i], points[0], points[end])
+      if (sq_dist > max_sq_dist) {
+        max_sq_dist = sq_dist
+        index = i
+      }
+    }
+
+    if (max_sq_dist > (tolerance * tolerance)) {
+      let left = simplify_path(points.slice(0, index + 1), tolerance)
+      let right = simplify_path(points.slice(index), tolerance)
+      return left.slice(0, left.length - 1).concat(right)
+    }
+
+    return [points[0], points[end]]
+  }
+
+  // --- Detection Logic ---
+
+  // 1. Get bounds
+  let min_x = Infinity, max_x = -Infinity, min_y = Infinity, max_y = -Infinity
+
+  for (let i = 0; i < len; i++) {
+    let p = clicks[i]
+    min_x = Math.min(min_x, p.x)
+    max_x = Math.max(max_x, p.x)
+    min_y = Math.min(min_y, p.y)
+    max_y = Math.max(max_y, p.y)
+  }
+
+  // 2. Check Closure
+  let diag = Math.hypot(max_x - min_x, max_y - min_y)
+  let start = clicks[0]
+  let end = clicks[len - 1]
+  let gap = Math.hypot(start.x - end.x, start.y - end.y)
+
+  // Gap must be less than 35% of total size (lenient closure)
+  if ((gap / diag) > 0.35) { return false }
+
+  // 3. Check Aspect Ratio (Distinguish Square from Rectangle)
+  let width = max_x - min_x
+  let height = max_y - min_y
+  let ratio = width / height
+
+  // A square is roughly 1:1. We allow 0.7 to 1.4.
+  // If it's outside this, it's a rectangle, not a square.
+  if (ratio < 0.7 || ratio > 1.4) { return false }
+
+  // 4. Simplify and Count Corners
+  // Tolerance: 12% of the diagonal size handles "messy" lines well
+  let tolerance = diag * 0.12
+  let simple_shape = simplify_path(clicks, tolerance)
+  let v_count = simple_shape.length
+
+  // A closed square usually simplifies to 5 points:
+  // Start -> Corner 1 -> Corner 2 -> Corner 3 -> End (near Start)
+  // We accept 5 or 6 (in case of a small over-draw hook)
+  return (v_count === 5 || v_count === 6)
+}
+
 App.cycle_panning = (amount, iterations) => {
   let start_pan = App.get_panning()
   let counter = 0

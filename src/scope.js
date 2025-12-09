@@ -22,6 +22,7 @@ App.scope_color = `rgba(204, 198, 239, 1)`
 App.scope_click_color_1 = `rgba(162, 171, 234, 0.5)`
 App.scope_click_color_2 = `rgba(255, 137, 204, 1)`
 App.scope_click_color_3 = `rgba(222, 242, 92, 1)`
+App.scope_click_color_4 = `rgba(91, 163, 240, 1)`
 App.scope_border_color = `#444`
 App.scope_click_level = 1
 
@@ -337,10 +338,15 @@ App.handle_scope_mouse_up = (event) => {
     App.cycle_panning(0.9, 12)
     App.grow_input()
   }
-  else if (App.circle_gesture()) {
+  else if (App.square_gesture()) {
     App.increase_scope_click_level(3)
     App.cycle_panning(0.9, 12)
     App.mirror_input()
+  }
+  else if (App.circle_gesture()) {
+    App.increase_scope_click_level(4)
+    App.cycle_panning(0.9, 12)
+    App.cursive_input()
   }
 }
 
@@ -459,16 +465,7 @@ App.draw_scope_frame = () => {
   App.scope_clicks = App.scope_clicks.filter(click => (now - click.timestamp) < App.scope_click_time)
 
   for (let click of App.scope_clicks) {
-    if (App.scope_click_level === 1) {
-      App.scope_canvas_ctx.fillStyle = App.scope_click_color_1
-    }
-    else if (App.scope_click_level === 2) {
-      App.scope_canvas_ctx.fillStyle = App.scope_click_color_2
-    }
-    else if (App.scope_click_level === 3) {
-      App.scope_canvas_ctx.fillStyle = App.scope_click_color_3
-    }
-
+    App.scope_canvas_ctx.fillStyle = App[`scope_click_color_${App.scope_click_level}`]
     App.draw_star(App.scope_canvas_ctx, click.x, click.y, 3, 5, App.scope_click_size)
     App.scope_canvas_ctx.fill()
   }
