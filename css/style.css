@@ -229,7 +229,7 @@ body, html {
 #code-input.cursive {
     text-shadow: var(--input-text-shadow);
     font-family: cursive;
-    font-size: 1.46rem;
+    font-size: 1.4rem;
 }
 
 .code-input-controls {
