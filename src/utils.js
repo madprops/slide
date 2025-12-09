@@ -138,3 +138,21 @@ App.boolstring = (s) => {
 App.capitalize = (s) => {
   return s.split(` `).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(` `)
 }
+
+App.get_el_height = (el) => {
+  if (!el) {
+    return 0
+  }
+
+  let styles = window.getComputedStyle(el)
+  let content_height = el.clientHeight // includes padding but not border
+  let padding_top = parseFloat(styles.padding_top) || 0
+  let padding_bottom = parseFloat(styles.padding_bottom) || 0
+
+  // clientHeight already includes padding; subtract once and add explicitly
+  return content_height - padding_top - padding_bottom + padding_top + padding_bottom
+}
+
+App.viewport_height = () => {
+  return window.innerHeight || document.documentElement.clientHeight
+}

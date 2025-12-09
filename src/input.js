@@ -224,7 +224,7 @@ App.init_code_input_controls = () => {
 
   if (max_button) {
     DOM.ev(max_button, `click`, (event) => {
-      App.toggle_max()
+      App.max_input()
     })
   }
 
@@ -329,7 +329,7 @@ App.init_code_input_controls = () => {
         })
 
         DOM.ev(resize_handle, `dblclick`, (event) => {
-          App.toggle_max(`restore`)
+          App.restore_input()
         })
       }
 
@@ -382,7 +382,7 @@ App.start_input_resize_observer = () => {
   resizeObserver.observe(wrapper)
 }
 
-App.toggle_max = (mode = `toggle`) => {
+App.restore_input = () => {
   let wrapper = DOM.el(`#code-input-wrapper`)
 
   if (!wrapper) {
@@ -391,23 +391,9 @@ App.toggle_max = (mode = `toggle`) => {
 
   let style = getComputedStyle(document.documentElement)
   let height = parseInt(style.getPropertyValue(`--input_height`))
-  let max_height = parseInt(style.getPropertyValue(`--input_max_height`))
   let max_width = parseInt(style.getPropertyValue(`--input_max_width`))
-
-  if (mode === `restore`) {
-    wrapper.style.height = `${height}px`
-    wrapper.style.width = `${max_width}%`
-  }
-  else if (App.input_is_maxed()) {
-    // Restore
-    wrapper.style.height = `${height}px`
-    wrapper.style.width = `${max_width}%`
-  }
-  else {
-    // Maximize
-    wrapper.style.height = `${max_height}px`
-    wrapper.style.width = `${max_width}%`
-  }
+  wrapper.style.height = `${height}px`
+  wrapper.style.width = `${max_width}%`
 }
 
 App.input_is_maxed = () => {
@@ -542,4 +528,20 @@ App.cursive_input = () => {
   App.input_grow_timeout = setTimeout(() => {
     code_input.classList.remove(`cursive`)
   }, App.input_grow_time)
+}
+
+App.max_input = () => {
+  let wrapper = DOM.el(`#code-input-wrapper`)
+  let style = getComputedStyle(document.documentElement)
+  let max_width = parseInt(style.getPropertyValue(`--input_max_width`))
+
+  let top_height = App.get_top_height()
+  let scope_height = App.get_scope_height()
+  let controls_height = App.get_controls_height()
+  let height_sum = top_height + scope_height + controls_height
+  let total_height = App.viewport_height()
+  let diff = total_height - height_sum
+
+  wrapper.style.height = `${diff}px`
+  wrapper.style.width = `${max_width}%`
 }

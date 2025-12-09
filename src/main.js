@@ -404,6 +404,7 @@ App.start_events = async () => {
   App.make_main_visible()
   App.set_cpm_from_query()
   App.set_beat_title_from_query()
+  App.max_input()
 
   if (!await App.load_song_from_query()) {
     if (!App.load_code_from_query()) {
@@ -480,6 +481,25 @@ App.update_title = () => {
   }
 
   document.title = title
+}
+
+App.get_top_height = () => {
+  let el = DOM.el(`#top`)
+  return App.get_el_height(el)
+}
+
+App.get_scope_height = () => {
+  if (App.scope_enabled) {
+    let el = DOM.el(`#scope-container`)
+    return App.get_el_height(el)
+  }
+
+  return 0
+}
+
+App.get_controls_height = () => {
+  let el = DOM.el(`#controls`)
+  return App.get_el_height(el)
 }
 
 window.H = H_hydra
