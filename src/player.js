@@ -105,10 +105,10 @@ App.strudel_update = async (code) => {
 
 App.playing = (extra) => {
   let msg = ``
-  let ms = App.get_matched_song()
+  let name = App.get_song_name(true)
 
-  if (ms) {
-    msg = `Playing: ${ms.clean_name}`
+  if (name) {
+    msg = `Playing: ${name}`
   }
 
   if (!msg) {
@@ -128,10 +128,10 @@ App.playing = (extra) => {
 }
 
 App.set_stop_status = () => {
-  let ms = App.get_matched_song()
+  let name = App.get_song_name(true)
 
-  if (ms) {
-    App.set_status(`Stopped: ${ms.clean_name}`)
+  if (name) {
+    App.set_status(`Stopped: ${name}`)
   }
   else {
     App.set_status(`Stopped`)

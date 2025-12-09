@@ -463,10 +463,10 @@ App.get_query_params = () => {
 
 App.update_title = () => {
   let title = App.app_name
-  let ms = App.get_matched_song()
+  let name = App.get_song_name(true)
 
-  if (ms) {
-    title = `${title} - ${ms.clean_name}`
+  if (name) {
+    title = `${title} - ${name}`
   }
   else if (App.beat_title) {
     title = `${title} - ${App.beat_title}`

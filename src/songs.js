@@ -124,14 +124,8 @@ App.load_song_from_query = async () => {
 App.set_song_context = (song_name = ``) => {
   App.current_song = song_name || ``
   App.set_title(App.underspace(App.current_song))
-
-  if (song_name) {
-    App.update_url(App.current_song)
-    App.update_title()
-  }
-  else {
-    App.clear_url_if_no_song()
-  }
+  App.update_url(App.current_song)
+  App.update_title()
 }
 
 App.random_song = async () => {
@@ -163,17 +157,6 @@ App.random_song = async () => {
   }
 }
 
-App.clear_url_if_no_song = () => {
-  let ms = App.get_matched_song()
-
-  if (ms) {
-    return
-  }
-
-  App.update_url()
-  App.update_title()
-}
-
 App.get_matched_song = () => {
   for (let name in App.song_cache) {
     let cache = App.song_cache[name]
@@ -185,4 +168,20 @@ App.get_matched_song = () => {
       return cache
     }
   }
+}
+
+App.get_song_name = (clean = false) => {
+  let ms = App.get_matched_song()
+  let song_name = ``
+
+  if (ms) {
+    if (clean) {
+      song_name = ms.clean_name
+    }
+    else {
+      song_name = ms.name
+    }
+  }
+
+  return song_name
 }
