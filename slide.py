@@ -59,10 +59,10 @@ logging.basicConfig(
 )
 
 app = Flask(__name__)
-stop_event = threading.Event()
-answer_lock = threading.Lock()
-worker_thread: threading.Thread | None = None
-status_observer: Any = None
+STOP_EVENT = threading.Event()
+ANSWER_LOCK = threading.Lock()
+WORKER_THREAD: threading.Thread | None = None
+STATUS_OBSERVER: Any = None
 HISTORY: list[str] = []
 
 
@@ -241,16 +241,16 @@ class StatusFileHandler(FileSystemEventHandler):  # type: ignore
 
             content = read_status_file()
 
-            with answer_lock:
+            with ANSWER_LOCK:
                 record_history(content)
 
 
 def start_status_watcher() -> None:
     """Start watching status.txt for external changes."""
 
-    global status_observer
+    global STATUS_OBSERVER
 
-    if status_observer and status_observer.is_alive():
+    if STATUS_OBSERVER and STATUS_OBSERVER.is_alive():
         return
 
     status_path = Path(STATE_FILE)
@@ -258,25 +258,25 @@ def start_status_watcher() -> None:
     status_filename = status_path.name
 
     handler = StatusFileHandler(status_filename)
-    status_observer = Observer()
-    status_observer.schedule(handler, watch_dir, recursive=False)
-    status_observer.start()
+    STATUS_OBSERVER = Observer()
+    STATUS_OBSERVER.schedule(handler, watch_dir, recursive=False)
+    STATUS_OBSERVER.start()
     logging.info("Started watching %s for changes", STATE_FILE)
 
 
 def stop_status_watcher() -> None:
     """Stop the status file watcher."""
 
-    global status_observer
+    global STATUS_OBSERVER
 
-    if status_observer:
-        status_observer.stop()
-        status_observer.join(timeout=2)
-        status_observer = None
+    if STATUS_OBSERVER:
+        STATUS_OBSERVER.stop()
+        STATUS_OBSERVER.join(timeout=2)
+        STATUS_OBSERVER = None
 
 
 def get_beats() -> str:
-    with answer_lock:
+    with ANSWER_LOCK:
         beats = list(HISTORY[-MAX_HISTORY:])
 
     s = ""
@@ -367,29 +367,30 @@ def background_worker() -> None:
 
     interval_seconds = REQUEST_INTERVAL_MINUTES * 60
 
-    while not stop_event.wait(interval_seconds):
+    while not STOP_EVENT.wait(interval_seconds):
         try:
             answer = run_ai_prompt()
         except Exception:
             logging.exception("AI request failed")
             answer = "Error collecting answer"
 
-        with answer_lock:
+        with ANSWER_LOCK:
             record_history(answer)
 
         persist_answer(answer)
 
 
 def start_worker_if_needed() -> None:
-    global worker_thread
+    global WORKER_THREAD
 
-    if worker_thread and worker_thread.is_alive():
+    if WORKER_THREAD and WORKER_THREAD.is_alive():
         return
 
-    worker_thread = threading.Thread(
+    WORKER_THREAD = threading.Thread(
         target=background_worker, name="ai-poller", daemon=True
     )
-    worker_thread.start()
+
+    WORKER_THREAD.start()
 
 
 @app.route("/", methods=["GET"])  # type: ignore
@@ -477,11 +478,11 @@ def song_shortcut(song_name: str):
 
 
 def shutdown_worker() -> None:
-    stop_event.set()
+    STOP_EVENT.set()
     stop_status_watcher()
 
-    if worker_thread:
-        worker_thread.join(timeout=2)
+    if WORKER_THREAD:
+        WORKER_THREAD.join(timeout=2)
 
 
 def main() -> None:
