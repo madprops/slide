@@ -8,15 +8,8 @@ import logging
 import threading
 from pathlib import Path
 from typing import Any
-
-from flask import (  # type: ignore
-    Flask,
-    Response,
-    send_from_directory,
-    render_template,
-    request,
-)
-
+from flask import Flask  # type: ignore
+from flask import Response, send_from_directory, render_template, request
 from litellm import completion  # type: ignore
 from watchdog.observers import Observer  # type: ignore
 from watchdog.events import FileSystemEventHandler  # type: ignore
@@ -226,14 +219,14 @@ def record_history(entry: str) -> None:
         del HISTORY[:-MAX_HISTORY]
 
 
-class StatusFileHandler(FileSystemEventHandler):
+class StatusFileHandler(FileSystemEventHandler):  # type: ignore
     """Watch for changes to status.txt and update history."""
 
     def __init__(self, status_filename: str):
         super().__init__()
         self.status_filename = status_filename
 
-    def on_modified(self, event: Any):
+    def on_modified(self, event: Any) -> None:
         if event.is_directory:
             return
 
@@ -241,6 +234,7 @@ class StatusFileHandler(FileSystemEventHandler):
             logging.info(
                 "Detected change in %s, updating history", self.status_filename
             )
+
             content = read_status_file()
 
             with answer_lock:
@@ -353,7 +347,7 @@ def run_ai_prompt() -> str:
     return "Received empty response from model."
 
 
-def get_api_key():
+def get_api_key() -> str:
     if "gemini" in MODEL:
         return GOOGLE_API_KEY
 
@@ -393,8 +387,8 @@ def start_worker_if_needed() -> None:
     worker_thread.start()
 
 
-@app.get("/")
-def index():
+@app.route("/", methods=["GET"])
+def index() -> Any:
     """Serve the main HTML page."""
 
     song_name = request.args.get("song", "")
@@ -410,7 +404,7 @@ def index():
     )
 
 
-@app.get("/strudel/<path:path>")
+@app.route("/strudel/<path:path>", methods=["GET"])
 def strudel_files(path: str) -> Response:
     """Serve strudel library files."""
 
@@ -430,22 +424,22 @@ def get_status() -> Response:
 
 
 @app.route("/dist/<path:filename>")
-def dist_assets(filename):
+def dist_assets(filename) -> Response:
     return send_from_directory("dist", filename)
 
 
 @app.route("/css/<path:filename>")
-def css_assets(filename):
+def css_assets(filename) -> Response:
     return send_from_directory("css", filename)
 
 
 @app.route("/img/<path:filename>")
-def img_assets(filename):
+def img_assets(filename) -> Response:
     return send_from_directory("img", filename)
 
 
 @app.route("/config/<path:filename>")
-def config_assets(filename):
+def config_assets(filename) -> Response:
     return send_from_directory("config", filename)
 
 
