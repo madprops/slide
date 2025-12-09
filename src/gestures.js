@@ -56,24 +56,38 @@ App.triangle_gesture = () => {
     if (len_sq === 0) {
       return get_sq_dist(p, a)
     }
+App.triangle_gesture = () => {
+  let get_sq_dist = (p1, p2) => {
+    let dx = p1.x - p2.x
+    let dy = p1.y - p2.y
+
+    return (dx * dx) + (dy * dy)
+  }
+
+  let get_point_line_dist = (p, a, b) => {
+    let len_sq = get_sq_dist(a, b)
+
+    if (len_sq === 0) {
+      return get_sq_dist(p, a)
+    }
 
     let t = ((p.x - a.x) * (b.x - a.x) + (p.y - a.y) * (b.y - a.y)) / len_sq
     t = Math.max(0, Math.min(1, t))
 
     return get_sq_dist(p, {
       x: a.x + (t * (b.x - a.x)),
-      y: a.y + (t * (b.y - a.y)),
+      y: a.y + (t * (b.y - a.y))
     })
   }
 
   let get_angle = (p1, p2, p3) => {
     let v1 = {
       x: p1.x - p2.x,
-      y: p1.y - p2.y,
+      y: p1.y - p2.y
     }
     let v2 = {
       x: p3.x - p2.x,
-      y: p3.y - p2.y,
+      y: p3.y - p2.y
     }
 
     let dot = (v1.x * v2.x) + (v1.y * v2.y)
@@ -142,13 +156,13 @@ App.triangle_gesture = () => {
     let end = points[len - 1]
     let gap = Math.hypot(start.x - end.x, start.y - end.y)
 
-    // relaxed: allow a 15% gap relative to size
-    if ((gap / diag) > 0.15) {
+    // loose: allow a 20% gap relative to size (easy to close)
+    if ((gap / diag) > 0.20) {
       return false
     }
 
-    // relaxed: allow 12% curvature (wobble)
-    let tolerance = diag * 0.12
+    // loose: allow 15% curvature (allows messy mouse movement)
+    let tolerance = diag * 0.15
     let simple_shape = simplify_path(points, tolerance)
     let v_count = simple_shape.length
 
@@ -161,13 +175,133 @@ App.triangle_gesture = () => {
     let angles = [
       get_angle(corners[2], corners[0], corners[1]),
       get_angle(corners[0], corners[1], corners[2]),
-      get_angle(corners[1], corners[2], corners[0]),
+      get_angle(corners[1], corners[2], corners[0])
     ]
 
     for (let i = 0; i < 3; i++) {
-      // strictness: reject only very thin slivers (< 15 degrees)
-      // or essentially flat lines (> 165 degrees)
-      if ((angles[i] < 15) || (angles[i] > 165)) {
+      // strictness: only reject angles that are impossibly thin (< 10)
+      // or essentially straight lines (> 170)
+      if ((angles[i] < 10) || (angles[i] > 170)) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  return detect_triangle(App.scope_clicks)
+}
+    let t = ((p.x - a.x) * (b.x - a.x) + (p.y - a.y) * (b.y - a.y)) / len_sq
+    t = Math.max(0, Math.min(1, t))
+
+    return get_sq_dist(p, {
+      x: a.x + (t * (b.x - a.x)),
+      y: a.y + (t * (b.y - a.y))
+    })
+  }
+
+  let get_angle = (p1, p2, p3) => {
+    let v1 = {
+      x: p1.x - p2.x,
+      y: p1.y - p2.y
+    }
+    let v2 = {
+      x: p3.x - p2.x,
+      y: p3.y - p2.y
+    }
+
+    let dot = (v1.x * v2.x) + (v1.y * v2.y)
+    let mag1 = Math.sqrt((v1.x * v1.x) + (v1.y * v1.y))
+    let mag2 = Math.sqrt((v2.x * v2.x) + (v2.y * v2.y))
+
+    if ((mag1 * mag2) === 0) {
+      return 0
+    }
+
+    let cosine = dot / (mag1 * mag2)
+    cosine = Math.max(-1, Math.min(1, cosine))
+
+    return Math.acos(cosine) * (180 / Math.PI)
+  }
+
+  let simplify_path = (points, tolerance) => {
+    if (points.length <= 2) {
+      return points
+    }
+
+    let max_sq_dist = 0
+    let index = 0
+    let end = points.length - 1
+
+    for (let i = 1; i < end; i++) {
+      let sq_dist = get_point_line_dist(points[i], points[0], points[end])
+
+      if (sq_dist > max_sq_dist) {
+        max_sq_dist = sq_dist
+        index = i
+      }
+    }
+
+    if (max_sq_dist > (tolerance * tolerance)) {
+      let left = simplify_path(points.slice(0, index + 1), tolerance)
+      let right = simplify_path(points.slice(index), tolerance)
+
+      return left.slice(0, left.length - 1).concat(right)
+    }
+
+    return [points[0], points[end]]
+  }
+
+  let detect_triangle = (points) => {
+    let len = points.length
+
+    if (len < 10) {
+      return false
+    }
+
+    let min_x = Infinity
+    let max_x = -Infinity
+    let min_y = Infinity
+    let max_y = -Infinity
+
+    for (let i = 0; i < len; i++) {
+      min_x = Math.min(min_x, points[i].x)
+      max_x = Math.max(max_x, points[i].x)
+      min_y = Math.min(min_y, points[i].y)
+      max_y = Math.max(max_y, points[i].y)
+    }
+
+    let diag = Math.hypot(max_x - min_x, max_y - min_y)
+    let start = points[0]
+    let end = points[len - 1]
+    let gap = Math.hypot(start.x - end.x, start.y - end.y)
+
+    // loose: allow a 20% gap relative to size (easy to close)
+    if ((gap / diag) > 0.20) {
+      return false
+    }
+
+    // loose: allow 15% curvature (allows messy mouse movement)
+    let tolerance = diag * 0.15
+    let simple_shape = simplify_path(points, tolerance)
+    let v_count = simple_shape.length
+
+    if ((v_count < 3) || (v_count > 4)) {
+      return false
+    }
+
+    let corners = simple_shape.slice(0, 3)
+
+    let angles = [
+      get_angle(corners[2], corners[0], corners[1]),
+      get_angle(corners[0], corners[1], corners[2]),
+      get_angle(corners[1], corners[2], corners[0])
+    ]
+
+    for (let i = 0; i < 3; i++) {
+      // strictness: only reject angles that are impossibly thin (< 10)
+      // or essentially straight lines (> 170)
+      if ((angles[i] < 10) || (angles[i] > 170)) {
         return false
       }
     }

@@ -8,8 +8,6 @@ App.apply_color = (color) => {
   let tempo_slider = DOM.el(`#tempo-slider`)
   let status_el = DOM.el(`#status`)
   let image_el = DOM.el(`#image`)
-  let scope_container = DOM.el(`#scope-container`)
-  let scope_canvas = DOM.el(`#scope-canvas`)
 
   if (code_input) {
     code_input.style.color = color
@@ -37,15 +35,6 @@ App.apply_color = (color) => {
 
   if (image_el) {
     image_el.style.filter = `drop-shadow(0 0 0.15rem ${color})`
-  }
-
-  if (scope_container) {
-    scope_container.style.borderColor = App.scope_border_color
-    scope_container.style.boxShadow = `0 0 0.35rem ${App.scope_border_color}33`
-  }
-
-  if (scope_canvas) {
-    scope_canvas.style.boxShadow = `inset 0 0 0.4rem ${App.scope_border_color}1a`
   }
 }
 
@@ -124,4 +113,21 @@ App.toggle_colors = () => {
       App.stop_color_cycle()
     }
   }
+}
+
+App.color_interface = (level) => {
+  let color = App[`scope_click_color_${level}`]
+  App.do_color_interface(color)
+}
+
+App.restore_interface_colors = () => {
+  App.do_color_interface(App.border_color)
+}
+
+App.do_color_interface = (color) => {
+  let input = App.get_input()
+  input.style.borderColor = color
+
+  let scope = App.get_scope_container()
+  scope.style.borderColor = color
 }

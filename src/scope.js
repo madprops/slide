@@ -23,7 +23,6 @@ App.scope_click_color_1 = `rgba(162, 171, 234, 0.5)`
 App.scope_click_color_2 = `rgba(255, 137, 204, 1)`
 App.scope_click_color_3 = `rgba(222, 242, 92, 1)`
 App.scope_click_color_4 = `rgba(91, 163, 240, 1)`
-App.scope_border_color = `#444`
 App.scope_click_level = 1
 
 App.scope_sine_time = 0
@@ -356,9 +355,11 @@ App.handle_scope_mouse_up = (event) => {
 App.increase_scope_click_level = (level) => {
   App.scope_click_level = level
   clearTimeout(App.scope_click_level_timeout)
+  App.color_interface(level)
 
   App.scope_click_level_timeout = setTimeout(() => {
     App.scope_click_level = 1
+    App.restore_interface_colors()
   }, App.scope_click_level_time)
 }
 
