@@ -19,6 +19,7 @@ App.scope_min_y = -1
 
 App.scope_background = `#111111da`
 App.scope_color = `rgba(204, 198, 239, 1)`
+App.scope_click_color_0 = `rgba(255, 255, 255, 1)`
 App.scope_click_color_1 = `rgba(162, 171, 234, 0.5)`
 App.scope_click_color_2 = `rgba(255, 137, 204, 1)`
 App.scope_click_color_3 = `rgba(222, 242, 92, 1)`
@@ -42,6 +43,7 @@ App.scope_click_lock = 250
 App.scope_debouncer_delay = 50
 App.max_scope_slide_y_dff = 45
 App.scope_click_level_time = 2.8 * 1000
+App.many_clicks_amount = 25
 
 App.setup_scope = () => {
   App.scope_debouncer = App.create_debouncer(() => {
@@ -333,22 +335,27 @@ App.handle_scope_mouse_up = (event) => {
         App.beep_sound()
       }
     }
-  }
 
-  if (App.triangle_gesture()) {
-    App.gesture_function(2, () => {
-      App.grow_input()
-    })
-  }
-  else if (App.square_gesture()) {
-    App.gesture_function(3, () => {
-      App.cursive_input()
-    })
-  }
-  else if (App.circle_gesture()) {
-    App.gesture_function(4, () => {
-      App.mirror_input()
-    })
+    if (App.scope_clicks.length >= App.many_clicks_amount) {
+        App.gesture_function(0, () => {
+        App.grow_input()
+      })
+    }
+    else if (App.triangle_gesture()) {
+      App.gesture_function(2, () => {
+        App.grow_input()
+      })
+    }
+    else if (App.square_gesture()) {
+      App.gesture_function(3, () => {
+        App.cursive_input()
+      })
+    }
+    else if (App.circle_gesture()) {
+      App.gesture_function(4, () => {
+        App.mirror_input()
+      })
+    }
   }
 }
 
