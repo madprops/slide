@@ -62,7 +62,7 @@ app = Flask(__name__)
 stop_event = threading.Event()
 answer_lock = threading.Lock()
 worker_thread: threading.Thread | None = None
-status_observer: Observer | None = None
+status_observer: Any = None
 HISTORY: list[str] = []
 
 
@@ -122,21 +122,25 @@ def load_api_key() -> None:
     global CLAUDE_API_KEY
 
     key_path = Path(GOOGLE_API_KEY_FILE)
+    key = ""
 
     try:
         key = key_path.read_text(encoding="utf-8").strip()
     except FileNotFoundError:
         pass
+
     if not key:
         pass
 
     GOOGLE_API_KEY = key
     key_path_2 = Path(CLAUDE_API_KEY_FILE)
+    key_2 = ""
 
     try:
         key_2 = key_path_2.read_text(encoding="utf-8").strip()
     except FileNotFoundError:
         pass
+
     if not key_2:
         pass
 
@@ -334,7 +338,8 @@ def run_ai_prompt() -> str:
         timeout=30,
     )
 
-    message = response.choices[0].message
+    message = response.choices[0].message  # pyright: ignore[reportAttributeAccessIssue]
+
     content = (
         message.get("content")
         if isinstance(message, dict)
@@ -387,7 +392,7 @@ def start_worker_if_needed() -> None:
     worker_thread.start()
 
 
-@app.route("/", methods=["GET"])
+@app.route("/", methods=["GET"])  # type: ignore
 def index() -> Any:
     """Serve the main HTML page."""
 
@@ -404,14 +409,14 @@ def index() -> Any:
     )
 
 
-@app.route("/strudel/<path:path>", methods=["GET"])
+@app.route("/strudel/<path:path>", methods=["GET"])  # type: ignore
 def strudel_files(path: str) -> Response:
     """Serve strudel library files."""
 
     return send_from_directory("strudel", path)
 
 
-@app.get("/status")
+@app.route("/status", methods=["GET"])  # type: ignore
 def get_status() -> Response:
     """Expose the most recent status as plain text."""
 
@@ -423,27 +428,27 @@ def get_status() -> Response:
     return Response(status, mimetype="text/plain")
 
 
-@app.route("/dist/<path:filename>")
+@app.route("/dist/<path:filename>", methods=["GET"])  # type: ignore
 def dist_assets(filename) -> Response:
     return send_from_directory("dist", filename)
 
 
-@app.route("/css/<path:filename>")
+@app.route("/css/<path:filename>", methods=["GET"])  # type: ignore
 def css_assets(filename) -> Response:
     return send_from_directory("css", filename)
 
 
-@app.route("/img/<path:filename>")
+@app.route("/img/<path:filename>", methods=["GET"])  # type: ignore
 def img_assets(filename) -> Response:
     return send_from_directory("img", filename)
 
 
-@app.route("/config/<path:filename>")
+@app.route("/config/<path:filename>", methods=["GET"])  # type: ignore
 def config_assets(filename) -> Response:
     return send_from_directory("config", filename)
 
 
-@app.route("/songs/list")
+@app.route("/songs/list", methods=["GET"])  # type: ignore
 def list_songs() -> Response:
     """Return list of song files without extension."""
     songs_dir = Path("songs")
@@ -458,12 +463,12 @@ def list_songs() -> Response:
     return Response(json.dumps(song_files), mimetype="application/json")
 
 
-@app.route("/songs/<path:filename>")
+@app.route("/songs/<path:filename>", methods=["GET"])  # type: ignore
 def songs_assets(filename):
     return send_from_directory("songs", filename)
 
 
-@app.get("/song/<path:song_name>")
+@app.get("/song/<path:song_name>", methods=["GET"])  # type: ignore
 def song_shortcut(song_name: str):
     """Render HTML page with song name in title and meta tags."""
 
