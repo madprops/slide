@@ -7,7 +7,6 @@ import atexit
 import logging
 import threading
 from pathlib import Path
-from typing import Optional
 
 from flask import (
     Flask,
@@ -66,8 +65,8 @@ logging.basicConfig(
 app = Flask(__name__)
 stop_event = threading.Event()
 answer_lock = threading.Lock()
-worker_thread: Optional[threading.Thread] = None
-status_observer: Optional[Observer] = None
+worker_thread: threading.Thread | None = None
+status_observer: Observer | None = None
 HISTORY: list[str] = []
 
 
@@ -316,10 +315,14 @@ def make_prompt() -> str:
     return PROMPT
 
 
+def echo(s: str) -> None:
+    print(s)  # noqa: T201
+
+
 def run_ai_prompt() -> str:
     """Send the hardcoded prompt through LiteLLM and capture the text body."""
 
-    print("Getting answer")
+    echo("Getting answer")
     model = resolve_model_name(MODEL)
 
     messages = [
