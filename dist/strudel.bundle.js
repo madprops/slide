@@ -246,6 +246,9 @@ Defaulting to 2020, but this will stop working in the future.`)),t.ecmaVersion=1
     <div class="about-item">Ctrl+1 = Show the sound context.</a></div>
     <div class="about-item">Ctrl+2 = Show the note context.</a></div>
     <div class="about-item">Ctrl+3 = Show the bank context.</a></div>
+    <div class="about-item">Try draging a triangle on the scope.</a></div>
+    <div class="about-item">Try draging a square on the scope.</a></div>
+    <div class="about-item">Try draging a circle on the scope.</a></div>
   `},App.open_about_modal=()=>{App.open_modal("about")},App.auto_delay=5,App.auto_endpoint="/status",App.setup_auto=()=>{let e=DOM.el("#auto-start");e&&DOM.ev(e,"click",()=>{let u=DOM.el("#auto-input");u&&App.start_auto(u.value)});let t=DOM.el("#auto-default");t&&DOM.ev(t,"click",()=>{App.start_auto("/status")});let o=DOM.el("#auto-input");o&&DOM.ev(o,"keydown",u=>{if(u.key==="Enter"){u.preventDefault();let l=DOM.el("#auto-input");l&&App.start_auto(l.value)}});let a=DOM.el("#auto-delay");a&&DOM.ev(a,"change",u=>{App.auto_delay=parseInt(u.target.value,10),App.stor_save_auto_delay(),App.fetch_timer&&App.strudel_watch_status()})},App.create_auto_modal=()=>{let e=App.create_modal("auto"),t=DOM.el(".modal-title",e);t.textContent="Auto Mode";let o=DOM.el(".modal-body",e),a=DOM.create("div","","auto-info");a.textContent="Code will be fetched periodically";let u=DOM.create("select","modal-select","auto-delay");u.innerHTML=`
     <option value="1">1 second</option>
     <option value="5" selected>5 seconds</option>
