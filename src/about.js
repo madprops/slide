@@ -30,6 +30,9 @@ App.create_about_modal = () => {
     <div class="about-item">Try drawing a triangle on the scope.</a></div>
     <div class="about-item">Try drawing a rectangle on the scope.</a></div>
     <div class="about-item">Try drawing a circle on the scope.</a></div>
+    <div class="about-item">Credit: Gemini</a></div>
+    <div class="about-item">Credit: ChatGPT</a></div>
+    <div class="about-item">Credit: Claude</a></div>
   `
 }
 
