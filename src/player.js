@@ -188,7 +188,3 @@ App.set_beat_title_from_query = () => {
     App.beat_title = beat_title
   }
 }
-
-App.tempo_madness = () => {
-
-}

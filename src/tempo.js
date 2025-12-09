@@ -101,7 +101,6 @@ App.on_tempo_change = (is_final = false, value_override = undefined) => {
       App.persist_tempo()
 
       if (App.current_song) {
-        App.update_url(App.current_song)
       }
 
       App.set_tempo()
@@ -186,5 +185,15 @@ App.init_tempo_controls = () => {
     DOM.ev(increment_button, `click`, () => {
       step_tempo(1)
     })
+  }
+}
+
+App.set_tempo = () => {
+  try {
+    App.scheduler.setCps(App.tempo / 60)
+    App.update_url()
+  }
+  catch (err) {
+    console.debug(`Tempo will be applied when audio starts`, err)
   }
 }

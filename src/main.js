@@ -116,15 +116,6 @@ App.strudel_init = async () => {
   }
 }
 
-App.set_tempo = () => {
-  try {
-    App.scheduler.setCps(App.tempo / 60)
-  }
-  catch (err) {
-    console.debug(`Tempo will be applied when audio starts`, err)
-  }
-}
-
 App.clear_draw_context = () => {
   try {
     cleanupDraw(true)
