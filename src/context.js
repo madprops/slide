@@ -1,7 +1,9 @@
 NeedContext.init()
 
 NeedContext.after_hide = () => {
-  App.focus_input()
+  if (App.input_caret_visible(App.get_input())) {
+    App.focus_input()
+  }
 }
 
 App.show_sounds_context = (event) => {

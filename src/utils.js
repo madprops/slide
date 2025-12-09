@@ -138,3 +138,44 @@ App.boolstring = (s) => {
 App.capitalize = (s) => {
   return s.split(` `).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(` `)
 }
+
+App.input_caret_visible = (el) => {
+  if (!el) {
+    return false
+  }
+
+  // Determine the actual cursor position (handling text selection direction)
+  let caret_index = el.selectionDirection === `backward`
+    ? el.selectionStart
+    : el.selectionEnd
+
+  // 1. Calculate the Row Number
+  // We count the newlines before the caret to know which row we are on
+  let text_before_caret = el.value.substring(0, caret_index)
+  let row_index = text_before_caret.split(`\n`).length - 1
+
+  // 2. Get Line Height
+  let style = window.getComputedStyle(el)
+  let line_height = parseInt(style.lineHeight)
+
+  // Fallback if line-height is "normal" (usually ~1.2x font size)
+  if (isNaN(line_height)) {
+    line_height = parseInt(style.fontSize) * 1.2
+  }
+
+  // 3. Calculate Geometry
+  let caret_pixel_top = row_index * line_height
+  let caret_pixel_bottom = caret_pixel_top + line_height
+
+  let scroll_top = el.scrollTop
+  let scroll_bottom = el.scrollTop + el.clientHeight
+
+  // 4. Check Visibility
+  // Ensure the top of the caret is below the top scroll
+  // AND the bottom of the caret is above the bottom scroll
+  if (caret_pixel_top >= scroll_top && caret_pixel_bottom <= scroll_bottom) {
+    return true
+  }
+
+  return false
+}
