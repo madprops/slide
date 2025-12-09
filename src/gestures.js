@@ -48,7 +48,10 @@ App.triangle_gesture = () => {
 
   let get_point_line_dist = (p, a, b) => {
     let len_sq = get_sq_dist(a, b)
-    if (len_sq === 0) return get_sq_dist(p, a)
+
+    if (len_sq === 0) {
+      return get_sq_dist(p, a)
+    }
 
     let t = ((p.x - a.x) * (b.x - a.x) + (p.y - a.y) * (b.y - a.y)) / len_sq
     t = Math.max(0, Math.min(1, t))
@@ -58,7 +61,9 @@ App.triangle_gesture = () => {
 
   // ramer-douglas-peucker simplification
   let simplify_path = (points, tolerance) => {
-    if (points.length <= 2) return points
+    if (points.length <= 2) {
+      return points
+    }
 
     let max_sq_dist = 0
     let index = 0
@@ -83,7 +88,10 @@ App.triangle_gesture = () => {
 
   let detect_triangle = (points) => {
     let len = points.length
-    if (len < 10) return false // ignore tiny accidental clicks
+
+    if (len < 10) {
+      return false // ignore tiny accidental clicks
+    }
 
     // 1. check if shape is closed
     // determine bounding box to get a relative scale for tolerance
@@ -102,7 +110,9 @@ App.triangle_gesture = () => {
     let gap = Math.hypot(start.x - end.x, start.y - end.y)
 
     // if the gap is larger than 20% of the shape size, it's not closed
-    if ((gap / diag) > 0.2) return false
+    if ((gap / diag) > 0.2) {
+      return false
+    }
 
     // 2. simplify the path
     // tolerance is how much curve we allow. 15% of size is a good baseline for "messy" mouse drawing
@@ -113,7 +123,7 @@ App.triangle_gesture = () => {
     // a drawn triangle usually simplifies to 4 points: start, corner 1, corner 2, end (which is near start)
     // sometimes 3 if start/end align perfectly with a corner
     let v_count = simple_shape.length
-    return ((v_count === 3) || (v_count === 4))
+    return (v_count === 3) || (v_count === 4)
   }
 
   return detect_triangle(App.scope_clicks)
