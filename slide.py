@@ -353,7 +353,8 @@ def run_ai_prompt() -> str:
 def get_api_key():
     if "gemini" in MODEL:
         return GOOGLE_API_KEY
-    elif "claude" in MODEL:
+
+    if "claude" in MODEL:
         return CLAUDE_API_KEY
 
     return ""
@@ -395,9 +396,11 @@ def index():
 
     song_name = request.args.get("song", "")
     song_value = re.sub(r"_+", " ", song_name) if song_name else ""
+
     beat_title = request.args.get("beat", "")
     beat_value = re.sub(r"_+", " ", beat_title) if beat_title else ""
-    song_display = song_name or beat_title or ""
+
+    song_display = song_value or beat_value or ""
 
     return render_template(
         "index.jinja", song_name=song_name, song_display=song_display, config=app_config
