@@ -7,6 +7,7 @@ App.code_scroll_pause_until = 0
 App.code_scroll_wheel_pause_ms = 350
 App.code_scroll_song_pause_ms = 1.2 * 1000
 App.code_scroll_pending_delay_ms = 0
+App.input_mirror_time = 2.8  * 1000
 
 App.setup_input = () => {
   App.start_input_resize_observer()
@@ -510,4 +511,14 @@ App.deactivate_bottom_input_controls = () => {
     controls.style.pointerEvents = `auto`
     controls.classList.remove(`active`)
   }
+}
+
+App.mirror_input = () => {
+  let code_input = DOM.el(`#code-input`)
+  code_input.classList.add(`mirror`)
+  clearTimeout(App.input_mirror_timeout)
+
+  setTimeout(() => {
+    code_input.classList.remove(`mirror`)
+  }, App.input_mirror_time)
 }

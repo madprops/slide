@@ -21,6 +21,7 @@ App.scope_background = `#111111da`
 App.scope_color = `rgba(204, 198, 239, 1)`
 App.scope_click_color_1 = `rgba(162, 171, 234, 0.5)`
 App.scope_click_color_2 = `rgba(255, 137, 204, 1)`
+App.scope_click_color_3 = `rgba(222, 242, 92, 1)`
 App.scope_border_color = `#444`
 App.scope_click_level = 1
 
@@ -40,6 +41,7 @@ App.scope_enable_date = 0
 App.scope_click_lock = 250
 App.scope_debouncer_delay = 50
 App.max_scope_slide_y_dff = 45
+App.scope_click_level_time = 2.8 * 1000
 
 App.setup_scope = () => {
   App.scope_debouncer = App.create_debouncer(() => {
@@ -332,13 +334,21 @@ App.handle_scope_mouse_up = (event) => {
 
   if (App.triangle_gesture()) {
     App.cycle_panning(0.9, 12)
-    App.scope_click_level = 2
-    clearTimeout(App.scope_click_level_timeout)
-
-    App.scope_click_level_timeout = setTimeout(() => {
-      App.scope_click_level = 1
-    }, 3 * 1000)
+    App.increase_scope_click_level(2)
   }
+  else if (App.circle_gesture()) {
+    App.increase_scope_click_level(3)
+    App.mirror_input()
+  }
+}
+
+App.increase_scope_click_level = (level) => {
+  App.scope_click_level = level
+  clearTimeout(App.scope_click_level_timeout)
+
+  App.scope_click_level_timeout = setTimeout(() => {
+    App.scope_click_level = 1
+  }, App.scope_click_level_time)
 }
 
 App.draw_star = (ctx, x, y, radius, spikes, outerRadius) => {
@@ -450,8 +460,11 @@ App.draw_scope_frame = () => {
     if (App.scope_click_level === 1) {
       App.scope_canvas_ctx.fillStyle = App.scope_click_color_1
     }
-    else {
+    else if (App.scope_click_level === 2) {
       App.scope_canvas_ctx.fillStyle = App.scope_click_color_2
+    }
+    else if (App.scope_click_level === 3) {
+      App.scope_canvas_ctx.fillStyle = App.scope_click_color_3
     }
 
     App.draw_star(App.scope_canvas_ctx, click.x, click.y, 3, 5, App.scope_click_size)

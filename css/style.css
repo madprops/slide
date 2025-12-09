@@ -216,6 +216,10 @@ body, html {
     resize: none;
 }
 
+#code-input.mirror {
+    transform: scaleX(-1);
+}
+
 .code-input-controls {
     position: absolute;
     right: 2rem;

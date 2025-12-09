@@ -129,6 +129,92 @@ App.triangle_gesture = () => {
   return detect_triangle(App.scope_clicks)
 }
 
+App.circle_gesture = () => {
+  let clicks = App.scope_clicks
+
+  // Safety check: prevent crash if array doesn't exist yet
+  if (!clicks || !Array.isArray(clicks)) { return false }
+
+  let len = clicks.length
+
+  // allow slightly fewer points for quick circles
+  if (len < 8) {
+    return false
+  }
+
+  let min_x = Infinity
+  let max_x = -Infinity
+  let min_y = Infinity
+  let max_y = -Infinity
+  let sum_x = 0
+  let sum_y = 0
+
+  // 1. get bounds and centroid sum
+  for (let i = 0; i < len; i++) {
+    let p = clicks[i]
+    if (p.x < min_x) { min_x = p.x }
+    if (p.x > max_x) { max_x = p.x }
+    if (p.y < min_y) { min_y = p.y }
+    if (p.y > max_y) { max_y = p.y }
+
+    sum_x += p.x
+    sum_y += p.y
+  }
+
+  // 2. check closure
+  let diag = Math.hypot((max_x - min_x), (max_y - min_y))
+  let start = clicks[0]
+  let end = clicks[len - 1]
+  let gap = Math.hypot((start.x - end.x), (start.y - end.y))
+
+  // RELAXED: was 0.2 (20%). Now 0.35 (35%).
+  // Allows the start and end points to be further apart (sloppy finish).
+  if ((gap / diag) > 0.35) {
+    return false
+  }
+
+  // 3. check aspect ratio (width vs height)
+  let width = max_x - min_x
+  let height = max_y - min_y
+  let ratio = width / height
+
+  // RELAXED: was 0.6 to 1.6. Now 0.4 to 2.5.
+  // This allows "squashed" ovals to pass as circles.
+  if ((ratio < 0.4) || (ratio > 2.5)) {
+    return false
+  }
+
+  // 4. check circularity (standard deviation of radius)
+  let center_x = sum_x / len
+  let center_y = sum_y / len
+  let sum_r = 0
+  let radii = []
+
+  for (let i = 0; i < len; i++) {
+    let dx = clicks[i].x - center_x
+    let dy = clicks[i].y - center_y
+    let r = Math.hypot(dx, dy)
+    radii.push(r)
+    sum_r += r
+  }
+
+  let avg_r = sum_r / len
+  let sum_sq_diff = 0
+
+  for (let i = 0; i < len; i++) {
+    let diff = radii[i] - avg_r
+    sum_sq_diff += (diff * diff)
+  }
+
+  let std_dev = Math.sqrt(sum_sq_diff / len)
+  let score = std_dev / avg_r
+
+  // RELAXED: was 0.15. Now 0.3.
+  // This is the "wobble factor". 0.3 allows for very shaky hands
+  // or irregular speeds, while still rejecting squares (which are usually > 0.35).
+  return score < 0.3
+}
+
 App.cycle_panning = (amount, iterations) => {
   let start_pan = App.get_panning()
   let counter = 0
