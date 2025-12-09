@@ -7,7 +7,7 @@ App.code_scroll_pause_until = 0
 App.code_scroll_wheel_pause_ms = 350
 App.code_scroll_song_pause_ms = 1.2 * 1000
 App.code_scroll_pending_delay_ms = 0
-App.input_mirror_time = 2.8  * 1000
+App.input_mirror_time = 2.8 * 1000
 
 App.setup_input = () => {
   App.start_input_resize_observer()

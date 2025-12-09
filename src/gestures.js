@@ -152,20 +152,32 @@ App.circle_gesture = () => {
   // 1. get bounds and centroid sum
   for (let i = 0; i < len; i++) {
     let p = clicks[i]
-    if (p.x < min_x) { min_x = p.x }
-    if (p.x > max_x) { max_x = p.x }
-    if (p.y < min_y) { min_y = p.y }
-    if (p.y > max_y) { max_y = p.y }
+
+    if (p.x < min_x) {
+      { min_x = p.x }
+    }
+
+    if (p.x > max_x) {
+      { max_x = p.x }
+    }
+
+    if (p.y < min_y) {
+      { min_y = p.y }
+    }
+
+    if (p.y > max_y) {
+      { max_y = p.y }
+    }
 
     sum_x += p.x
     sum_y += p.y
   }
 
   // 2. check closure
-  let diag = Math.hypot((max_x - min_x), (max_y - min_y))
+  let diag = Math.hypot(max_x - min_x, max_y - min_y)
   let start = clicks[0]
   let end = clicks[len - 1]
-  let gap = Math.hypot((start.x - end.x), (start.y - end.y))
+  let gap = Math.hypot(start.x - end.x, start.y - end.y)
 
   // RELAXED: was 0.2 (20%). Now 0.35 (35%).
   // Allows the start and end points to be further apart (sloppy finish).
@@ -203,7 +215,7 @@ App.circle_gesture = () => {
 
   for (let i = 0; i < len; i++) {
     let diff = radii[i] - avg_r
-    sum_sq_diff += (diff * diff)
+    sum_sq_diff += diff * diff
   }
 
   let std_dev = Math.sqrt(sum_sq_diff / len)
