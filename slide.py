@@ -7,8 +7,9 @@ import atexit
 import logging
 import threading
 from pathlib import Path
+from typing import Any
 
-from flask import (
+from flask import (  # type: ignore
     Flask,
     Response,
     send_from_directory,
@@ -16,9 +17,9 @@ from flask import (
     request,
 )
 
-from litellm import completion
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
+from litellm import completion  # type: ignore
+from watchdog.observers import Observer  # type: ignore
+from watchdog.events import FileSystemEventHandler  # type: ignore
 
 PROMPT = """
 This is a program that writes strudel.cc patterns using the strudel syntax (or tidal notation).
@@ -43,6 +44,8 @@ GOOGLE_MODEL = "gemini/gemini-2.0-flash"
 CLAUDE_MODEL = "anthropic/claude-sonnet-4-20250514"
 MODEL = os.getenv("LITELLM_MODEL", CLAUDE_MODEL)
 
+GOOGLE_API_KEY = ""
+CLAUDE_API_KEY = ""
 GOOGLE_API_KEY_FILE = os.getenv("LITELLM_KEY_FILE", "keys/google_api_key.txt")
 CLAUDE_API_KEY_FILE = os.getenv("LITELLM_KEY_FILE", "keys/claude_api_key.txt")
 STATE_FILE = os.getenv("STATE_FILE", "status.txt")
@@ -119,7 +122,7 @@ def resolve_model_name(raw_name: str) -> str:
     return name
 
 
-def load_api_key() -> str:
+def load_api_key() -> None:
     """Load the provider key from api_key.txt, raising if it cannot be read."""
 
     global GOOGLE_API_KEY
@@ -230,7 +233,7 @@ class StatusFileHandler(FileSystemEventHandler):
         super().__init__()
         self.status_filename = status_filename
 
-    def on_modified(self, event):
+    def on_modified(self, event: Any):
         if event.is_directory:
             return
 
