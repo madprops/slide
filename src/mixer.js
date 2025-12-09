@@ -27,7 +27,7 @@
       const is_main_context = !window.master_fx
 
       if (is_main_context) {
-        console.log(`Intercepted MAIN AudioContext (Seamless Reverb Mode)`)
+        console.log(`Intercepted MAIN AudioContext (Seamless Reverb + LFO Mode)`)
       }
       else {
         console.log(`Intercepted SECONDARY AudioContext`)
@@ -54,7 +54,21 @@
       App.panning = ctx.createStereoPanner()
       App.panning.pan.value = 0
 
-      // Reverb setup
+      // --- LFO Panner Setup (New) ---
+      // We use a Sine wave for smooth movement, unlike the square wave of setInterval
+      let lfo = ctx.createOscillator()
+      lfo.type = `sine`
+      lfo.frequency.value = 0 // Starts frozen
+
+      let lfo_gain = ctx.createGain()
+      lfo_gain.gain.value = 0 // Starts with 0 depth (no effect)
+
+      lfo.connect(lfo_gain)
+      // Connect LFO to the *parameter* of the panner, not the audio stream
+      lfo_gain.connect(App.panning.pan)
+      lfo.start()
+
+      // --- Reverb setup ---
       let convolver = ctx.createConvolver()
       convolver.buffer = create_reverb_buffer(ctx)
 
@@ -73,8 +87,6 @@
       App.panning.connect(master_gain)
       master_gain.connect(super.destination)
 
-      // Wet chain is disconnected initially
-
       // --- 3. Compatibility ---
 
       Object.defineProperty(eq_low, `maxChannelCount`, {
@@ -89,7 +101,6 @@
       // --- 4. Expose Controls ---
 
       if (is_main_context) {
-        // Internal state to manage rapid clicking
         let reverb_state = {
           timer: null,
           is_connected: false,
@@ -97,7 +108,7 @@
 
         window.master_fx = {
           context: ctx,
-          nodes: {eq_low, eq_mid, eq_high, panner: App.panning, reverb_gain, master_gain},
+          nodes: {eq_low, eq_mid, eq_high, panner: App.panning, reverb_gain, master_gain, lfo, lfo_gain},
           set_eq: (low_db, mid_db, high_db) => {
             let now = ctx.currentTime
             let ramp = 0.1
@@ -118,7 +129,16 @@
             master_gain.gain.setTargetAtTime(val, ctx.currentTime, 0.1)
           },
           set_panning: (val) => {
-            App.panning.pan.setTargetAtTime(val, ctx.currentTime, 0.1)
+            // Add slight lookahead to prevent clicking
+            App.panning.pan.setTargetAtTime(val, ctx.currentTime + 0.02, 0.1)
+          },
+          // New LFO Control
+          set_auto_pan: (rate_hz, depth) => {
+            let now = ctx.currentTime
+            // Smoothly ramp the frequency
+            lfo.frequency.setTargetAtTime(rate_hz, now, 0.1)
+            // Smoothly ramp the depth (amplitude of the pan swing)
+            lfo_gain.gain.setTargetAtTime(depth, now, 0.1)
           },
           splash_reverb: (duration = 3) => {
             let now = ctx.currentTime
@@ -126,52 +146,33 @@
             let fade_out_time = 0.5
             let target_volume = 0.5
 
-            // 1. Clear any pending disconnects from previous clicks
             if (reverb_state.timer) {
               clearTimeout(reverb_state.timer)
               reverb_state.timer = null
             }
 
-            // 2. Cancel audio scheduled values (stop any current fading out)
             reverb_gain.gain.cancelScheduledValues(now)
 
-            // 3. Connect if not already connected
             if (!reverb_state.is_connected) {
               App.panning.connect(convolver)
               convolver.connect(reverb_gain)
               reverb_gain.connect(master_gain)
 
-              // Start from 0 if fresh connection
               reverb_gain.gain.setValueAtTime(0, now)
               reverb_state.is_connected = true
-              console.log(`Reverb Connected`)
-            }
-            else {
-              // If already connected, we might be fading out.
-              // We grab the current value implicitly by not setting it,
-              // and ramping back up to target.
-              // Note: WebAudio needs a starting anchor point for ramps usually,
-              // but setValueAtTime(reverb_gain.gain.value) is unreliable during ramps.
-              // So we just ramp immediately to target.
             }
 
-            // 4. Ramp to "On" Volume (Reset the clock)
-            // If it was already on, this keeps it on.
-            // If it was fading out, this pulls it back up.
             reverb_gain.gain.linearRampToValueAtTime(target_volume, now + fade_in_time)
 
-            // 5. Schedule the NEW fade out
             let fade_start = now + duration
             reverb_gain.gain.setValueAtTime(target_volume, fade_start)
             reverb_gain.gain.linearRampToValueAtTime(0, fade_start + fade_out_time)
 
-            // 6. Set the new cleanup timer
             reverb_state.timer = setTimeout(() => {
               reverb_gain.disconnect()
               convolver.disconnect()
               reverb_state.is_connected = false
-              console.log(`Reverb Disconnected (Clean)`)
-            }, (duration + fade_out_time) * 1000 + 100) // Buffer ms for safety
+            }, (duration + fade_out_time) * 1000 + 100)
           },
         }
       }

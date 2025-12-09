@@ -92,3 +92,23 @@ App.set_gain = (value) => {
 App.set_eq = (low, mid, high) => {
   window.master_fx.set_eq_freqs(low, mid, high)
 }
+
+// Rate: Speed in Hz (e.g., 0.5 is once every 2 seconds)
+// Depth: How far to pan (0 to 1). 1 = Full Left/Right swing
+App.start_auto_pan = (rate = 2, depth = 0.8) => {
+  window.master_fx.set_auto_pan(rate, depth)
+}
+
+App.stop_auto_pan = () => {
+  // Smoothly fade out the LFO depth to 0
+  window.master_fx.set_auto_pan(0, 0)
+}
+
+App.spin_panning = (duration_ms = 2000) => {
+  // Start spinning fast (4hz) with full depth
+  App.start_auto_pan(4, 1.0)
+
+  setTimeout(() => {
+    App.stop_auto_pan()
+  }, duration_ms)
+}

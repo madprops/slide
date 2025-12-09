@@ -409,27 +409,8 @@ App.square_gesture = () => {
   return right_angles >= 2
 }
 
-App.cycle_panning = (amount, iterations) => {
-  let start_pan = App.get_panning()
-  let counter = 0
-  let speed_ms = 200
-
-  let interval_id = setInterval(() => {
-    let direction = (counter % 2) === 0 ? -1 : 1
-    let offset = amount * direction
-    let next_pan = start_pan + offset
-    App.set_panning(next_pan)
-    counter = counter + 1
-
-    if (counter >= iterations) {
-      clearInterval(interval_id)
-      App.set_panning(start_pan)
-    }
-  }, speed_ms)
-}
-
 App.gesture_function = (level, action) => {
   App.increase_scope_click_level(level)
-  App.cycle_panning(0.9, 12)
+  App.spin_panning()
   action()
 }
