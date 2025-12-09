@@ -11,6 +11,7 @@
     --input_min_height: 200px;
 
     --alpha_background: #111111da;
+    --input-text-shadow: 0 0 0.2rem currentcolor;
 }
 
 body, html {
@@ -217,18 +218,19 @@ body, html {
 }
 
 #code-input.mirror {
+    text-shadow: var(--input-text-shadow);
     transform: scaleX(-1);
-    text-shadow: 0 0 0.2rem currentcolor;
 }
 
 #code-input.grow {
+    text-shadow: var(--input-text-shadow);
     font-size: 1.33rem;
-    text-shadow: 0 0 0.2rem currentcolor;
 }
 
 #code-input.cursive {
+    text-shadow: var(--input-text-shadow);
     font-family: cursive;
-    font-size: 1.33rem;
+    font-size: 1.46rem;
 }
 
 .code-input-controls {
