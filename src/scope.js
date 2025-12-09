@@ -337,7 +337,7 @@ App.handle_scope_mouse_up = (event) => {
     }
 
     if (App.scope_clicks.length >= App.many_clicks_amount) {
-        App.gesture_function(0, () => {
+      App.gesture_function(0, () => {
         App.grow_input()
       })
     }
