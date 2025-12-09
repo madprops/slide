@@ -146,11 +146,14 @@ App.get_el_height = (el) => {
 
   let styles = window.getComputedStyle(el)
   let content_height = el.clientHeight // includes padding but not border
-  let padding_top = parseFloat(styles.padding_top) || 0
-  let padding_bottom = parseFloat(styles.padding_bottom) || 0
+  let padding_top = parseFloat(styles.paddingTop) || 0
+  let padding_bottom = parseFloat(styles.paddingBottom) || 0
+  let margin_top = parseFloat(styles.marginTop) || 0
+  let margin_bottom = parseFloat(styles.marginBottom) || 0
 
   // clientHeight already includes padding; subtract once and add explicitly
-  return content_height - padding_top - padding_bottom + padding_top + padding_bottom
+  return content_height - padding_top - padding_bottom +
+  padding_top + padding_bottom + margin_top + margin_bottom
 }
 
 App.viewport_height = () => {
