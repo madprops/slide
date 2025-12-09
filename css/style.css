@@ -218,6 +218,12 @@ body, html {
 
 #code-input.mirror {
     transform: scaleX(-1);
+    text-shadow: 0 0 0.2rem currentcolor;
+}
+
+#code-input.grow {
+    font-size: 1.33rem;
+    text-shadow: 0 0 0.2rem currentcolor;
 }
 
 .code-input-controls {

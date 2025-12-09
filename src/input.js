@@ -8,6 +8,7 @@ App.code_scroll_wheel_pause_ms = 350
 App.code_scroll_song_pause_ms = 1.2 * 1000
 App.code_scroll_pending_delay_ms = 0
 App.input_mirror_time = 2.8 * 1000
+App.input_grow_time = 2.8 * 1000
 
 App.setup_input = () => {
   App.start_input_resize_observer()
@@ -518,7 +519,17 @@ App.mirror_input = () => {
   code_input.classList.add(`mirror`)
   clearTimeout(App.input_mirror_timeout)
 
-  setTimeout(() => {
+  App.input_mirror_timeout = setTimeout(() => {
     code_input.classList.remove(`mirror`)
   }, App.input_mirror_time)
+}
+
+App.grow_input = () => {
+  let code_input = DOM.el(`#code-input`)
+  code_input.classList.add(`grow`)
+  clearTimeout(App.input_grow_timeout)
+
+  App.input_grow_timeout = setTimeout(() => {
+    code_input.classList.remove(`grow`)
+  }, App.input_grow_time)
 }
