@@ -27,20 +27,3 @@ import "./sounds.js"
 import "./notes.js"
 import "./colors.js"
 import "./gestures.js"
-
-const start_app_events = () => {
-  if (!window?.App?.start_events) {
-    return
-  }
-
-  window.App.start_events()
-}
-
-if (document.readyState === `loading`) {
-  document.addEventListener(`DOMContentLoaded`, () => {
-    start_app_events()
-  }, {once: true})
-}
-else {
-  start_app_events()
-}

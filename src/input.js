@@ -18,6 +18,10 @@ App.get_input = () => {
   return DOM.el(`#code-input`)
 }
 
+App.get_input_wrapper = () => {
+  return DOM.el(`#code-input-wrapper`)
+}
+
 App.defer_code_scroll = (delay_ms) => {
   if (!Number.isFinite(delay_ms) || (delay_ms <= 0)) {
     App.code_scroll_pending_delay_ms = 0
@@ -183,7 +187,7 @@ App.stop_code_scroll = () => {
 }
 
 App.init_code_input_controls = () => {
-  let wrapper = DOM.el(`#code-input-wrapper`)
+  let wrapper = App.get_input_wrapper()
   let code_input = App.get_input()
   let scroll_button = DOM.el(`#code-input-scroll`)
   let max_button = DOM.el(`#code-input-max`)
@@ -361,7 +365,7 @@ App.init_code_input_controls = () => {
 
 // Add a ResizeObserver to resize the scope canvas when the wrapper is resized
 App.start_input_resize_observer = () => {
-  let wrapper = DOM.el(`#code-input-wrapper`)
+  let wrapper = App.get_input_wrapper()
 
   if (!wrapper) {
     return
@@ -375,7 +379,7 @@ App.start_input_resize_observer = () => {
 }
 
 App.restore_input = () => {
-  let wrapper = DOM.el(`#code-input-wrapper`)
+  let wrapper = App.get_input_wrapper()
 
   if (!wrapper) {
     return
@@ -389,10 +393,11 @@ App.restore_input = () => {
 }
 
 App.input_is_maxed = () => {
-  let wrapper = DOM.el(`#code-input-wrapper`)
-  let diff = App.get_input_diff()
-  let height = parseInt(wrapper.style.height)
-  return Math.abs(diff - height) <= 2
+  let wrapper = App.get_input_wrapper()
+  let height_1 = parseInt(wrapper.style.height)
+  let width_1 = parseInt(wrapper.style.width)
+  let [height_2, width_2] = App.max_input(true)
+  return (height_1 === height_2) && (width_1 === width_2)
 }
 
 App.restart_code_scroll = () => {
@@ -501,14 +506,19 @@ App.cursive_input = () => {
   }, App.input_grow_time)
 }
 
-App.max_input = () => {
-  let wrapper = DOM.el(`#code-input-wrapper`)
+App.max_input = (just_check = false) => {
+  let wrapper = App.get_input_wrapper()
   let style = getComputedStyle(document.documentElement)
   let max_width = parseInt(style.getPropertyValue(`--input_max_width`))
   let diff = App.get_input_diff()
-  wrapper.style.height = `${diff}px`
-  wrapper.style.width = `${max_width}%`
-  App.check_max_button()
+
+  if (!just_check) {
+    wrapper.style.height = `${diff}px`
+    wrapper.style.width = `${max_width}%`
+    App.check_max_button()
+  }
+
+  return [diff, max_width]
 }
 
 App.get_input_diff = () => {

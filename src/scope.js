@@ -133,7 +133,6 @@ App.resize_scope_canvas = () => {
   }
 
   DOM.show(`#scope-container`, 2)
-
   let ratio = 1
 
   if (typeof window !== `undefined`) {
@@ -142,8 +141,8 @@ App.resize_scope_canvas = () => {
 
   App.scope_pixel_ratio = ratio
 
-  let wrapper_el = DOM.el(`#code-input-wrapper`)
-  let container_el = DOM.el(`#scope-container`)
+  let wrapper_el = App.get_input_wrapper()
+  let container_el = App.get_scope_container()
 
   // Default fallback
   let css_width = 320
@@ -610,7 +609,6 @@ App.enable_scope_visualizer = () => {
   App.scope_enabled = true
   App.set_scope_visibility(true)
   App.handle_scope_resize()
-
   let canvas = App.setup_scope_canvas()
 
   if (canvas && !App.scope_animation_id) {
