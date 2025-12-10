@@ -43,7 +43,7 @@ App.scope_click_lock = 250
 App.scope_debouncer_delay = 50
 App.max_scope_slide_y_dff = 45
 App.scope_click_level_time = 2.8 * 1000
-App.many_clicks_amount = 25
+App.many_clicks_amount = 100
 
 App.setup_scope = () => {
   App.scope_debouncer = App.create_debouncer(() => {
