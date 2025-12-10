@@ -6,8 +6,9 @@ App.create_about_modal = () => {
   header.prepend(image)
   let title = DOM.el(`.modal-title`, modal)
   let version = `v${App.config.version}`
-  title.textContent = `Slide ${version} | Merkoba | 2025`
+  title.textContent = `Slide | ${version} | Merkoba | 2025 | ${App.commit_hash}`
   title.id = `modal-title-about`
+  title.title = `Name | Version | Company | Year | Git Commit Hash`
   let body = DOM.el(`.modal-body`, modal)
   body.id = `modal-body-about`
 

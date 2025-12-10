@@ -6,6 +6,7 @@ import json
 import atexit
 import logging
 import threading
+import subprocess
 from pathlib import Path
 from typing import Any
 from flask import Flask  # type: ignore
@@ -65,6 +66,20 @@ WORKER_THREAD: threading.Thread | None = None
 STATUS_OBSERVER: Any = None
 HISTORY: list[str] = []
 
+def get_git_commit_hash() -> str:
+    """Retrieves the current git commit hash."""
+    try:
+        # Get the short hash (first 7 characters)
+        commit_hash = subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"],
+            stderr=subprocess.STDOUT
+        ).decode("utf-8").strip()
+
+        return commit_hash
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return "unknown"
+
+COMMIT_HASH = get_git_commit_hash()
 
 def load_config() -> None:
     """Load application configuration from config.json."""
@@ -406,7 +421,11 @@ def index() -> Any:
     song_display = song_value or beat_value or ""
 
     return render_template(
-        "index.jinja", song_name=song_name, song_display=song_display, config=app_config
+        "index.jinja",
+        song_name=song_name,
+        song_display=song_display,
+        config=app_config,
+        commit_hash=COMMIT_HASH,
     )
 
 
