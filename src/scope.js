@@ -45,7 +45,7 @@ App.max_scope_slide_y_dff = 45
 App.scope_click_level_time = 2.8 * 1000
 App.many_clicks_amount = 100
 App.scope_gestures_enabled = false
-App.scope_clicks_min = 20
+App.scope_clicks_min = 5
 
 App.setup_scope = () => {
   App.scope_debouncer = App.create_debouncer(() => {
@@ -342,7 +342,6 @@ App.handle_scope_mouse_move = (event) => {
       for (let i = 1; i <= steps; i++) {
         let intermediate_x = last_x + (dx * i / steps)
         let intermediate_y = last_y + (dy * i / steps)
-        console.log(333)
         App.scope_clicks.push({x: intermediate_x, y: intermediate_y, timestamp: Date.now()})
       }
     }
@@ -362,6 +361,7 @@ App.handle_scope_mouse_up = (event) => {
       if (!App.check_scope_panning()) {
         App.beep_sound()
       }
+
     }
 
     return
