@@ -45,6 +45,7 @@ App.max_scope_slide_y_dff = 45
 App.scope_click_level_time = 2.8 * 1000
 App.many_clicks_amount = 100
 App.scope_gestures_enabled = false
+App.scope_clicks_min = 20
 
 App.setup_scope = () => {
   App.scope_debouncer = App.create_debouncer(() => {
@@ -295,7 +296,7 @@ App.handle_scope_mouse_down = (event) => {
   App.scope_mousedown_date = Date.now()
   App.scope_is_drawing = true
 
-  if (App.scope_clicks.length === 0) {
+  if (App.scope_clicks.length <= App.scope_clicks_min) {
     App.scope_gestures_enabled = true
   }
 
@@ -339,9 +340,10 @@ App.handle_scope_mouse_move = (event) => {
       let steps = Math.ceil(distance / App.scope_click_distance)
 
       for (let i = 1; i <= steps; i++) {
-        let intermediateX = last_x + (dx * i / steps)
-        let intermediateY = last_y + (dy * i / steps)
-        App.scope_clicks.push({x: intermediateX, y: intermediateY, timestamp: Date.now()})
+        let intermediate_x = last_x + (dx * i / steps)
+        let intermediate_y = last_y + (dy * i / steps)
+        console.log(333)
+        App.scope_clicks.push({x: intermediate_x, y: intermediate_y, timestamp: Date.now()})
       }
     }
 
@@ -352,16 +354,8 @@ App.handle_scope_mouse_move = (event) => {
 
 App.handle_scope_mouse_up = (event) => {
   App.mouse_up_coords = App.get_scope_coords(event)
-  let slided = false
 
-  if ((Date.now() - App.scope_mousedown_date) <= App.scope_slide_delay) {
-    slided = App.check_scope_slide()
-  }
-
-  if (slided) {
-    App.scope_gestures_enabled = false
-  }
-  else {
+  if (App.scope_clicks.length <= App.scope_clicks_min) {
     if ((Date.now() - App.scope_mousedown_date) <= App.scope_beep_delay) {
       App.splash_reverb(2)
 
@@ -370,27 +364,36 @@ App.handle_scope_mouse_up = (event) => {
       }
     }
 
-    if (App.scope_gestures_enabled) {
-      if (App.triangle_gesture()) {
-        App.gesture_function(2, () => {
-          App.grow_input()
-        })
-      }
-      else if (App.square_gesture()) {
-        App.gesture_function(3, () => {
-          App.cursive_input()
-        })
-      }
-      else if (App.circle_gesture()) {
-        App.gesture_function(4, () => {
-          App.mirror_input()
-        })
-      }
-      else if (App.scope_clicks.length >= App.many_clicks_amount) {
-        App.gesture_function(5, () => {
-          App.grow_input()
-        })
-      }
+    return
+  }
+
+  if ((Date.now() - App.scope_mousedown_date) <= App.scope_slide_delay) {
+    if (App.check_scope_slide()) {
+      App.scope_gestures_enabled = false
+      return
+    }
+  }
+
+  if (App.scope_gestures_enabled) {
+    if (App.triangle_gesture()) {
+      App.gesture_function(2, () => {
+        App.grow_input()
+      })
+    }
+    else if (App.square_gesture()) {
+      App.gesture_function(3, () => {
+        App.cursive_input()
+      })
+    }
+    else if (App.circle_gesture()) {
+      App.gesture_function(4, () => {
+        App.mirror_input()
+      })
+    }
+    else if (App.scope_clicks.length >= App.many_clicks_amount) {
+      App.gesture_function(5, () => {
+        App.grow_input()
+      })
     }
   }
 }
