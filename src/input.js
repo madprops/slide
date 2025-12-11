@@ -470,7 +470,7 @@ App.deactivate_bottom_input_controls = () => {
 }
 
 App.mirror_input = () => {
-  let code_input = DOM.el(`#code-input`)
+  let code_input = App.get_input()
   code_input.classList.add(`mirror`)
   clearTimeout(App.input_mirror_timeout)
 
@@ -479,18 +479,18 @@ App.mirror_input = () => {
   }, App.input_mirror_time)
 }
 
-App.grow_input = () => {
-  let code_input = DOM.el(`#code-input`)
-  code_input.classList.add(`grow`)
+App.glow_input = () => {
+  let code_input = App.get_input()
+  code_input.classList.add(`glow`)
   clearTimeout(App.input_grow_timeout)
 
   App.input_grow_timeout = setTimeout(() => {
-    code_input.classList.remove(`grow`)
+    code_input.classList.remove(`glow`)
   }, App.input_grow_time)
 }
 
 App.cursive_input = () => {
-  let code_input = DOM.el(`#code-input`)
+  let code_input = App.get_input()
   code_input.classList.add(`cursive`)
   clearTimeout(App.input_grow_timeout)
 

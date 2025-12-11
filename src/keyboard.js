@@ -100,21 +100,21 @@ App.setup_editor_autocomplete = () => {
       let line = cm.getLine(cursor.line)
       let text_before = line.slice(0, cursor.ch)
 
-      if (text_before.endsWith(`note("`)) {
+      if (text_before.endsWith(`note("`) || text_before.endsWith(`note('`)) {
         cm.showHint({
           hint: App.notes_hint,
           completeSingle: false,
           container: document.body,
         })
       }
-      else if (text_before.endsWith(`bank("`)) {
+      else if (text_before.endsWith(`bank("`) || text_before.endsWith(`bank('`)) {
         cm.showHint({
           hint: App.banks_hint,
           completeSingle: false,
           container: document.body,
         })
       }
-      else if (text_before.endsWith(`sound("`)) {
+      else if (text_before.endsWith(`sound("`) || text_before.endsWith(`sound('`)) {
         cm.showHint({
           hint: App.sounds_hint,
           completeSingle: false,

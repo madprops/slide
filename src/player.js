@@ -27,6 +27,7 @@ App.play_action = async (code = ``, force = false) => {
 
   if (!code) {
     App.reset_playing()
+    App.stop_action()
     return
   }
 

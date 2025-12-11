@@ -364,28 +364,28 @@ App.handle_scope_mouse_up = (event) => {
   if (App.scope_gestures_enabled) {
     if (App.triangle_gesture()) {
       App.gesture_function(2, () => {
-        App.grow_input()
+        App.glow_input()
       })
 
       return
     }
     else if (App.square_gesture()) {
       App.gesture_function(3, () => {
-        App.cursive_input()
+        App.glow_input()
       })
 
       return
     }
     else if (App.circle_gesture()) {
       App.gesture_function(4, () => {
-        App.mirror_input()
+        App.glow_input()
       })
 
       return
     }
     else if (App.scope_clicks.length >= App.many_clicks_amount) {
       App.gesture_function(5, () => {
-        App.grow_input()
+        App.glow_input()
       })
 
       return

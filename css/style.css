@@ -218,19 +218,19 @@ body, html {
     resize: none;
 }
 
-#code-input.mirror {
-    text-shadow: var(--input-text-shadow);
-    transform: scaleX(-1);
+#codemirror-wrapper.mirror {
+    text-shadow: var(--input-text-shadow) !important;
+    transform: scaleX(-1) !important;
 }
 
-#code-input.grow {
-    text-shadow: var(--input-text-shadow);
+#codemirror-wrapper.glow {
+    text-shadow: var(--input-text-shadow) !important;
 }
 
-#code-input.cursive {
-    text-shadow: var(--input-text-shadow);
-    font-family: cursive;
-    font-size: 1.4rem;
+#codemirror-wrapper.cursive {
+    text-shadow: var(--input-text-shadow) !important;
+    font-family: cursive !important;
+    font-size: 1.4rem !important;
 }
 
 .code-input-controls {
