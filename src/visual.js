@@ -209,9 +209,9 @@ App.anim_flux_surface = (c, w, h, f) => {
 App.anim_hyper_rose = (c, w, h, f) => {
   let cx = w / 2
   let cy = h / 2
-  let max_r = (Math.max(w, h) * 0.8)
-  let t = (f * 0.002)
-  let two_pi = (Math.PI * 2)
+  let max_r = Math.max(w, h) * 0.8
+  let t = f * 0.002
+  let two_pi = Math.PI * 2
 
   // increased line width slightly to compensate for fewer layers
   c.lineWidth = 2
@@ -219,8 +219,8 @@ App.anim_hyper_rose = (c, w, h, f) => {
 
   // reduced layers from 15 to 8 for performance
   for (let layer = 0; layer < 8; layer++) {
-    let p = (layer / 8)
-    let radius_scale = (max_r * (1 - p))
+    let p = layer / 8
+    let radius_scale = max_r * (1 - p)
 
     // spacing out the colors a bit more (* 15) to keep the spectrum wide
     let hue = ((f * 0.2) + (layer * 15)) % 360
@@ -231,16 +231,15 @@ App.anim_hyper_rose = (c, w, h, f) => {
     // optimization: shape closes at 2*PI, so 4*PI was redundant overdraw
     // optimization: increased step to 0.1 (less CPU, same visual smoothness)
     for (let a = 0; a < two_pi; a += 0.1) {
-
       // pre-calculate the rotation for this point
       // ((a * 7) + (t * 5)) is the petal frequency
-      let r_mod = (Math.sin((a * 7) + (t * 5)) * Math.cos((a * 3) - t))
-      let r = (radius_scale * (0.5 + (0.5 * r_mod)))
+      let r_mod = Math.sin((a * 7) + (t * 5)) * Math.cos((a * 3) - t)
+      let r = radius_scale * (0.5 + (0.5 * r_mod))
 
-      let theta = (a + (t * (layer + 1)))
+      let theta = a + (t * (layer + 1))
 
-      let x = (cx + (Math.cos(theta) * r))
-      let y = (cy + (Math.sin(theta) * r))
+      let x = cx + (Math.cos(theta) * r)
+      let y = cy + (Math.sin(theta) * r)
 
       c.lineTo(x, y)
     }
