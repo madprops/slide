@@ -26,6 +26,8 @@ App.play_action = async (code = ``, force = false) => {
   }
 
   if (!code) {
+    App.last_code = ``
+    App.current_song = ``
     App.reset_playing()
     App.stop_action()
     return
