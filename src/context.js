@@ -4,49 +4,29 @@ NeedContext.after_hide = () => {
   App.focus_input()
 }
 
-App.show_sounds_context = (event) => {
-  let items = []
-
-  for (let sound of App.strudel_sounds) {
-    items.push({
-      text: sound,
+App.show_generic_context = (data_source, title, event) => {
+  let items = data_source.map((item) => {
+    return {
+      text: item,
       action: () => {
-        App.add_word_to_input(sound)
-      },
-    })
-  }
+        App.add_text_to_input(item)
+      }
+    }
+  })
 
-  App.show_context(items, event, `Sounds`)
+  App.show_context(items, event, title)
+}
+
+App.show_sounds_context = (event) => {
+  App.show_generic_context(App.strudel_sounds, `Sounds`, event)
 }
 
 App.show_notes_context = (event) => {
-  let items = []
-
-  for (let note of App.strudel_notes) {
-    items.push({
-      text: note,
-      action: () => {
-        App.add_word_to_input(note)
-      },
-    })
-  }
-
-  App.show_context(items, event, `Notes`)
+  App.show_generic_context(App.strudel_notes, `Notes`, event)
 }
 
 App.show_banks_context = (event) => {
-  let items = []
-
-  for (let bank of App.strudel_banks) {
-    items.push({
-      text: bank,
-      action: () => {
-        App.add_word_to_input(bank)
-      },
-    })
-  }
-
-  App.show_context(items, event, `Banks`)
+  App.show_generic_context(App.strudel_banks, `Banks`, event)
 }
 
 App.show_context = (items, event, title) => {

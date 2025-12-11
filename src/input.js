@@ -435,23 +435,9 @@ App.restart_code_scroll = () => {
   }
 }
 
-App.add_word_to_input = (word) => {
-  let textarea = App.get_input()
-
-  // The element must be focused for execCommand to apply to it
-  textarea.focus()
-
-  // 'insertText' mimics user input, preserving the undo history
-  let success = document.execCommand(`insertText`, false, word)
-
-  if (!success) {
-    // Fallback if execCommand is not supported
-    let start_pos = textarea.selectionStart
-    let end_pos = textarea.selectionEnd
-
-    // setRangeText is cleaner than manual string slicing and handles cursor position
-    textarea.setRangeText(word, start_pos, end_pos, `end`)
-  }
+App.add_text_to_input = (text) => {
+  App.document.replaceSelection(text)
+  App.editor.focus()
 }
 
 App.focus_input = () => {
