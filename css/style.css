@@ -204,7 +204,7 @@ body, html {
     min-width: 500px;
 }
 
-#code-input {
+#codemirror-wrapper {
     width: 100%;
     height: 100%;
     background: var(--alpha_background);
@@ -241,6 +241,7 @@ body, html {
     opacity: 0;
     pointer-events: none;
     transition: opacity 1s ease;
+    z-index: 999;
 }
 
 #code-input-controls-top {
@@ -304,6 +305,7 @@ body, html {
     opacity: 0;
     pointer-events: none;
     transition: opacity 1s ease;
+    z-index: 999;
 }
 
 #resize-handle::after {

@@ -12,6 +12,25 @@ App.input_grow_time = 2.8 * 1000
 
 App.setup_input = () => {
   App.start_input_resize_observer()
+  App.create_editor()
+}
+
+App.create_editor = () => {
+	App.editor = CodeMirror.fromTextArea(App.get_input(),
+		{
+			lineNumbers: false,
+			theme: `nord`,
+			indentWithTabs: true,
+			tabSize: 4,
+			lineWrapping: true,
+			indentUnit: 4
+		})
+
+  App.editor.getWrapperElement().id = `codemirror-wrapper`
+	App.document = App.editor.getDoc()
+	App.editor.setOption(`mode`, `clike`)
+	App.editor.refresh()
+	App.editor.focus()
 }
 
 App.get_input = () => {
@@ -20,6 +39,10 @@ App.get_input = () => {
 
 App.get_input_wrapper = () => {
   return DOM.el(`#code-input-wrapper`)
+}
+
+App.get_input_value = () => {
+  return App.document.getValue()
 }
 
 App.defer_code_scroll = (delay_ms) => {
@@ -69,7 +92,7 @@ App.set_input = (code) => {
     return
   }
 
-  code_input.value = code
+  App.document.setValue(code)
   code_input.scrollTop = 0
   App.reset_code_scroll_for_content()
 }
@@ -433,7 +456,7 @@ App.add_word_to_input = (word) => {
 }
 
 App.focus_input = () => {
-  App.get_input().focus()
+  App.editor.focus()
 }
 
 App.activate_top_input_controls = () => {

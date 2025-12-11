@@ -350,8 +350,7 @@ App.start_events = async () => {
   App.start_visual()
 
   DOM.ev(`#btn-play`, `click`, () => {
-    let code_input = App.get_input()
-    let next_code = code_input ? code_input.value : ``
+    let next_code = App.get_input_value()
     App.play_action(next_code, true)
   })
 
@@ -424,7 +423,7 @@ App.set_title = (title) => {
 
 App.update_url = (song_name = ``) => {
   let next_url = new URL(window.location.href)
-  let code = App.get_input().value.trim()
+  let code = App.get_input_value().trim()
 
   if (!song_name) {
     song_name = App.get_song_name()

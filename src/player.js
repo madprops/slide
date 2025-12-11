@@ -22,8 +22,7 @@ App.play_action = async (code = ``, force = false) => {
   }
 
   if (!code) {
-    let code_input = App.get_input()
-    code = code_input.value
+    code = App.get_input_value()
   }
 
   if (!code) {
