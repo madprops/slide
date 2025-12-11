@@ -120,9 +120,7 @@ App.code_scroll_tick = (timestamp) => {
     return
   }
 
-  let input = App.get_input()
-
-  if (!input) {
+  if (!App.editor) {
     App.stop_code_scroll()
     return
   }
@@ -142,7 +140,7 @@ App.code_scroll_tick = (timestamp) => {
   App.code_scroll_last_ts = timestamp
   let distance = (App.code_scroll_speed_px_per_second * delta) / 1000
   let target = App.get_input_scroll() + (distance * App.code_scroll_direction)
-  let max_scroll = Math.max(0, input.scrollHeight - input.clientHeight)
+  let max_scroll = Math.max(0, App.get_input_height() - App.get_input_client_height())
   App.set_input_scroll(target)
 
   if (max_scroll <= 0) {
@@ -176,7 +174,7 @@ App.start_code_scroll = () => {
     return
   }
 
-  let max_scroll = Math.max(0, input.scrollHeight - input.clientHeight)
+  let max_scroll = Math.max(0, App.get_input_height() - App.get_input_client_height())
 
   if (max_scroll <= 0) {
     return
@@ -565,4 +563,14 @@ App.scroll_input_to_bottom = () => {
 App.get_input_scroll = () => {
   let scroll_info = App.editor.getScrollInfo()
   return scroll_info.top
+}
+
+App.get_input_height = () => {
+  let info = App.editor.getScrollInfo()
+  return info.height
+}
+
+App.get_input_client_height = () => {
+  let info = App.editor.getScrollInfo()
+  return info.clientHeight
 }
