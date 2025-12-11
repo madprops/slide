@@ -10,7 +10,7 @@ App.show_generic_context = (data_source, title, event) => {
       text: item,
       action: () => {
         App.add_text_to_input(item)
-      }
+      },
     }
   })
 

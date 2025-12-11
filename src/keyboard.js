@@ -43,16 +43,16 @@ App.generic_hint = (cm, callback, items) => {
   let token = cm.getTokenAt(cursor)
 
   // Strip quotes to get the search term (e.g., "Ak" from "Akai")
-  let current_word = token.string.replace(/['"]/g, "")
+  let current_word = token.string.replace(/['"]/g, ``)
 
   // Filter the list
   let suggestions = items.filter(bank =>
-    bank.toLowerCase().startsWith(current_word.toLowerCase())
+    bank.toLowerCase().startsWith(current_word.toLowerCase()),
   )
 
   // Debugging: Check if we actually found anything
   if (suggestions.length === 0) {
-    console.log("⚠️ No matches found for:", current_word)
+    console.log(`⚠️ No matches found for:`, current_word)
   }
   else {
     console.log(`✅ Found ${suggestions.length} matches`)
@@ -62,7 +62,7 @@ App.generic_hint = (cm, callback, items) => {
   callback({
     list: suggestions,
     from: {line: cursor.line, ch: token.start + 1}, // +1 to skip open quote
-    to: {line: cursor.line, ch: token.end}
+    to: {line: cursor.line, ch: token.end},
   })
 }
 
@@ -89,13 +89,13 @@ App.sound_hint_func = (cm) => {
   return {
     list: App.strudel_sounds,
     from: cursor,
-    to: cursor
+    to: cursor,
   }
 }
 
 App.setup_editor_autocomplete = () => {
   App.editor.on(`inputRead`, (cm, change) => {
-    if (change.text[0] === `"` || change.text[0] === `'`) {
+    if ((change.text[0] === `"`) || (change.text[0] === `'`)) {
       let cursor = cm.getCursor()
       let line = cm.getLine(cursor.line)
       let text_before = line.slice(0, cursor.ch)
@@ -104,21 +104,21 @@ App.setup_editor_autocomplete = () => {
         cm.showHint({
           hint: App.notes_hint,
           completeSingle: false,
-          container: document.body
+          container: document.body,
         })
       }
       else if (text_before.endsWith(`bank("`)) {
         cm.showHint({
           hint: App.banks_hint,
           completeSingle: false,
-          container: document.body
+          container: document.body,
         })
       }
       else if (text_before.endsWith(`sound("`)) {
         cm.showHint({
           hint: App.sounds_hint,
           completeSingle: false,
-          container: document.body
+          container: document.body,
         })
       }
     }
