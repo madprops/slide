@@ -354,18 +354,6 @@ App.handle_scope_mouse_move = (event) => {
 App.handle_scope_mouse_up = (event) => {
   App.mouse_up_coords = App.get_scope_coords(event)
 
-  if (App.scope_clicks.length <= App.scope_clicks_min) {
-    if ((Date.now() - App.scope_mousedown_date) <= App.scope_beep_delay) {
-      App.splash_reverb(2)
-
-      if (!App.check_scope_panning()) {
-        App.beep_sound()
-      }
-    }
-
-    return
-  }
-
   if ((Date.now() - App.scope_mousedown_date) <= App.scope_slide_delay) {
     if (App.check_scope_slide()) {
       App.scope_gestures_enabled = false
@@ -378,21 +366,37 @@ App.handle_scope_mouse_up = (event) => {
       App.gesture_function(2, () => {
         App.grow_input()
       })
+
+      return
     }
     else if (App.square_gesture()) {
       App.gesture_function(3, () => {
         App.cursive_input()
       })
+
+      return
     }
     else if (App.circle_gesture()) {
       App.gesture_function(4, () => {
         App.mirror_input()
       })
+
+      return
     }
     else if (App.scope_clicks.length >= App.many_clicks_amount) {
       App.gesture_function(5, () => {
         App.grow_input()
       })
+
+      return
+    }
+  }
+
+  if ((Date.now() - App.scope_mousedown_date) <= App.scope_beep_delay) {
+    App.splash_reverb(2)
+
+    if (!App.check_scope_panning()) {
+      App.beep_sound()
     }
   }
 }
