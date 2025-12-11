@@ -162,31 +162,44 @@ App.anim_bio_tunnel = (c, w, h, f) => {
 }
 
 App.anim_flux_surface = (c, w, h, f) => {
-  const line_gap = 25
-  const time = f * 0.03
+  let line_gap = 30 // Increased gap (25 -> 30) to reduce draw calls
+  let step_x = 40 // Increased x step (20 -> 40), low freq waves look fine with less points
+  let time = f * 0.03
+  let time_doubled = time * 2 // Pre-calc constant
+  let max_amp = 65 // 50 (wave1) + 15 (wave2) for bounds checking
 
   c.lineWidth = 2
 
-  // Over-scan vertical loop to ensure waves don't leave gaps at edges
-  for (let y = -100; y < h + 100; y += line_gap) {
-    c.beginPath()
+  // Optimization: Pre-calculate "Wave 1" (Swells) since it implies identical y-offset for every line
+  // This removes a heavy Math.sin() call from the inner loop
+  let wave_1_cache = []
 
-    // Color gradient from top to bottom
-    // We mix time into the hue so the whole ocean shifts colors
+  for (let x = 0; x <= w; x += step_x) {
+    wave_1_cache.push(Math.sin(x * 0.005 + time) * 50)
+  }
+
+  // Loop Y with padding based on max amplitude so lines don't pop in/out
+  for (let y = -max_amp; y < h + max_amp; y += line_gap) {
+    let y_factor = y * 0.01 // Pre-calc y-component of wave 2
+
+    // Color logic
     let hue = (y * 0.2 + f * 0.5) % 360
     c.strokeStyle = `hsla(${hue}, 60%, 60%, 0.8)`
 
-    // Draw the horizontal line with distortion
-    for (let x = 0; x <= w; x += 20) {
-      // Create complex liquid motion by adding two sine waves together
-      // Wave 1: Large slow swells
-      let wave1 = Math.sin(x * 0.005 + time) * 50
-      // Wave 2: Fast ripples
-      let wave2 = Math.sin(x * 0.02 - time * 2 + y * 0.01) * 15
+    c.beginPath()
 
-      let distortion = wave1 + wave2
+    let x_index = 0
 
-      c.lineTo(x, y + distortion)
+    for (let x = 0; x <= w; x += step_x) {
+      // Fetch pre-calculated large swell
+      let wave_1 = wave_1_cache[x_index]
+
+      // Calculate fast ripples (must be done here as it depends on y)
+      let wave_2 = Math.sin(x * 0.02 - time_doubled + y_factor) * 15
+
+      c.lineTo(x, y + wave_1 + wave_2)
+
+      x_index++
     }
 
     c.stroke()
