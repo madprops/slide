@@ -1,17 +1,12 @@
 App.colors_enabled = true
 
 App.apply_color = (color) => {
-  let code_input = App.get_input()
   let volume_value = DOM.el(`#volume-value`)
   let volume_slider = DOM.el(`#volume-slider`)
   let tempo_value = DOM.el(`#tempo-value`)
   let tempo_slider = DOM.el(`#tempo-slider`)
   let status_el = DOM.el(`#status`)
   let image_el = DOM.el(`#image`)
-
-  if (code_input) {
-    code_input.style.color = color
-  }
 
   if (volume_value) {
     volume_value.style.color = color
