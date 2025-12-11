@@ -1,4 +1,5 @@
 // Author: madprops
+// CPM: 25
 
 cat(
 	cat(
