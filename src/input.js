@@ -14,6 +14,7 @@ App.setup_input = () => {
   App.start_input_resize_observer()
   App.create_editor()
   App.setup_editor_autocomplete()
+  App.max_button = App.get_max_button()
 }
 
 App.create_editor = () => {
@@ -210,7 +211,7 @@ App.init_code_input_controls = () => {
   let wrapper = App.get_input_wrapper()
   let code_input = App.get_input()
   let scroll_button = DOM.el(`#code-input-scroll`)
-  let max_button = DOM.el(`#code-input-max`)
+  let max_button = App.get_max_button()
   let top_button = DOM.el(`#code-input-top`)
   let bottom_button = DOM.el(`#code-input-bottom`)
   let sounds_button = DOM.el(`#code-input-sounds`)
@@ -391,11 +392,12 @@ App.start_input_resize_observer = () => {
     return
   }
 
-  const resizeObserver = new ResizeObserver(() => {
+  let observer = new ResizeObserver(() => {
     App.scope_debouncer.call()
+    App.enable_max_button()
   })
 
-  resizeObserver.observe(wrapper)
+  observer.observe(wrapper)
 }
 
 App.restore_input = () => {
@@ -537,14 +539,24 @@ App.get_input_diff = () => {
 }
 
 App.check_max_button = () => {
-  let max_button = DOM.el(`#code-input-max`)
-
   if (App.input_is_maxed()) {
-    max_button.classList.add(`disabled`)
+    App.disable_max_button()
   }
   else {
-    max_button.classList.remove(`disabled`)
+    App.enable_max_button()
   }
+}
+
+App.get_max_button = () => {
+  return DOM.el(`#code-input-max`)
+}
+
+App.enable_max_button = () => {
+  App.max_button.classList.remove(`disabled`)
+}
+
+App.disable_max_button = () => {
+  App.max_button.classList.add(`disabled`)
 }
 
 App.set_input_scroll = (v_amount) => {
