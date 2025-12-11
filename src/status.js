@@ -5,9 +5,24 @@ App.setup_status = () => {
     App.do_set_status(status)
   }, 300)
 
-  DOM.ev(`#status`, `click`, () => {
+  let status = App.get_status()
+
+  DOM.ev(status, `click`, () => {
     App.ask_for_title()
   })
+
+  DOM.ev(status, `wheel`, (event) => {
+    if (event.deltaY < 0) {
+      status.scrollLeft -= 12
+    }
+    else if (event.deltaY > 0) {
+      status.scrollLeft += 12
+    }
+  })
+}
+
+App.get_status = () => {
+  return DOM.el(`#status`)
 }
 
 App.set_status = (status) => {
@@ -19,7 +34,7 @@ App.set_status = (status) => {
 }
 
 App.do_set_status = (status) => {
-  let status_el = DOM.el(`#status`)
+  let status_el = App.get_status()
   status_el.innerText = status
 }
 
