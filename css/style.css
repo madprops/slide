@@ -8,6 +8,7 @@
     --alpha_background: #111111da;
     --input-text-shadow: 0 0 0.2rem currentcolor;
     --border-transition: border-color 100ms;
+    --buttons-gap: 0.62rem;
 }
 
 body, html {
@@ -355,7 +356,7 @@ button:hover {
 #controls {
     margin-top: 16px;
     display: flex;
-    gap: 10px;
+    gap: var(--buttons-gap);
     height: 2rem;
     display: flex;
     flex-direction: row;
@@ -586,7 +587,7 @@ a.popup:hover {
 
 .modal-buttons {
     display: flex;
-    gap: 0.8rem;
+    gap: var(--buttons-gap);
     justify-content: flex-end;
 }
 
