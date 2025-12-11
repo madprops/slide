@@ -159,3 +159,21 @@ App.get_el_height = (el) => {
 App.viewport_height = () => {
   return window.innerHeight || document.documentElement.clientHeight
 }
+
+App.compress_string = (text) => {
+  try {
+    return lz.compressToEncodedURIComponent(text)
+  }
+  catch (err) {
+    return ``
+  }
+}
+
+App.uncompress_string = (hash) => {
+  try {
+    return lz.decompressFromEncodedURIComponent(hash)
+  }
+  catch (err) {
+    return ``
+  }
+}

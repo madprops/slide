@@ -6,6 +6,7 @@ import {transpiler} from "@strudel.cycles/transpiler"
 import {registerSoundfonts} from "@strudel.cycles/soundfonts"
 import {cleanupDraw} from "@strudel.cycles/draw"
 import {initHydra, clearHydra, H as H_hydra} from "@strudel.cycles/hydra"
+import {LZString} from "./libs/lz-string.js"
 
 App.last_eval_error = ``
 
@@ -440,7 +441,8 @@ App.update_url = (song_name = ``) => {
   }
 
   if (code && !song_name && (code.length <= App.code_url_max)) {
-    next_url.searchParams.set(App.code_query_key, code)
+    let compressed_code = App.compress_string(code)
+    next_url.searchParams.set(App.code_query_key, compressed_code)
   }
   else {
     next_url.searchParams.delete(App.code_query_key)
@@ -496,3 +498,4 @@ App.get_controls_height = () => {
 window.H = H_hydra
 window.initHydra = initHydra
 window.clearHydra = clearHydra
+window.lz = LZString

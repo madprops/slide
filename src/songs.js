@@ -97,30 +97,6 @@ App.load_song = async (song_name) => {
   }
 }
 
-App.load_song_from_query = async () => {
-  let query_params = App.get_query_params()
-  let requested_song = query_params.get(App.song_query_key)
-
-  if (!requested_song) {
-    return false
-  }
-
-  try {
-    App.set_status(`Loading ${requested_song}...`)
-    let content = await App.fetch_song_content(requested_song)
-    App.set_input(content)
-    App.set_song_context(requested_song)
-    App.set_status(`Loaded: ${App.underspace(requested_song)}`)
-    return true
-  }
-  catch (err) {
-    App.set_status(`Failed to load song: ${err.message}`)
-    console.error(`Failed to load song:`, err)
-  }
-
-  return false
-}
-
 App.set_song_context = (song_name = ``) => {
   App.current_song = song_name || ``
   App.set_title(App.underspace(App.current_song))
