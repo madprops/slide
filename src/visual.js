@@ -212,27 +212,24 @@ App.anim_hyper_rose = (c, w, h, f) => {
   let max_r = Math.max(w, h) * 0.8
   let t = f * 0.002
   let two_pi = Math.PI * 2
+  // Decreased step from 0.1 to 0.01 to fix roughness
+  let step = 0.01
 
-  // increased line width slightly to compensate for fewer layers
   c.lineWidth = 2
+  // Round joins make the connection points between lines less sharp
+  c.lineJoin = `round`
   c.globalCompositeOperation = `lighter`
 
-  // reduced layers from 15 to 8 for performance
   for (let layer = 0; layer < 8; layer++) {
     let p = layer / 8
     let radius_scale = max_r * (1 - p)
 
-    // spacing out the colors a bit more (* 15) to keep the spectrum wide
     let hue = ((f * 0.2) + (layer * 15)) % 360
     c.strokeStyle = `hsla(${hue}, 80%, 50%, 0.6)`
 
     c.beginPath()
 
-    // optimization: shape closes at 2*PI, so 4*PI was redundant overdraw
-    // optimization: increased step to 0.1 (less CPU, same visual smoothness)
-    for (let a = 0; a < two_pi; a += 0.1) {
-      // pre-calculate the rotation for this point
-      // ((a * 7) + (t * 5)) is the petal frequency
+    for (let a = 0; a < two_pi; a += step) {
       let r_mod = Math.sin((a * 7) + (t * 5)) * Math.cos((a * 3) - t)
       let r = radius_scale * (0.5 + (0.5 * r_mod))
 
