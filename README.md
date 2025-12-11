@@ -12,11 +12,15 @@
 
 ---
 
-`Slide` is a web application that plays dynamic `strudel` music.
+`Slide` is a web application that plays [`strudel`](https://strudel.cc/) music.
 
-Patterns evolve over time automatically through the use of `AI`.
+It has an editor to write code including autocomplete.
 
-It also has a collection of songs ready to play.
+Patterns can evolve over time automatically through the use of `AI`.
+
+It has a collection of songs ready to play.
+
+There's also a scope visualizer that supports gestures.
 
 ---
 
