@@ -20,7 +20,11 @@ Patterns can evolve over time automatically through the use of `AI`.
 
 It has a collection of songs ready to play.
 
-There's also a scope visualizer that supports gestures.
+There's a scope visualizer that supports gestures.
+
+Multiple background visuals are available.
+
+Current beats can be titled and shared through URLs.
 
 ---
 
