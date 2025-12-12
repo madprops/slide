@@ -207,7 +207,7 @@ App.intended_cpm = (code) => {
   let evaluate = (str) => {
     try {
       // strictly return the math result
-      return Function('"use strict";return (' + str + ')')()
+      return Function(`"use strict"; return (${str})`)()
     }
     catch (e) {
       return null
@@ -241,7 +241,7 @@ App.intended_cpm = (code) => {
   else if (bpm_match) {
     let val = evaluate(bpm_match[1])
     if (val !== null) {
-      intended_cpm = val / 4  // Convert BPM to CPM (assuming /4)
+      intended_cpm = val / 4 // Convert BPM to CPM (assuming /4)
     }
   }
 
