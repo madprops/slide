@@ -2,26 +2,51 @@ App.is_playing = false
 App.play_running = false
 
 App.setup_player = () => {
+  // Store the previous state outside the loop
+  let previous_locations = []
+
   App.drawer = new Drawer((active_haps) => {
     let locations = []
 
     for (let hap of active_haps) {
-      // 1. Check for PLURAL 'locations'
       if (hap.context && hap.context.locations) {
-        // 2. Add all locations from this event to our master list
         locations.push(...hap.context.locations)
       }
-      // Fallback for older versions or different event types
       else if (hap.context && hap.context.location) {
         locations.push(hap.context.location)
       }
     }
 
-    if (App.editor) {
-      // 3. Dispatch the list (which is now full of objects like {start: 1746, end: 1749})
-      App.editor.dispatch({
-        effects: App.set_highlight.of(locations),
-      })
+    // Optimization: Compare current locations with previous ones
+    // We assume the objects are simple { start: x, end: y }
+    let has_changed = false
+
+    if (locations.length !== previous_locations.length) {
+      has_changed = true
+    }
+    else {
+      for (let i = 0; i < locations.length; i++) {
+        let curr = locations[i]
+        let prev = previous_locations[i]
+
+        // Check if start or end are different
+        if ((curr.start !== prev.start) || (curr.end !== prev.end)) {
+          has_changed = true
+          break
+        }
+      }
+    }
+
+    // Only touch the DOM/Editor if data actually changed
+    if (has_changed) {
+      if (App.editor) {
+        App.editor.dispatch({
+          effects: App.set_highlight.of(locations),
+        })
+      }
+
+      // Update our cache
+      previous_locations = locations
     }
   }, [0, 0])
 }
