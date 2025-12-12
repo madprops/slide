@@ -45,22 +45,22 @@ App.create_editor = () => {
   // This ensures these styles override the 'nord' theme styles
   let theme = EditorView.theme({
     "& .cm-activeLine": {
-      backgroundColor: `transparent !important`
+      backgroundColor: `transparent !important`,
     },
 
     "& .cm-activeLineGutter": {
-      backgroundColor: `transparent !important`
+      backgroundColor: `transparent !important`,
     },
 
     "& .cm-gutters": {
       backgroundColor: `#2E3440`,
       color: `#D8DEE9`,
-      borderRight: `1px solid #4C566A`
+      borderRight: `1px solid #4C566A`,
     },
 
     "& .cm-lineNumbers .cm-gutterElement": {
-      paddingLeft: `8px`
-    }
+      paddingLeft: `8px`,
+    },
   }, {dark: true})
 
   let extensions = [
@@ -73,12 +73,12 @@ App.create_editor = () => {
 
   let start_state = EditorState.create({
     doc: `// Initial content here`,
-    extensions: extensions
+    extensions,
   })
 
   App.editor = new EditorView({
     state: start_state,
-    parent: container
+    parent: container,
   })
 
   App.editor.dom.id = `codemirror-wrapper`
@@ -142,8 +142,8 @@ App.set_input = (code) => {
     changes: {
       from: 0,
       to: App.editor.state.doc.length,
-      insert: code
-    }
+      insert: code,
+    },
   })
 
   App.scroll_input_to_top()
@@ -475,10 +475,7 @@ App.restart_code_scroll = () => {
 }
 
 App.add_text_to_input = (text) => {
-  App.editor.dispatch(
-    App.editor.state.replaceSelection(text)
-  )
-
+  App.editor.dispatch(App.editor.state.replaceSelection(text))
   App.editor.focus()
 }
 
@@ -647,13 +644,13 @@ App.toggle_lines = () => {
 
 App.enable_lines = () => {
   App.editor.dispatch({
-    effects: App.compartment.reconfigure(App.lineNumbers())
+    effects: App.compartment.reconfigure(App.lineNumbers()),
   })
 }
 
 App.disable_lines = () => {
   // Reconfigure the compartment with an empty array to remove the extension
   App.editor.dispatch({
-    effects: App.compartment.reconfigure([])
+    effects: App.compartment.reconfigure([]),
   })
 }
