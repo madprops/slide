@@ -765,7 +765,7 @@ a.popup:hover {
 
 /* 2. The actual text numbers */
 .CodeMirror-linenumber {
-  color: white !important;
+  color: rgb(182, 182, 182) !important;
   /* Optional: Add padding if they feel squished */
   padding-right: 5px;
 }
