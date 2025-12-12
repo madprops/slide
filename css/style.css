@@ -748,6 +748,5 @@ a.popup:hover {
 
 .sh-executing {
   outline: 1px solid rgb(176, 176, 176);      /* Green Border */
-  background-color: rgba(0, 255, 0, 0.1); /* Slight tint */
   transition: all 0.1s;
 }
