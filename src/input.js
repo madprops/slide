@@ -56,8 +56,8 @@ App.create_editor = () => {
 
     Prec.highest(
       keymap.of([
-        {key: "Ctrl-Shift-Alt-ArrowDown", run: copyLineDown},
-        {key: "Ctrl-Shift-Alt-ArrowUp", run: copyLineUp},
+        {key: `Ctrl-Shift-Alt-ArrowDown`, run: copyLineDown},
+        {key: `Ctrl-Shift-Alt-ArrowUp`, run: copyLineUp},
         {key: `Mod-d`, run: selectNextOccurrence, preventDefault: true},
         ...vscodeKeymap,
       ]),
