@@ -15,4 +15,4 @@ let s2 = stack(
 	sound("hh [hh hh hh]").bank("CasioRZ1").pan(0.9),
 )
 
-cat(s1, s2, s1, s2, s1, s2, s1, s2.cpm(2.0))
+cat(s1, s2, s1, s2, s1, s2, s1, s2.cpm(2))

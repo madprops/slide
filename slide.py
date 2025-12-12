@@ -414,6 +414,7 @@ def index() -> Any:
 
     song_name = request.args.get("song", "")
     song_value = re.sub(r"_+", " ", song_name) if song_name else ""
+    song_value = song_value.title()
 
     beat_title = request.args.get("beat", "")
     beat_value = re.sub(r"_+", " ", beat_title) if beat_title else ""
