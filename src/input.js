@@ -57,9 +57,9 @@ App.create_editor = () => {
 
     Prec.highest(
       keymap.of([
-        {key: "Mod-d", run: selectNextOccurrence, preventDefault: true},
+        {key: `Mod-d`, run: selectNextOccurrence, preventDefault: true},
         ...vscodeKeymap,
-      ])
+      ]),
     ),
 
     search(),
