@@ -122,7 +122,7 @@ App.set_beat_title_from_query = () => {
 }
 
 App.get_beat_url = () => {
-  let url = prompt(`Enter URL`)
+  let url = prompt(`URL of the beat (javascript/text file)`)
 
   if (!url) {
     return
