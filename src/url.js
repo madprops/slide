@@ -172,17 +172,20 @@ App.load_beat_url = async () => {
     let content = await response.text()
 
     if (!content) {
+      App.playing()
       return
     }
 
-    content = content.trim()
+    let code = content.trim()
 
-    if (!content) {
+    if (!code) {
+      App.playing()
       return
     }
 
-    App.last_code = content
-    App.set_input(content)
+    App.last_code = code
+    App.set_input(code)
+    App.set_song_tempo(code)
     App.set_status(`Loaded URL 🌐`)
     App.update_url()
   }
