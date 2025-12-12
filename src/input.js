@@ -420,22 +420,8 @@ App.init_code_input_controls = () => {
   }
 
   DOM.ev(input, `wheel`, (event) => {
-    if (!App.code_scroll_active) {
-      return
-    }
-
-    if (window.performance?.now) {
-      App.code_scroll_pause_until = window.performance.now() + App.code_scroll_wheel_pause_ms
-    }
-    else {
-      App.code_scroll_pause_until = App.code_scroll_wheel_pause_ms
-    }
-
-    if (event.deltaY < 0) {
-      App.code_scroll_direction = -1
-    }
-    else if (event.deltaY > 0) {
-      App.code_scroll_direction = 1
+    if (App.code_scroll_active) {
+      App.stop_code_scroll()
     }
   }, {passive: true})
 }
