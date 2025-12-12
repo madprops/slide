@@ -6,6 +6,7 @@ App.visual_storage_key = `slide.visual`
 App.scope_storage_key = `slide.scope`
 App.colors_storage_key = `slide.colors`
 App.code_storage_key = `slide.code`
+App.lines_storage_key = `slide.lines`
 
 App.load_storage = (what, on_value) => {
   let value = localStorage.getItem(App[`${what}_storage_key`])
@@ -32,6 +33,7 @@ App.load_all_storage = () => {
   App.stor_load_scope()
   App.stor_load_colors()
   App.stor_load_code()
+  App.stor_load_lines()
 }
 
 App.stor_load_auto_endpoint = () => {
@@ -90,6 +92,14 @@ App.stor_load_colors = () => {
   )
 }
 
+App.stor_load_lines = () => {
+  App.load_storage(`lines`,
+    (value) => {
+      App.lines_enabled = App.boolstring(value)
+    },
+  )
+}
+
 App.stor_load_code = () => {
   App.load_storage(`code`,
     (value) => {
@@ -126,6 +136,10 @@ App.stor_save_scope = () => {
 
 App.stor_save_colors = () => {
   App.save_storage(`colors`, App.colors_enabled)
+}
+
+App.stor_save_lines = () => {
+  App.save_storage(`lines`, App.lines_enabled)
 }
 
 App.stor_save_code = () => {

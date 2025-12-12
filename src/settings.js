@@ -19,9 +19,15 @@ App.create_settings_modal = () => {
       App.toggle_colors()
     })
 
+  let lines = App.register_setting(`Toggle Lines`,
+    `Enable or disable the line numbers`, () => {
+      App.toggle_lines()
+    })
+
   body.appendChild(visual)
   body.appendChild(scope)
   body.appendChild(colors)
+  body.appendChild(lines)
 }
 
 App.register_setting = (text, title, action) => {

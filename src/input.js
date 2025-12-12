@@ -9,12 +9,20 @@ App.code_scroll_song_pause_ms = 1.2 * 1000
 App.code_scroll_pending_delay_ms = 0
 App.input_mirror_time = 2.8 * 1000
 App.input_grow_time = 2.8 * 1000
+App.lines_enabled = true
 
 App.setup_input = () => {
   App.start_input_resize_observer()
   App.create_editor()
   App.setup_editor_autocomplete()
   App.max_button = App.get_max_button()
+
+  if (App.lines_enabled) {
+    App.enable_lines()
+  }
+  else {
+    App.disable_lines()
+  }
 }
 
 App.create_editor = () => {
@@ -574,4 +582,25 @@ App.get_input_client_height = () => {
 App.set_input_border = (color) => {
   let input = App.get_input()
   input.style.borderColor = color
+}
+
+App.toggle_lines = () => {
+  App.lines_enabled = !App.lines_enabled
+
+  if (App.lines_enabled) {
+    App.enable_lines()
+  }
+  else {
+    App.disable_lines()
+  }
+
+  App.stor_save_lines()
+}
+
+App.enable_lines = () => {
+  App.editor.setOption("lineNumbers", true)
+}
+
+App.disable_lines = () => {
+  App.editor.setOption("lineNumbers", false)
 }
