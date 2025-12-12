@@ -93,6 +93,12 @@ export default [
         browser: "readonly",
         CodeMirror: "readonly",
         lz: "readonly",
+        initAudio: "readonly",
+        strudelMini: "readonly",
+        registerSynthSounds: "readonly",
+        registerSoundfonts: "readonly",
+        samples: "readonly",
+        Drawer: "readonly",
       }
     }
   }
