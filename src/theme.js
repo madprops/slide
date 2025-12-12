@@ -6,12 +6,13 @@ App.editor_theme = {
     backgroundColor: `transparent !important`,
   },
   "& .cm-gutters": {
-    backgroundColor: `#2E3440`,
-    color: `#D8DEE9`,
+    backgroundColor: `#202020 !important`,
     borderRight: `1px solid #4C566A`,
+    paddingRight: `0.66rem`,
   },
   "& .cm-lineNumbers .cm-gutterElement": {
     paddingLeft: `8px`,
+    color: `#aaa`,
   },
   // TARGET: Matching brackets (parenthesis)
   "& .cm-matchingBracket": {
