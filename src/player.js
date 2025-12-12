@@ -38,7 +38,6 @@ App.play_action = async (code = ``, force = false) => {
     return
   }
 
-  App.stop_status_watch()
   App.restart_code_scroll(false)
   App.last_code = code
   App.stor_save_code()
@@ -60,7 +59,6 @@ App.play_action = async (code = ``, force = false) => {
 
 App.stop_action = () => {
   console.info(`🔮 Stop Action`)
-  App.stop_status_watch()
   App.stop_strudel()
   App.stop_code_scroll()
   App.clear_draw_context()

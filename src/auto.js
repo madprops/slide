@@ -14,6 +14,14 @@ App.setup_auto = () => {
     })
   }
 
+  let auto_stop = DOM.el(`#auto-stop`)
+
+  if (auto_stop) {
+    DOM.ev(auto_stop, `click`, () => {
+      App.stop_status_watch()
+    })
+  }
+
   let auto_default = DOM.el(`#auto-default`)
 
   if (auto_default) {
@@ -83,6 +91,7 @@ App.create_auto_modal = () => {
 
   buttons.innerHTML = `
     <button id="auto-default">Default</button>
+    <button id="auto-stop">Stop</button>
     <button id="auto-start">Start</button>
   `
 
@@ -129,10 +138,6 @@ App.fetch_status_code = async () => {
   return response.text()
 }
 
-App.stop_status_watch = () => {
-  App.clear_status_watch()
-}
-
 App.strudel_watch_status = () => {
   if (!App.strudel_watch_status) {
     console.warn(`Polling function missing. Did strudel bundle load?`)
@@ -148,7 +153,7 @@ App.strudel_watch_status = () => {
   const interval_ms = App.auto_delay * 1000
 
   const fetch_status = async () => {
-    console.info(`Fetching status...`)
+    console.info(`🤖 Fetching auto code`)
 
     if (App.fetch_in_flight) {
       return
@@ -186,7 +191,7 @@ App.strudel_watch_status = () => {
     }
   }
 
-  App.clear_status_watch(false) // Don't set cancelled flag for restart
+  App.stop_status_watch(false) // Don't set cancelled flag for restart
   fetch_status()
 
   App.fetch_timer = setInterval(() => {
@@ -196,12 +201,14 @@ App.strudel_watch_status = () => {
   console.info(`Interval started.`)
 }
 
-App.clear_status_watch = (set_cancelled = true) => {
+App.stop_status_watch = (set_cancelled = true) => {
+  App.close_modal(`auto`)
+
   if (!App.fetch_timer) {
     return
   }
 
-  console.info(`Interval cleared.`)
+  console.info(`Interval cleared 🖐`)
   clearInterval(App.fetch_timer)
   App.fetch_timer = undefined
 

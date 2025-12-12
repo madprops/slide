@@ -80,7 +80,6 @@ App.load_song = async (song_name) => {
   try {
     App.set_status(`Loading ${song_name}...`)
     let content = await App.fetch_song_code(song_name)
-    App.stop_status_watch()
     App.stop_color_cycle()
     App.clear_draw_context()
 
