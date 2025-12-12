@@ -34,7 +34,7 @@ App.create_editor = () => {
     indentOnInput, bracketMatching, closeBrackets, rectangularSelection, crosshairCursor, // UI basics
     keymap, defaultKeymap, historyKeymap, indentWithTab, // Keymaps
     highlightSelectionMatches, searchKeymap, search,
-    javascript, nord,
+    javascript, nord, vscodeKeymap,
   } = window.CM
 
   App.lineNumbers = lineNumbers
@@ -51,22 +51,21 @@ App.create_editor = () => {
 
   let extensions = [
     nord,
-    // Add the compartment with the gutter extensions inside
+    theme,
     App.compartment.of(gutter_extensions),
-
-    // Manually add the standard features (formerly provided by basicSetup)
     search(),
     history(),
     drawSelection(),
     dropCursor(),
+    closeBrackets(),
     indentOnInput(),
     bracketMatching(),
-    closeBrackets(),
     rectangularSelection(),
     crosshairCursor(),
     highlightSelectionMatches(),
 
     keymap.of([
+      ...vscodeKeymap,
       ...defaultKeymap,
       ...historyKeymap,
       ...searchKeymap,
@@ -75,7 +74,6 @@ App.create_editor = () => {
 
     javascript(),
     EditorView.lineWrapping,
-    theme,
   ]
 
   let start_state = EditorState.create({
