@@ -33,7 +33,7 @@ App.create_editor = () => {
     history, drawSelection, dropCursor, // Core basics
     indentOnInput, bracketMatching, closeBrackets, rectangularSelection, crosshairCursor, // UI basics
     keymap, defaultKeymap, historyKeymap, indentWithTab, // Keymaps
-    javascript, nord
+    javascript, nord,
   } = window.CM
 
   App.lineNumbers = lineNumbers

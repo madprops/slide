@@ -21,12 +21,12 @@ App.editor_theme = {
   "& .cm-matchingBracket": {
     // Use a low opacity white or a specific Nord color
     backgroundColor: `rgba(136, 192, 208, 0.2) !important`, // Nord "Frost" cyan with low opacity
-    color: `#ECEFF4 !important` // Bright white text to make the bracket itself stand out
+    color: `#ECEFF4 !important`, // Bright white text to make the bracket itself stand out
   },
 
   // Optional: Style non-matching (error) brackets
   "& .cm-nonmatchingBracket": {
-      backgroundColor: `rgba(191, 97, 106, 0.3) !important` // Nord "Aurora" red
+    backgroundColor: `rgba(191, 97, 106, 0.3) !important`, // Nord "Aurora" red
   },
 
   // TARGET: All other occurrences of the selected word
@@ -34,11 +34,11 @@ App.editor_theme = {
     // A subtle background color (Nord 'Frost' with low opacity)
     backgroundColor: `rgba(136, 192, 208, 0.25) !important`,
     // Optional: Add a border to make it crisp without being bright
-    outline: `1px solid rgba(136, 192, 208, 0.4)`
+    outline: `1px solid rgba(136, 192, 208, 0.4)`,
   },
 
   // Optional: Just in case you want to change the Main Selection color too
   "& .cm-selectionBackground, &.cm-focused .cm-selectionBackground": {
-    backgroundColor: `rgba(67, 76, 94, 0.8) !important` // Nord 'Polar Night' selection
+    backgroundColor: `rgba(67, 76, 94, 0.8) !important`, // Nord 'Polar Night' selection
   },
 }
