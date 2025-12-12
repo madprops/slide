@@ -34,7 +34,7 @@ App.create_editor = () => {
     indentOnInput, bracketMatching, closeBrackets, rectangularSelection, crosshairCursor, // UI basics
     keymap, defaultKeymap, historyKeymap, indentWithTab, // Keymaps
     highlightSelectionMatches, searchKeymap, search,
-    javascript, nord, vscodeKeymap,
+    javascript, nord, vscodeKeymap, Prec,
   } = window.CM
 
   App.lineNumbers = lineNumbers
@@ -53,6 +53,13 @@ App.create_editor = () => {
     nord,
     theme,
     App.compartment.of(gutter_extensions),
+
+    Prec.highest(
+      keymap.of([
+        ...vscodeKeymap, // Contains "Mod-d" -> selectNextOccurrence
+      ])
+    ),
+
     search(),
     history(),
     drawSelection(),
@@ -65,7 +72,6 @@ App.create_editor = () => {
     highlightSelectionMatches(),
 
     keymap.of([
-      ...vscodeKeymap,
       ...defaultKeymap,
       ...historyKeymap,
       ...searchKeymap,

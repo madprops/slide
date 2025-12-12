@@ -27678,6 +27678,7 @@
     EditorView,
     EditorState,
     Compartment,
+    Prec,
     javascript,
     nord,
     keymap,

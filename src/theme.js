@@ -35,39 +35,80 @@ App.editor_theme = {
     backgroundColor: `rgba(67, 76, 94, 0.8) !important`, // Nord 'Polar Night' selection
   },
   ".cm-panels": {
-    backgroundColor: "#2e3440",
-    color: "#d8dee9",
-    borderTop: "1px solid #4c566a"
+    backgroundColor: "#2E3440", // Nord Polar Night
+    color: "#D8DEE9",
+    borderTop: "1px solid #4C566A",
+    borderBottom: "1px solid #4C566A",
   },
-  ".cm-panels.cm-panels-top": {
-    borderBottom: "2px solid black"
+  ".cm-panels-top": {
+    borderBottom: "2px solid #3B4252"
   },
-  ".cm-panels.cm-panels-bottom": {
-    borderTop: "2px solid black"
+  ".cm-panels-bottom": {
+    borderTop: "2px solid #3B4252"
   },
-  ".cm-textfield": {
-    backgroundColor: "#3b4252",
-    color: "#eceff4",
-    border: "1px solid #4c566a",
-    borderRadius: "4px"
+  ".cm-search": {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    padding: "8px 12px",
+    fontFamily: "inherit",
+  },
+  ".cm-search .cm-textfield": {
+    backgroundColor: "#3B4252",
+    color: "#ECEFF4",
+    border: "1px solid #4C566A",
+    borderRadius: "4px",
+    padding: "4px 8px",
+    outline: "none",
+    minWidth: "200px"
+  },
+  ".cm-search .cm-textfield:focus": {
+    border: "1px solid #88C0D0" // Nord Frost Blue
   },
   ".cm-button": {
     backgroundImage: "none",
-    backgroundColor: "#4c566a",
-    color: "#eceff4",
-    border: "1px solid #434c5e",
+    backgroundColor: "#434C5E",
+    color: "#ECEFF4",
+    border: "none",
     borderRadius: "4px",
-    cursor: "pointer"
+    padding: "4px 10px",
+    cursor: "pointer",
+    textTransform: "capitalize",
+    fontSize: "0.9em"
   },
   ".cm-button:hover": {
-    backgroundColor: "#5e81ac"
+    backgroundColor: "#5E81AC" // Nord Blue
   },
+  ".cm-button:active": {
+    transform: "translateY(1px)"
+  },
+  ".cm-search label": {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "4px",
+    fontSize: "0.85em",
+    cursor: "pointer"
+  },
+  ".cm-search input[type='checkbox']": {
+    cursor: "pointer",
+    accentColor: "#88C0D0"
+  },
+  ".cm-panel.cm-search [name='close']": {
+    marginLeft: "auto", // Push close button to the far right
+    padding: "2px 6px",
+    fontSize: "1.2em",
+    background: "transparent"
+  },
+  ".cm-panel.cm-search [name='close']:hover": {
+    color: "#BF616A" // Nord Red
+  },
+  // Highlight colors
   ".cm-searchMatch": {
-    backgroundColor: "#725920", // dimmed highlight
-    outline: "1px solid #fab387"
+    backgroundColor: "rgba(235, 203, 139, 0.4)", // Nord Yellow (dim)
+    outline: "1px solid #EBCB8B"
   },
   ".cm-searchMatch.cm-searchMatch-selected": {
-    backgroundColor: "#fab387", // active highlight
-    color: "#2e3440"
+    backgroundColor: "#EBCB8B", // Nord Yellow (bright)
+    color: "#2E3440"
   },
 }
