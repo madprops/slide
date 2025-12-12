@@ -26,22 +26,62 @@ App.setup_input = () => {
 }
 
 App.create_editor = () => {
-  let textarea = DOM.el(`#code-input`)
+  let {EditorView, basicSetup} = window.CM
+  let {EditorState} = window.CM
+  let {javascript} = window.CM
+  let {indentWithTab} = window.CM
+  let {keymap} = window.CM
+  let {indentUnit} = window.CM
+  let {Compartment} = window.CM
+  let {lineNumbers} = window.CM
+  let {nord} = window.CM
 
-  App.editor = CodeMirror.fromTextArea(textarea, {
-    theme: `nord`,
-    lineNumbers: true,
-    indentWithTabs: true,
-    tabSize: 4,
-    lineWrapping: true,
-    indentUnit: 4,
+  App.lineNumbers = lineNumbers
+  App.compartment = new Compartment()
+  let container = DOM.el(`#code-input-wrapper`)
+
+  // 1. Define your custom theme
+  // Use "&" to attach the style to the editor wrapper specifically
+  // This ensures these styles override the 'nord' theme styles
+  let theme = EditorView.theme({
+    "& .cm-activeLine": {
+      backgroundColor: `transparent !important`
+    },
+
+    "& .cm-activeLineGutter": {
+      backgroundColor: `transparent !important`
+    },
+
+    "& .cm-gutters": {
+      backgroundColor: `#2E3440`,
+      color: `#D8DEE9`,
+      borderRight: `1px solid #4C566A`
+    },
+
+    "& .cm-lineNumbers .cm-gutterElement": {
+      paddingLeft: `8px`
+    }
+  }, {dark: true})
+
+  let extensions = [
+    basicSetup,
+    javascript(),
+    EditorView.lineWrapping,
+    nord,
+    theme,
+  ]
+
+  let start_state = EditorState.create({
+    doc: `// Initial content here`,
+    extensions: extensions
   })
 
-  App.editor.getWrapperElement().id = `codemirror-wrapper`
-  App.document = App.editor.getDoc()
-  App.editor.setOption(`mode`, `javascript`)
-  App.editor.refresh()
-  App.editor.focus()
+  App.editor = new EditorView({
+    state: start_state,
+    parent: container
+  })
+
+  App.editor.dom.id = `codemirror-wrapper`
 }
 
 App.get_input = () => {
@@ -53,7 +93,8 @@ App.get_input_wrapper = () => {
 }
 
 App.get_input_value = () => {
-  return App.document.getValue()
+  // access the current state from the view
+  return App.editor.state.doc.toString()
 }
 
 App.defer_code_scroll = (delay_ms) => {
@@ -97,7 +138,14 @@ App.reset_code_scroll_for_content = (options = {}) => {
 }
 
 App.set_input = (code) => {
-  App.document.setValue(code)
+  App.editor.dispatch({
+    changes: {
+      from: 0,
+      to: App.editor.state.doc.length,
+      insert: code
+    }
+  })
+
   App.scroll_input_to_top()
   App.reset_code_scroll_for_content()
 }
@@ -427,7 +475,10 @@ App.restart_code_scroll = () => {
 }
 
 App.add_text_to_input = (text) => {
-  App.document.replaceSelection(text)
+  App.editor.dispatch(
+    App.editor.state.replaceSelection(text)
+  )
+
   App.editor.focus()
 }
 
@@ -515,7 +566,7 @@ App.max_input = (just_check = false) => {
     wrapper.style.height = `${diff}px`
     wrapper.style.width = `${max_width}%`
     App.check_max_button()
-    App.editor.refresh()
+    // App.editor.requestMeasure()
   }
 
   return [diff, max_width]
@@ -552,7 +603,7 @@ App.disable_max_button = () => {
 }
 
 App.set_input_scroll = (v_amount) => {
-  App.editor.scrollTo(null, v_amount)
+  App.editor.scrollDOM.scrollTop = v_amount
 }
 
 App.scroll_input_to_top = () => {
@@ -560,28 +611,25 @@ App.scroll_input_to_top = () => {
 }
 
 App.scroll_input_to_bottom = () => {
-  let scroll_info = App.editor.getScrollInfo()
-  App.editor.scrollTo(null, scroll_info.height)
+  let scroll_height = App.editor.scrollDOM.scrollHeight
+  App.editor.scrollDOM.scrollTop = scroll_height
 }
 
 App.get_input_scroll = () => {
-  let scroll_info = App.editor.getScrollInfo()
-  return scroll_info.top
+  return App.editor.scrollDOM.scrollTop
 }
 
 App.get_input_height = () => {
-  let info = App.editor.getScrollInfo()
-  return info.height
+  return App.editor.scrollDOM.scrollHeight
 }
 
 App.get_input_client_height = () => {
-  let info = App.editor.getScrollInfo()
-  return info.clientHeight
+  return App.editor.scrollDOM.clientHeight
 }
 
 App.set_input_border = (color) => {
-  let input = App.get_input()
-  input.style.borderColor = color
+  // 'dom' refers to the outer editor container element
+  App.editor.dom.style.borderColor = color
 }
 
 App.toggle_lines = () => {
@@ -598,9 +646,14 @@ App.toggle_lines = () => {
 }
 
 App.enable_lines = () => {
-  App.editor.setOption(`lineNumbers`, true)
+  App.editor.dispatch({
+    effects: App.compartment.reconfigure(App.lineNumbers())
+  })
 }
 
 App.disable_lines = () => {
-  App.editor.setOption(`lineNumbers`, false)
+  // Reconfigure the compartment with an empty array to remove the extension
+  App.editor.dispatch({
+    effects: App.compartment.reconfigure([])
+  })
 }

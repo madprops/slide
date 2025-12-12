@@ -746,26 +746,3 @@ a.popup:hover {
     gap: 1rem;
     padding-bottom: 1rem;
 }
-
-.CodeMirror-hints {
-  z-index: 2147483647 !important;
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  border: 2px solid #9c9ac5 !important;
-}
-
-/* 1. The container strip (Background) */
-.CodeMirror-gutters {
-  background-color: #1c1c1c !important;
-  /* CodeMirror adds a default border that looks bad on dark themes, remove or darken it: */
-  border-right: 1px solid #2a2a2a;
-  padding-right: 0.5rem;
-}
-
-/* 2. The actual text numbers */
-.CodeMirror-linenumber {
-  color: rgb(182, 182, 182) !important;
-  /* Optional: Add padding if they feel squished */
-  padding-right: 5px;
-}

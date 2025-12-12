@@ -93,34 +93,41 @@ App.sound_hint_func = (cm) => {
   }
 }
 
-App.setup_editor_autocomplete = () => {
-  App.editor.on(`inputRead`, (cm, change) => {
-    if ((change.text[0] === `"`) || (change.text[0] === `'`)) {
-      let cursor = cm.getCursor()
-      let line = cm.getLine(cursor.line)
-      let text_before = line.slice(0, cursor.ch)
+App.custom_completion_source = (context) => {
+  // Check text before cursor matches function(" or function('
+  let match = context.matchBefore(/(note|bank|sound)\(["']/)
 
-      if (text_before.endsWith(`note("`) || text_before.endsWith(`note('`)) {
-        cm.showHint({
-          hint: App.notes_hint,
-          completeSingle: false,
-          container: document.body,
-        })
-      }
-      else if (text_before.endsWith(`bank("`) || text_before.endsWith(`bank('`)) {
-        cm.showHint({
-          hint: App.banks_hint,
-          completeSingle: false,
-          container: document.body,
-        })
-      }
-      else if (text_before.endsWith(`sound("`) || text_before.endsWith(`sound('`)) {
-        cm.showHint({
-          hint: App.sounds_hint,
-          completeSingle: false,
-          container: document.body,
-        })
-      }
-    }
+  if (!match) {
+    return null
+  }
+
+  let options = []
+
+  if (match.text.startsWith(`note`)) {
+    options = App.notes_hint
+  }
+  else if (match.text.startsWith(`bank`)) {
+    options = App.banks_hint
+  }
+  else if (match.text.startsWith(`sound`)) {
+    options = App.sounds_hint
+  }
+
+  return {
+    from: context.pos,
+    options: options.map((opt) => {
+      // transform string array into CM6 option objects
+      return {label: opt, type: `text`}
+    }),
+  }
+}
+
+App.setup_editor_autocomplete = () => {
+  let {autocompletion} = window.CM
+
+  // Returns the extension to be added to your EditorState config
+  return autocompletion({
+    override: [App.custom_completion_source],
+    defaultKeymap: true,
   })
 }
