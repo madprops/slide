@@ -13689,311 +13689,6 @@
       return [dropCursorPos, drawDropCursor];
   }
 
-  function iterMatches(doc, re, from, to, f) {
-      re.lastIndex = 0;
-      for (let cursor = doc.iterRange(from, to), pos = from, m; !cursor.next().done; pos += cursor.value.length) {
-          if (!cursor.lineBreak)
-              while (m = re.exec(cursor.value))
-                  f(pos + m.index, m);
-      }
-  }
-  function matchRanges(view, maxLength) {
-      let visible = view.visibleRanges;
-      if (visible.length == 1 && visible[0].from == view.viewport.from &&
-          visible[0].to == view.viewport.to)
-          return visible;
-      let result = [];
-      for (let { from, to } of visible) {
-          from = Math.max(view.state.doc.lineAt(from).from, from - maxLength);
-          to = Math.min(view.state.doc.lineAt(to).to, to + maxLength);
-          if (result.length && result[result.length - 1].to >= from)
-              result[result.length - 1].to = to;
-          else
-              result.push({ from, to });
-      }
-      return result;
-  }
-  /**
-  Helper class used to make it easier to maintain decorations on
-  visible code that matches a given regular expression. To be used
-  in a [view plugin](https://codemirror.net/6/docs/ref/#view.ViewPlugin). Instances of this object
-  represent a matching configuration.
-  */
-  class MatchDecorator {
-      /**
-      Create a decorator.
-      */
-      constructor(config) {
-          const { regexp, decoration, decorate, boundary, maxLength = 1000 } = config;
-          if (!regexp.global)
-              throw new RangeError("The regular expression given to MatchDecorator should have its 'g' flag set");
-          this.regexp = regexp;
-          if (decorate) {
-              this.addMatch = (match, view, from, add) => decorate(add, from, from + match[0].length, match, view);
-          }
-          else if (typeof decoration == "function") {
-              this.addMatch = (match, view, from, add) => {
-                  let deco = decoration(match, view, from);
-                  if (deco)
-                      add(from, from + match[0].length, deco);
-              };
-          }
-          else if (decoration) {
-              this.addMatch = (match, _view, from, add) => add(from, from + match[0].length, decoration);
-          }
-          else {
-              throw new RangeError("Either 'decorate' or 'decoration' should be provided to MatchDecorator");
-          }
-          this.boundary = boundary;
-          this.maxLength = maxLength;
-      }
-      /**
-      Compute the full set of decorations for matches in the given
-      view's viewport. You'll want to call this when initializing your
-      plugin.
-      */
-      createDeco(view) {
-          let build = new RangeSetBuilder(), add = build.add.bind(build);
-          for (let { from, to } of matchRanges(view, this.maxLength))
-              iterMatches(view.state.doc, this.regexp, from, to, (from, m) => this.addMatch(m, view, from, add));
-          return build.finish();
-      }
-      /**
-      Update a set of decorations for a view update. `deco` _must_ be
-      the set of decorations produced by _this_ `MatchDecorator` for
-      the view state before the update.
-      */
-      updateDeco(update, deco) {
-          let changeFrom = 1e9, changeTo = -1;
-          if (update.docChanged)
-              update.changes.iterChanges((_f, _t, from, to) => {
-                  if (to >= update.view.viewport.from && from <= update.view.viewport.to) {
-                      changeFrom = Math.min(from, changeFrom);
-                      changeTo = Math.max(to, changeTo);
-                  }
-              });
-          if (update.viewportMoved || changeTo - changeFrom > 1000)
-              return this.createDeco(update.view);
-          if (changeTo > -1)
-              return this.updateRange(update.view, deco.map(update.changes), changeFrom, changeTo);
-          return deco;
-      }
-      updateRange(view, deco, updateFrom, updateTo) {
-          for (let r of view.visibleRanges) {
-              let from = Math.max(r.from, updateFrom), to = Math.min(r.to, updateTo);
-              if (to >= from) {
-                  let fromLine = view.state.doc.lineAt(from), toLine = fromLine.to < to ? view.state.doc.lineAt(to) : fromLine;
-                  let start = Math.max(r.from, fromLine.from), end = Math.min(r.to, toLine.to);
-                  if (this.boundary) {
-                      for (; from > fromLine.from; from--)
-                          if (this.boundary.test(fromLine.text[from - 1 - fromLine.from])) {
-                              start = from;
-                              break;
-                          }
-                      for (; to < toLine.to; to++)
-                          if (this.boundary.test(toLine.text[to - toLine.from])) {
-                              end = to;
-                              break;
-                          }
-                  }
-                  let ranges = [], m;
-                  let add = (from, to, deco) => ranges.push(deco.range(from, to));
-                  if (fromLine == toLine) {
-                      this.regexp.lastIndex = start - fromLine.from;
-                      while ((m = this.regexp.exec(fromLine.text)) && m.index < end - fromLine.from)
-                          this.addMatch(m, view, m.index + fromLine.from, add);
-                  }
-                  else {
-                      iterMatches(view.state.doc, this.regexp, start, end, (from, m) => this.addMatch(m, view, from, add));
-                  }
-                  deco = deco.update({ filterFrom: start, filterTo: end, filter: (from, to) => from < start || to > end, add: ranges });
-              }
-          }
-          return deco;
-      }
-  }
-
-  const UnicodeRegexpSupport = /x/.unicode != null ? "gu" : "g";
-  const Specials = /*@__PURE__*/new RegExp("[\u0000-\u0008\u000a-\u001f\u007f-\u009f\u00ad\u061c\u200b\u200e\u200f\u2028\u2029\u202d\u202e\u2066\u2067\u2069\ufeff\ufff9-\ufffc]", UnicodeRegexpSupport);
-  const Names = {
-      0: "null",
-      7: "bell",
-      8: "backspace",
-      10: "newline",
-      11: "vertical tab",
-      13: "carriage return",
-      27: "escape",
-      8203: "zero width space",
-      8204: "zero width non-joiner",
-      8205: "zero width joiner",
-      8206: "left-to-right mark",
-      8207: "right-to-left mark",
-      8232: "line separator",
-      8237: "left-to-right override",
-      8238: "right-to-left override",
-      8294: "left-to-right isolate",
-      8295: "right-to-left isolate",
-      8297: "pop directional isolate",
-      8233: "paragraph separator",
-      65279: "zero width no-break space",
-      65532: "object replacement"
-  };
-  let _supportsTabSize = null;
-  function supportsTabSize() {
-      var _a;
-      if (_supportsTabSize == null && typeof document != "undefined" && document.body) {
-          let styles = document.body.style;
-          _supportsTabSize = ((_a = styles.tabSize) !== null && _a !== void 0 ? _a : styles.MozTabSize) != null;
-      }
-      return _supportsTabSize || false;
-  }
-  const specialCharConfig = /*@__PURE__*/Facet.define({
-      combine(configs) {
-          let config = combineConfig(configs, {
-              render: null,
-              specialChars: Specials,
-              addSpecialChars: null
-          });
-          if (config.replaceTabs = !supportsTabSize())
-              config.specialChars = new RegExp("\t|" + config.specialChars.source, UnicodeRegexpSupport);
-          if (config.addSpecialChars)
-              config.specialChars = new RegExp(config.specialChars.source + "|" + config.addSpecialChars.source, UnicodeRegexpSupport);
-          return config;
-      }
-  });
-  /**
-  Returns an extension that installs highlighting of special
-  characters.
-  */
-  function highlightSpecialChars(
-  /**
-  Configuration options.
-  */
-  config = {}) {
-      return [specialCharConfig.of(config), specialCharPlugin()];
-  }
-  let _plugin = null;
-  function specialCharPlugin() {
-      return _plugin || (_plugin = ViewPlugin.fromClass(class {
-          constructor(view) {
-              this.view = view;
-              this.decorations = Decoration.none;
-              this.decorationCache = Object.create(null);
-              this.decorator = this.makeDecorator(view.state.facet(specialCharConfig));
-              this.decorations = this.decorator.createDeco(view);
-          }
-          makeDecorator(conf) {
-              return new MatchDecorator({
-                  regexp: conf.specialChars,
-                  decoration: (m, view, pos) => {
-                      let { doc } = view.state;
-                      let code = codePointAt(m[0], 0);
-                      if (code == 9) {
-                          let line = doc.lineAt(pos);
-                          let size = view.state.tabSize, col = countColumn(line.text, size, pos - line.from);
-                          return Decoration.replace({
-                              widget: new TabWidget((size - (col % size)) * this.view.defaultCharacterWidth / this.view.scaleX)
-                          });
-                      }
-                      return this.decorationCache[code] ||
-                          (this.decorationCache[code] = Decoration.replace({ widget: new SpecialCharWidget(conf, code) }));
-                  },
-                  boundary: conf.replaceTabs ? undefined : /[^]/
-              });
-          }
-          update(update) {
-              let conf = update.state.facet(specialCharConfig);
-              if (update.startState.facet(specialCharConfig) != conf) {
-                  this.decorator = this.makeDecorator(conf);
-                  this.decorations = this.decorator.createDeco(update.view);
-              }
-              else {
-                  this.decorations = this.decorator.updateDeco(update, this.decorations);
-              }
-          }
-      }, {
-          decorations: v => v.decorations
-      }));
-  }
-  const DefaultPlaceholder = "\u2022";
-  // Assigns placeholder characters from the Control Pictures block to
-  // ASCII control characters
-  function placeholder$1(code) {
-      if (code >= 32)
-          return DefaultPlaceholder;
-      if (code == 10)
-          return "\u2424";
-      return String.fromCharCode(9216 + code);
-  }
-  class SpecialCharWidget extends WidgetType {
-      constructor(options, code) {
-          super();
-          this.options = options;
-          this.code = code;
-      }
-      eq(other) { return other.code == this.code; }
-      toDOM(view) {
-          let ph = placeholder$1(this.code);
-          let desc = view.state.phrase("Control character") + " " + (Names[this.code] || "0x" + this.code.toString(16));
-          let custom = this.options.render && this.options.render(this.code, desc, ph);
-          if (custom)
-              return custom;
-          let span = document.createElement("span");
-          span.textContent = ph;
-          span.title = desc;
-          span.setAttribute("aria-label", desc);
-          span.className = "cm-specialChar";
-          return span;
-      }
-      ignoreEvent() { return false; }
-  }
-  class TabWidget extends WidgetType {
-      constructor(width) {
-          super();
-          this.width = width;
-      }
-      eq(other) { return other.width == this.width; }
-      toDOM() {
-          let span = document.createElement("span");
-          span.textContent = "\t";
-          span.className = "cm-tab";
-          span.style.width = this.width + "px";
-          return span;
-      }
-      ignoreEvent() { return false; }
-  }
-
-  /**
-  Mark lines that have a cursor on them with the `"cm-activeLine"`
-  DOM class.
-  */
-  function highlightActiveLine() {
-      return activeLineHighlighter;
-  }
-  const lineDeco = /*@__PURE__*/Decoration.line({ class: "cm-activeLine" });
-  const activeLineHighlighter = /*@__PURE__*/ViewPlugin.fromClass(class {
-      constructor(view) {
-          this.decorations = this.getDeco(view);
-      }
-      update(update) {
-          if (update.docChanged || update.selectionSet)
-              this.decorations = this.getDeco(update.view);
-      }
-      getDeco(view) {
-          let lastLineStart = -1, deco = [];
-          for (let r of view.state.selection.ranges) {
-              let line = view.lineBlockAt(r.head);
-              if (line.from > lastLineStart) {
-                  deco.push(lineDeco.range(line.from));
-                  lastLineStart = line.from;
-              }
-          }
-          return Decoration.set(deco);
-      }
-  }, {
-      decorations: v => v.decorations
-  });
-
   // Don't compute precise column positions for line offsets above this
   // (since it could get expensive). Assume offset==column for them.
   const MaxOff = 2000;
@@ -14071,7 +13766,7 @@
   [range](https://codemirror.net/6/docs/ref/#state.SelectionRange) per line.
   */
   function rectangularSelection(options) {
-      let filter = (e => e.altKey && e.button == 0);
+      let filter = (options === null || options === void 0 ? void 0 : options.eventFilter) || (e => e.altKey && e.button == 0);
       return EditorView.mouseSelectionStyle.of((view, event) => filter(event) ? rectangleSelectionStyle(view, event) : null);
   }
   const keys = {
@@ -19428,20 +19123,6 @@
       view.dispatch({ effects });
       return true;
   };
-  /**
-  Default fold-related key bindings.
-
-   - Ctrl-Shift-[ (Cmd-Alt-[ on macOS): [`foldCode`](https://codemirror.net/6/docs/ref/#language.foldCode).
-   - Ctrl-Shift-] (Cmd-Alt-] on macOS): [`unfoldCode`](https://codemirror.net/6/docs/ref/#language.unfoldCode).
-   - Ctrl-Alt-[: [`foldAll`](https://codemirror.net/6/docs/ref/#language.foldAll).
-   - Ctrl-Alt-]: [`unfoldAll`](https://codemirror.net/6/docs/ref/#language.unfoldAll).
-  */
-  const foldKeymap = [
-      { key: "Ctrl-Shift-[", mac: "Cmd-Alt-[", run: foldCode },
-      { key: "Ctrl-Shift-]", mac: "Cmd-Alt-]", run: unfoldCode },
-      { key: "Ctrl-Alt-[", run: foldAll },
-      { key: "Ctrl-Alt-]", run: unfoldAll }
-  ];
   const defaultConfig = {
       placeholderDOM: null,
       preparePlaceholder: null,
@@ -19660,9 +19341,7 @@
               ext.push(EditorView.styleModule.of(highlighter.module));
           themeType = highlighter.themeType;
       }
-      if (options === null || options === void 0 ? void 0 : options.fallback)
-          ext.push(fallbackHighlighter.of(highlighter));
-      else if (themeType)
+      if (themeType)
           ext.push(highlighterFacet.computeN([EditorView.darkTheme], state => {
               return state.facet(EditorView.darkTheme) == (themeType == "dark") ? [highlighter] : [];
           }));
@@ -19706,50 +19385,6 @@
   const treeHighlighter = /*@__PURE__*/Prec.high(/*@__PURE__*/ViewPlugin.fromClass(TreeHighlighter, {
       decorations: v => v.decorations
   }));
-  /**
-  A default highlight style (works well with light themes).
-  */
-  const defaultHighlightStyle = /*@__PURE__*/HighlightStyle.define([
-      { tag: tags.meta,
-          color: "#404740" },
-      { tag: tags.link,
-          textDecoration: "underline" },
-      { tag: tags.heading,
-          textDecoration: "underline",
-          fontWeight: "bold" },
-      { tag: tags.emphasis,
-          fontStyle: "italic" },
-      { tag: tags.strong,
-          fontWeight: "bold" },
-      { tag: tags.strikethrough,
-          textDecoration: "line-through" },
-      { tag: tags.keyword,
-          color: "#708" },
-      { tag: [tags.atom, tags.bool, tags.url, tags.contentSeparator, tags.labelName],
-          color: "#219" },
-      { tag: [tags.literal, tags.inserted],
-          color: "#164" },
-      { tag: [tags.string, tags.deleted],
-          color: "#a11" },
-      { tag: [tags.regexp, tags.escape, /*@__PURE__*/tags.special(tags.string)],
-          color: "#e40" },
-      { tag: /*@__PURE__*/tags.definition(tags.variableName),
-          color: "#00f" },
-      { tag: /*@__PURE__*/tags.local(tags.variableName),
-          color: "#30a" },
-      { tag: [tags.typeName, tags.namespace],
-          color: "#085" },
-      { tag: tags.className,
-          color: "#167" },
-      { tag: [/*@__PURE__*/tags.special(tags.variableName), tags.macroName],
-          color: "#256" },
-      { tag: /*@__PURE__*/tags.definition(tags.propertyName),
-          color: "#00c" },
-      { tag: tags.comment,
-          color: "#940" },
-      { tag: tags.invalid,
-          color: "#f00" }
-  ]);
 
   const baseTheme$3 = /*@__PURE__*/EditorView.baseTheme({
       "&.cm-focused .cm-matchingBracket": { backgroundColor: "#328c8252" },
@@ -21884,108 +21519,6 @@
           }
       }
   });
-
-  const defaultHighlightOptions = {
-      highlightWordAroundCursor: false,
-      minSelectionLength: 1,
-      maxMatches: 100,
-      wholeWords: false
-  };
-  const highlightConfig = /*@__PURE__*/Facet.define({
-      combine(options) {
-          return combineConfig(options, defaultHighlightOptions, {
-              highlightWordAroundCursor: (a, b) => a || b,
-              minSelectionLength: Math.min,
-              maxMatches: Math.min
-          });
-      }
-  });
-  /**
-  This extension highlights text that matches the selection. It uses
-  the `"cm-selectionMatch"` class for the highlighting. When
-  `highlightWordAroundCursor` is enabled, the word at the cursor
-  itself will be highlighted with `"cm-selectionMatch-main"`.
-  */
-  function highlightSelectionMatches(options) {
-      let ext = [defaultTheme, matchHighlighter];
-      return ext;
-  }
-  const matchDeco = /*@__PURE__*/Decoration.mark({ class: "cm-selectionMatch" });
-  const mainMatchDeco = /*@__PURE__*/Decoration.mark({ class: "cm-selectionMatch cm-selectionMatch-main" });
-  // Whether the characters directly outside the given positions are non-word characters
-  function insideWordBoundaries(check, state, from, to) {
-      return (from == 0 || check(state.sliceDoc(from - 1, from)) != CharCategory.Word) &&
-          (to == state.doc.length || check(state.sliceDoc(to, to + 1)) != CharCategory.Word);
-  }
-  // Whether the characters directly at the given positions are word characters
-  function insideWord(check, state, from, to) {
-      return check(state.sliceDoc(from, from + 1)) == CharCategory.Word
-          && check(state.sliceDoc(to - 1, to)) == CharCategory.Word;
-  }
-  const matchHighlighter = /*@__PURE__*/ViewPlugin.fromClass(class {
-      constructor(view) {
-          this.decorations = this.getDeco(view);
-      }
-      update(update) {
-          if (update.selectionSet || update.docChanged || update.viewportChanged)
-              this.decorations = this.getDeco(update.view);
-      }
-      getDeco(view) {
-          let conf = view.state.facet(highlightConfig);
-          let { state } = view, sel = state.selection;
-          if (sel.ranges.length > 1)
-              return Decoration.none;
-          let range = sel.main, query, check = null;
-          if (range.empty) {
-              if (!conf.highlightWordAroundCursor)
-                  return Decoration.none;
-              let word = state.wordAt(range.head);
-              if (!word)
-                  return Decoration.none;
-              check = state.charCategorizer(range.head);
-              query = state.sliceDoc(word.from, word.to);
-          }
-          else {
-              let len = range.to - range.from;
-              if (len < conf.minSelectionLength || len > 200)
-                  return Decoration.none;
-              if (conf.wholeWords) {
-                  query = state.sliceDoc(range.from, range.to); // TODO: allow and include leading/trailing space?
-                  check = state.charCategorizer(range.head);
-                  if (!(insideWordBoundaries(check, state, range.from, range.to) &&
-                      insideWord(check, state, range.from, range.to)))
-                      return Decoration.none;
-              }
-              else {
-                  query = state.sliceDoc(range.from, range.to);
-                  if (!query)
-                      return Decoration.none;
-              }
-          }
-          let deco = [];
-          for (let part of view.visibleRanges) {
-              let cursor = new SearchCursor(state.doc, query, part.from, part.to);
-              while (!cursor.next().done) {
-                  let { from, to } = cursor.value;
-                  if (!check || insideWordBoundaries(check, state, from, to)) {
-                      if (range.empty && from <= range.from && to >= range.to)
-                          deco.push(mainMatchDeco.range(from, to));
-                      else if (from >= range.to || to <= range.from)
-                          deco.push(matchDeco.range(from, to));
-                      if (deco.length > conf.maxMatches)
-                          return Decoration.none;
-                  }
-              }
-          }
-          return Decoration.set(deco);
-      }
-  }, {
-      decorations: v => v.decorations
-  });
-  const defaultTheme = /*@__PURE__*/EditorView.baseTheme({
-      ".cm-selectionMatch": { backgroundColor: "#99ff7780" },
-      ".cm-searchMatch .cm-selectionMatch": { backgroundColor: "transparent" }
-  });
   // Select the words around the cursors.
   const selectWord = ({ state, dispatch }) => {
       let { selection } = state;
@@ -22502,24 +22035,6 @@
       view.dispatch({ effects: togglePanel$1.of(false) });
       return true;
   };
-  /**
-  Default search-related key bindings.
-
-   - Mod-f: [`openSearchPanel`](https://codemirror.net/6/docs/ref/#search.openSearchPanel)
-   - F3, Mod-g: [`findNext`](https://codemirror.net/6/docs/ref/#search.findNext)
-   - Shift-F3, Shift-Mod-g: [`findPrevious`](https://codemirror.net/6/docs/ref/#search.findPrevious)
-   - Mod-Alt-g: [`gotoLine`](https://codemirror.net/6/docs/ref/#search.gotoLine)
-   - Mod-d: [`selectNextOccurrence`](https://codemirror.net/6/docs/ref/#search.selectNextOccurrence)
-  */
-  const searchKeymap = [
-      { key: "Mod-f", run: openSearchPanel, scope: "editor search-panel" },
-      { key: "F3", run: findNext, shift: findPrevious, scope: "editor search-panel", preventDefault: true },
-      { key: "Mod-g", run: findNext, shift: findPrevious, scope: "editor search-panel", preventDefault: true },
-      { key: "Escape", run: closeSearchPanel, scope: "editor search-panel" },
-      { key: "Mod-Shift-l", run: selectSelectionMatches },
-      { key: "Mod-Alt-g", run: gotoLine },
-      { key: "Mod-d", run: selectNextOccurrence, preventDefault: true },
-  ];
   class SearchPanel {
       constructor(view) {
           this.view = view;
@@ -24451,13 +23966,6 @@
       return !dont;
   };
   /**
-  Close-brackets related key bindings. Binds Backspace to
-  [`deleteBracketPair`](https://codemirror.net/6/docs/ref/#autocomplete.deleteBracketPair).
-  */
-  const closeBracketsKeymap = [
-      { key: "Backspace", run: deleteBracketPair }
-  ];
-  /**
   Implements the extension's behavior on text insertion. If the
   given string counts as a bracket in the language around the
   selection, and replacing the selection with it requires custom
@@ -24876,16 +24384,6 @@
       view.dispatch({ selection: { anchor: next.from, head: next.to }, scrollIntoView: true });
       return true;
   };
-  /**
-  A set of default key bindings for the lint functionality.
-
-  - Ctrl-Shift-m (Cmd-Shift-m on macOS): [`openLintPanel`](https://codemirror.net/6/docs/ref/#lint.openLintPanel)
-  - F8: [`nextDiagnostic`](https://codemirror.net/6/docs/ref/#lint.nextDiagnostic)
-  */
-  const lintKeymap = [
-      { key: "Mod-Shift-m", run: openLintPanel, preventDefault: true },
-      { key: "F8", run: nextDiagnostic }
-  ];
   const lintConfig = /*@__PURE__*/Facet.define({
       combine(input) {
           return {
@@ -25267,74 +24765,6 @@
       /*@__PURE__*/hoverTooltip(lintTooltip, { hideOn: hideTooltip }),
       baseTheme
   ];
-
-  // (The superfluous function calls around the list of extensions work
-  // around current limitations in tree-shaking software.)
-  /**
-  This is an extension value that just pulls together a number of
-  extensions that you might want in a basic editor. It is meant as a
-  convenient helper to quickly set up CodeMirror without installing
-  and importing a lot of separate packages.
-
-  Specifically, it includes...
-
-   - [the default command bindings](https://codemirror.net/6/docs/ref/#commands.defaultKeymap)
-   - [line numbers](https://codemirror.net/6/docs/ref/#view.lineNumbers)
-   - [special character highlighting](https://codemirror.net/6/docs/ref/#view.highlightSpecialChars)
-   - [the undo history](https://codemirror.net/6/docs/ref/#commands.history)
-   - [a fold gutter](https://codemirror.net/6/docs/ref/#language.foldGutter)
-   - [custom selection drawing](https://codemirror.net/6/docs/ref/#view.drawSelection)
-   - [drop cursor](https://codemirror.net/6/docs/ref/#view.dropCursor)
-   - [multiple selections](https://codemirror.net/6/docs/ref/#state.EditorState^allowMultipleSelections)
-   - [reindentation on input](https://codemirror.net/6/docs/ref/#language.indentOnInput)
-   - [the default highlight style](https://codemirror.net/6/docs/ref/#language.defaultHighlightStyle) (as fallback)
-   - [bracket matching](https://codemirror.net/6/docs/ref/#language.bracketMatching)
-   - [bracket closing](https://codemirror.net/6/docs/ref/#autocomplete.closeBrackets)
-   - [autocompletion](https://codemirror.net/6/docs/ref/#autocomplete.autocompletion)
-   - [rectangular selection](https://codemirror.net/6/docs/ref/#view.rectangularSelection) and [crosshair cursor](https://codemirror.net/6/docs/ref/#view.crosshairCursor)
-   - [active line highlighting](https://codemirror.net/6/docs/ref/#view.highlightActiveLine)
-   - [active line gutter highlighting](https://codemirror.net/6/docs/ref/#view.highlightActiveLineGutter)
-   - [selection match highlighting](https://codemirror.net/6/docs/ref/#search.highlightSelectionMatches)
-   - [search](https://codemirror.net/6/docs/ref/#search.searchKeymap)
-   - [linting](https://codemirror.net/6/docs/ref/#lint.lintKeymap)
-
-  (You'll probably want to add some language package to your setup
-  too.)
-
-  This extension does not allow customization. The idea is that,
-  once you decide you want to configure your editor more precisely,
-  you take this package's source (which is just a bunch of imports
-  and an array literal), copy it into your own code, and adjust it
-  as desired.
-  */
-  const basicSetup = /*@__PURE__*/(() => [
-      lineNumbers(),
-      highlightActiveLineGutter(),
-      highlightSpecialChars(),
-      history(),
-      foldGutter(),
-      drawSelection(),
-      dropCursor(),
-      EditorState.allowMultipleSelections.of(true),
-      indentOnInput(),
-      syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-      bracketMatching(),
-      closeBrackets(),
-      autocompletion(),
-      rectangularSelection(),
-      crosshairCursor(),
-      highlightActiveLine(),
-      highlightSelectionMatches(),
-      keymap.of([
-          ...closeBracketsKeymap,
-          ...defaultKeymap,
-          ...searchKeymap,
-          ...historyKeymap,
-          ...foldKeymap,
-          ...completionKeymap,
-          ...lintKeymap
-      ])
-  ])();
 
   /**
   A parse stack. These are used internally by the parser to track
@@ -28115,9 +27545,8 @@
 
   window.CM = {
     EditorView,
-    basicSetup,
     EditorState,
-    Compartment, // Add to export
+    Compartment,
     javascript,
     nord,
     keymap,
@@ -28125,7 +27554,19 @@
     indentWithTab,
     indentUnit,
     autocompletion,
-    lineNumbers // Add to export
+    lineNumbers,
+    history,
+    foldGutter,
+    highlightActiveLineGutter,
+    drawSelection,
+    dropCursor,
+    indentOnInput,
+    bracketMatching,
+    closeBrackets,
+    rectangularSelection,
+    crosshairCursor,
+    defaultKeymap,
+    historyKeymap
   };
 
 })();

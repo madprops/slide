@@ -26,27 +26,51 @@ App.setup_input = () => {
 }
 
 App.create_editor = () => {
-  let {EditorView, basicSetup} = window.CM
-  let {EditorState} = window.CM
-  let {javascript} = window.CM
-  let {indentWithTab} = window.CM
-  let {keymap} = window.CM
-  let {indentUnit} = window.CM
-  let {Compartment} = window.CM
-  let {lineNumbers} = window.CM
-  let {nord} = window.CM
+  // specific imports needed to replace basicSetup
+  let {
+    EditorView, EditorState, Compartment,
+    lineNumbers, highlightActiveLineGutter, foldGutter, // Gutter components
+    history, drawSelection, dropCursor, // Core basics
+    indentOnInput, bracketMatching, closeBrackets, rectangularSelection, crosshairCursor, // UI basics
+    keymap, defaultKeymap, historyKeymap, indentWithTab, // Keymaps
+    javascript, nord
+  } = window.CM
 
   App.lineNumbers = lineNumbers
   App.compartment = new Compartment()
   let container = DOM.el(`#code-input-wrapper`)
   let theme = EditorView.theme(App.editor_theme, {dark: true})
 
+  // Group all extensions that render in the gutter
+  let gutter_extensions = [
+    lineNumbers(),
+    highlightActiveLineGutter(),
+    foldGutter(),
+  ]
+
   let extensions = [
     nord,
-    basicSetup,
+    // Add the compartment with the gutter extensions inside
+    App.compartment.of(gutter_extensions),
+
+    // Manually add the standard features (formerly provided by basicSetup)
+    history(),
+    drawSelection(),
+    dropCursor(),
+    indentOnInput(),
+    bracketMatching(),
+    closeBrackets(),
+    rectangularSelection(),
+    crosshairCursor(),
+
+    keymap.of([
+      ...defaultKeymap,
+      ...historyKeymap,
+      indentWithTab,
+    ]),
+
     javascript(),
     EditorView.lineWrapping,
-    App.compartment.of(lineNumbers()),
     theme,
   ]
 
