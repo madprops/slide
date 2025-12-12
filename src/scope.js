@@ -46,6 +46,7 @@ App.scope_click_level_time = 2.8 * 1000
 App.many_clicks_amount = 100
 App.scope_gestures_enabled = false
 App.scope_clicks_min = 5
+App.scope_click_rotation_speed = 0.001
 
 App.setup_scope = () => {
   App.scope_debouncer = App.create_debouncer(() => {
@@ -412,16 +413,20 @@ App.increase_scope_click_level = (level) => {
   }, App.scope_click_level_time)
 }
 
-App.draw_star = (ctx, x, y, radius, spikes, outerRadius) => {
-  let rot = Math.PI / 2 * 3
+App.draw_star = (ctx, x, y, radius, spikes, outer_radius, rotation_offset = 0) => {
+  let rot = (Math.PI / 2 * 3) + rotation_offset
   let step = Math.PI / spikes
 
+  // calculate the starting point dynamically so the first point rotates too
+  let start_x = x + Math.cos(rot) * outer_radius
+  let start_y = y + Math.sin(rot) * outer_radius
+
   ctx.beginPath()
-  ctx.moveTo(x, y - outerRadius)
+  ctx.moveTo(start_x, start_y)
 
   for (let i = 0; i < spikes; i++) {
-    let x1 = x + Math.cos(rot) * outerRadius
-    let y1 = y + Math.sin(rot) * outerRadius
+    let x1 = x + Math.cos(rot) * outer_radius
+    let y1 = y + Math.sin(rot) * outer_radius
     ctx.lineTo(x1, y1)
     rot += step
 
@@ -431,7 +436,7 @@ App.draw_star = (ctx, x, y, radius, spikes, outerRadius) => {
     rot += step
   }
 
-  ctx.lineTo(x, y - outerRadius)
+  ctx.lineTo(start_x, start_y)
   ctx.closePath()
 }
 
@@ -517,11 +522,29 @@ App.draw_scope_frame = () => {
   let now = Date.now()
   App.scope_clicks = App.scope_clicks.filter(click => (now - click.timestamp) < App.scope_click_time)
 
-  for (let click of App.scope_clicks) {
-    App.scope_canvas_ctx.fillStyle = App[`scope_click_color_${App.scope_click_level}`]
-    App.draw_star(App.scope_canvas_ctx, click.x, click.y, 3, 5, App.scope_click_size)
-    App.scope_canvas_ctx.fill()
+for (let click of App.scope_clicks) {
+  let age = (now - click.timestamp)
+  let angle = 0
+
+  if (App.scope_click_level > 1) {
+    angle = (age * App.scope_click_rotation_speed)
   }
+
+  App.scope_canvas_ctx.fillStyle = App[`scope_click_color_${App.scope_click_level}`]
+
+  // pass the angle as the last argument
+  App.draw_star(
+    App.scope_canvas_ctx,
+    click.x,
+    click.y,
+    3,
+    5,
+    App.scope_click_size,
+    angle
+  )
+
+  App.scope_canvas_ctx.fill()
+}
 
   App.scope_animation_id = requestAnimationFrame(App.draw_scope_frame)
 }
