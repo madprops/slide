@@ -1,5 +1,5 @@
 // Author: madprops
-// CPM: 60
+setcpm(60)
 
 let s1 = stack(
 	note("a b c@3 d"),

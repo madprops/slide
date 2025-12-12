@@ -1,5 +1,5 @@
 // Author: madprops
-// CPM: 25
+setcpm(25)
 
 let s1 = stack(
 	note("eb3 f4b d4 [g4 g4]").sound("sine").pan(-0.3).room("<0 .5 .6>"),
