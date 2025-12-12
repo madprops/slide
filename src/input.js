@@ -56,14 +56,9 @@ App.create_editor = () => {
 
     Prec.highest(
       keymap.of([
-        // Add your Linux-specific duplicate bindings here:
-        { key: "Ctrl-Shift-Alt-ArrowDown", run: copyLineDown },
-        { key: "Ctrl-Shift-Alt-ArrowUp", run: copyLineUp },
-
-        // Your existing custom binding:
-        { key: `Mod-d`, run: selectNextOccurrence, preventDefault: true },
-
-        // The standard VS Code bindings (Shift-Alt-Down, etc.):
+        {key: "Ctrl-Shift-Alt-ArrowDown", run: copyLineDown},
+        {key: "Ctrl-Shift-Alt-ArrowUp", run: copyLineUp},
+        {key: `Mod-d`, run: selectNextOccurrence, preventDefault: true},
         ...vscodeKeymap,
       ]),
     ),
