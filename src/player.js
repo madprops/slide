@@ -114,6 +114,9 @@ App.playing = (extra) => {
     if (App.beat_title) {
       msg = `Playing: ${App.beat_title}`
     }
+    else if (App.fetch_timer) {
+      msg = `Playing 🤖`
+    }
     else {
       msg = `Playing 🥁`
     }

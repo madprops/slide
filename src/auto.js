@@ -105,6 +105,15 @@ App.open_auto_modal = () => {
   App.open_modal(`auto`)
   DOM.el(`#auto-delay`).value = App.auto_delay
   DOM.el(`#auto-input`).value = App.auto_endpoint
+
+  if (App.fetch_timer) {
+    DOM.hide(`#auto-start`)
+    DOM.show(`#auto-stop`)
+  }
+  else {
+    DOM.show(`#auto-start`)
+    DOM.hide(`#auto-stop`)
+  }
 }
 
 App.start_auto = async (endpoint) => {
@@ -124,8 +133,6 @@ App.start_auto = async (endpoint) => {
   }
 
   App.strudel_watch_status()
-  let display_endpoint = App.truncate_path(App.auto_endpoint)
-  App.set_status(`Auto mode running (${display_endpoint})`)
 }
 
 App.fetch_status_code = async () => {
