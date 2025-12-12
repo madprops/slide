@@ -20,7 +20,7 @@ App.setup_player = () => {
     if (App.editor) {
       // 3. Dispatch the list (which is now full of objects like {start: 1746, end: 1749})
       App.editor.dispatch({
-        effects: App.set_highlight.of(locations)
+        effects: App.set_highlight.of(locations),
       })
     }
   }, [0, 0])
