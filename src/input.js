@@ -34,7 +34,7 @@ App.create_editor = () => {
     indentOnInput, bracketMatching, closeBrackets, rectangularSelection, crosshairCursor, // UI basics
     keymap, defaultKeymap, historyKeymap, indentWithTab, // Keymaps
     highlightSelectionMatches, searchKeymap, search, selectNextOccurrence,
-    javascript, nord, vscodeKeymap, Prec,
+    javascript, nord, vscodeKeymap, Prec, copyLineDown, copyLineUp,
   } = window.CM
 
   App.lineNumbers = lineNumbers
@@ -57,7 +57,14 @@ App.create_editor = () => {
 
     Prec.highest(
       keymap.of([
-        {key: `Mod-d`, run: selectNextOccurrence, preventDefault: true},
+        // Add your Linux-specific duplicate bindings here:
+        { key: "Ctrl-Shift-Alt-ArrowDown", run: copyLineDown },
+        { key: "Ctrl-Shift-Alt-ArrowUp", run: copyLineUp },
+
+        // Your existing custom binding:
+        { key: `Mod-d`, run: selectNextOccurrence, preventDefault: true },
+
+        // The standard VS Code bindings (Shift-Alt-Down, etc.):
         ...vscodeKeymap,
       ]),
     ),

@@ -27703,6 +27703,8 @@
     searchKeymap,
     search,
     selectNextOccurrence,
+    copyLineDown,
+    copyLineUp,
   };
 
 })();
