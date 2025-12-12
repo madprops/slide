@@ -92,15 +92,9 @@ def load_config() -> None:
         config_content = config_path.read_text(encoding="utf-8")
         app_config = json.loads(config_content)
         logging.info("Loaded config: %s", app_config)
-    except FileNotFoundError:
-        logging.warning("Config file %s not found, using defaults", CONFIG_FILE)
-        app_config = {"version": "1.0"}
-    except json.JSONDecodeError:
-        logging.exception("Invalid JSON in config file")
-        app_config = {"version": "1.0"}
-    except OSError:
-        logging.exception("Failed to read config file")
-        app_config = {"version": "1.0"}
+    except:
+        logging.critical("Config Error: %s", e)
+        sys.exit(1)
 
 
 def strip_markdown_code_fences(text: str) -> str:
