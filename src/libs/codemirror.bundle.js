@@ -21519,6 +21519,110 @@
           }
       }
   });
+
+  const defaultHighlightOptions = {
+      highlightWordAroundCursor: false,
+      minSelectionLength: 1,
+      maxMatches: 100,
+      wholeWords: false
+  };
+  const highlightConfig = /*@__PURE__*/Facet.define({
+      combine(options) {
+          return combineConfig(options, defaultHighlightOptions, {
+              highlightWordAroundCursor: (a, b) => a || b,
+              minSelectionLength: Math.min,
+              maxMatches: Math.min
+          });
+      }
+  });
+  /**
+  This extension highlights text that matches the selection. It uses
+  the `"cm-selectionMatch"` class for the highlighting. When
+  `highlightWordAroundCursor` is enabled, the word at the cursor
+  itself will be highlighted with `"cm-selectionMatch-main"`.
+  */
+  function highlightSelectionMatches(options) {
+      let ext = [defaultTheme, matchHighlighter];
+      if (options)
+          ext.push(highlightConfig.of(options));
+      return ext;
+  }
+  const matchDeco = /*@__PURE__*/Decoration.mark({ class: "cm-selectionMatch" });
+  const mainMatchDeco = /*@__PURE__*/Decoration.mark({ class: "cm-selectionMatch cm-selectionMatch-main" });
+  // Whether the characters directly outside the given positions are non-word characters
+  function insideWordBoundaries(check, state, from, to) {
+      return (from == 0 || check(state.sliceDoc(from - 1, from)) != CharCategory.Word) &&
+          (to == state.doc.length || check(state.sliceDoc(to, to + 1)) != CharCategory.Word);
+  }
+  // Whether the characters directly at the given positions are word characters
+  function insideWord(check, state, from, to) {
+      return check(state.sliceDoc(from, from + 1)) == CharCategory.Word
+          && check(state.sliceDoc(to - 1, to)) == CharCategory.Word;
+  }
+  const matchHighlighter = /*@__PURE__*/ViewPlugin.fromClass(class {
+      constructor(view) {
+          this.decorations = this.getDeco(view);
+      }
+      update(update) {
+          if (update.selectionSet || update.docChanged || update.viewportChanged)
+              this.decorations = this.getDeco(update.view);
+      }
+      getDeco(view) {
+          let conf = view.state.facet(highlightConfig);
+          let { state } = view, sel = state.selection;
+          if (sel.ranges.length > 1)
+              return Decoration.none;
+          let range = sel.main, query, check = null;
+          if (range.empty) {
+              if (!conf.highlightWordAroundCursor)
+                  return Decoration.none;
+              let word = state.wordAt(range.head);
+              if (!word)
+                  return Decoration.none;
+              check = state.charCategorizer(range.head);
+              query = state.sliceDoc(word.from, word.to);
+          }
+          else {
+              let len = range.to - range.from;
+              if (len < conf.minSelectionLength || len > 200)
+                  return Decoration.none;
+              if (conf.wholeWords) {
+                  query = state.sliceDoc(range.from, range.to); // TODO: allow and include leading/trailing space?
+                  check = state.charCategorizer(range.head);
+                  if (!(insideWordBoundaries(check, state, range.from, range.to) &&
+                      insideWord(check, state, range.from, range.to)))
+                      return Decoration.none;
+              }
+              else {
+                  query = state.sliceDoc(range.from, range.to);
+                  if (!query)
+                      return Decoration.none;
+              }
+          }
+          let deco = [];
+          for (let part of view.visibleRanges) {
+              let cursor = new SearchCursor(state.doc, query, part.from, part.to);
+              while (!cursor.next().done) {
+                  let { from, to } = cursor.value;
+                  if (!check || insideWordBoundaries(check, state, from, to)) {
+                      if (range.empty && from <= range.from && to >= range.to)
+                          deco.push(mainMatchDeco.range(from, to));
+                      else if (from >= range.to || to <= range.from)
+                          deco.push(matchDeco.range(from, to));
+                      if (deco.length > conf.maxMatches)
+                          return Decoration.none;
+                  }
+              }
+          }
+          return Decoration.set(deco);
+      }
+  }, {
+      decorations: v => v.decorations
+  });
+  const defaultTheme = /*@__PURE__*/EditorView.baseTheme({
+      ".cm-selectionMatch": { backgroundColor: "#99ff7780" },
+      ".cm-searchMatch .cm-selectionMatch": { backgroundColor: "transparent" }
+  });
   // Select the words around the cursors.
   const selectWord = ({ state, dispatch }) => {
       let { selection } = state;
@@ -21587,6 +21691,15 @@
           });
       }
   });
+  /**
+  Add search state to the editor configuration, and optionally
+  configure the search extension.
+  ([`openSearchPanel`](https://codemirror.net/6/docs/ref/#search.openSearchPanel) will automatically
+  enable this if it isn't already on).
+  */
+  function search(config) {
+      return config ? [searchConfigFacet.of(config), searchExtensions] : searchExtensions;
+  }
   /**
   A search query. Part of the editor's search state.
   */
@@ -22035,6 +22148,24 @@
       view.dispatch({ effects: togglePanel$1.of(false) });
       return true;
   };
+  /**
+  Default search-related key bindings.
+
+   - Mod-f: [`openSearchPanel`](https://codemirror.net/6/docs/ref/#search.openSearchPanel)
+   - F3, Mod-g: [`findNext`](https://codemirror.net/6/docs/ref/#search.findNext)
+   - Shift-F3, Shift-Mod-g: [`findPrevious`](https://codemirror.net/6/docs/ref/#search.findPrevious)
+   - Mod-Alt-g: [`gotoLine`](https://codemirror.net/6/docs/ref/#search.gotoLine)
+   - Mod-d: [`selectNextOccurrence`](https://codemirror.net/6/docs/ref/#search.selectNextOccurrence)
+  */
+  const searchKeymap = [
+      { key: "Mod-f", run: openSearchPanel, scope: "editor search-panel" },
+      { key: "F3", run: findNext, shift: findPrevious, scope: "editor search-panel", preventDefault: true },
+      { key: "Mod-g", run: findNext, shift: findPrevious, scope: "editor search-panel", preventDefault: true },
+      { key: "Escape", run: closeSearchPanel, scope: "editor search-panel" },
+      { key: "Mod-Shift-l", run: selectSelectionMatches },
+      { key: "Mod-Alt-g", run: gotoLine },
+      { key: "Mod-d", run: selectNextOccurrence, preventDefault: true },
+  ];
   class SearchPanel {
       constructor(view) {
           this.view = view;
@@ -27566,7 +27697,10 @@
     rectangularSelection,
     crosshairCursor,
     defaultKeymap,
-    historyKeymap
+    historyKeymap,
+    highlightSelectionMatches,
+    searchKeymap,
+    search,
   };
 
 })();

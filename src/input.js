@@ -33,6 +33,7 @@ App.create_editor = () => {
     history, drawSelection, dropCursor, // Core basics
     indentOnInput, bracketMatching, closeBrackets, rectangularSelection, crosshairCursor, // UI basics
     keymap, defaultKeymap, historyKeymap, indentWithTab, // Keymaps
+    highlightSelectionMatches, searchKeymap, search,
     javascript, nord,
   } = window.CM
 
@@ -54,6 +55,7 @@ App.create_editor = () => {
     App.compartment.of(gutter_extensions),
 
     // Manually add the standard features (formerly provided by basicSetup)
+    search(),
     history(),
     drawSelection(),
     dropCursor(),
@@ -62,10 +64,12 @@ App.create_editor = () => {
     closeBrackets(),
     rectangularSelection(),
     crosshairCursor(),
+    highlightSelectionMatches(),
 
     keymap.of([
       ...defaultKeymap,
       ...historyKeymap,
+      ...searchKeymap,
       indentWithTab,
     ]),
 
