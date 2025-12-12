@@ -523,11 +523,11 @@ App.draw_scope_frame = () => {
   App.scope_clicks = App.scope_clicks.filter(click => (now - click.timestamp) < App.scope_click_time)
 
   for (let click of App.scope_clicks) {
-    let age = (now - click.timestamp)
+    let age = now - click.timestamp
     let angle = 0
 
     if (App.scope_click_level > 1) {
-      angle = (age * App.scope_click_rotation_speed)
+      angle = age * App.scope_click_rotation_speed
     }
 
     App.scope_canvas_ctx.fillStyle = App[`scope_click_color_${App.scope_click_level}`]
@@ -540,7 +540,7 @@ App.draw_scope_frame = () => {
       3,
       5,
       App.scope_click_size,
-      angle
+      angle,
     )
 
     App.scope_canvas_ctx.fill()
