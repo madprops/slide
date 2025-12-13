@@ -4,7 +4,7 @@ App.setup_drawer = () => {
   let max_haps = 1000
 
   App.drawer = new Drawer((active_haps) => {
-    if (active_haps.length > max_haps) {
+    if (!App.mirror_enabled || (active_haps.length > max_haps)) {
       return
     }
 
@@ -65,6 +65,17 @@ App.clean_mirror = () => {
 
 App.toggle_mirror = () => {
   App.mirror_enabled = !App.mirror_enabled
+
+  if (App.mirror_enabled) {
+    if (App.is_playing) {
+      App.start_drawer()
+    }
+  }
+  else {
+    App.stop_drawer()
+    App.clean_mirror()
+  }
+
   App.stor_save_mirror()
 }
 
