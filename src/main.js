@@ -390,8 +390,8 @@ App.get_scope_height = () => {
   return 0
 }
 
-App.get_controls_height = () => {
-  let el = DOM.el(`#controls`)
+App.get_bottom_height = () => {
+  let el = DOM.el(`#bottom`)
   return App.get_el_height(el)
 }
 
