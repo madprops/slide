@@ -318,6 +318,7 @@ App.start_events = async () => {
   App.init_tempo_controls()
   App.init_code_input_controls()
   App.start_keyboard()
+  App.start_resize_observer()
 
   DOM.ev(window, `resize`, () => {
     App.handle_scope_resize()
@@ -336,8 +337,12 @@ App.start_events = async () => {
   }
 }
 
+App.get_main = () => {
+  return DOM.el(`#main`)
+}
+
 App.make_main_visible = () => {
-  DOM.el(`#main`).classList.remove(`invisible`)
+  App.get_main().classList.remove(`invisible`)
 }
 
 App.set_title = (title) => {
@@ -397,6 +402,18 @@ App.new_beat = () => {
     App.set_input(``)
     App.stop_action()
     App.focus_input()
+  }
+}
+
+App.start_resize_observer = () => {
+  let main = App.get_main()
+
+  let observer = new ResizeObserver((entries) => {
+    App.max_debouncer.call()
+  })
+
+  if (main) {
+    observer.observe(main)
   }
 }
 

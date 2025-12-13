@@ -22,6 +22,10 @@ App.setup_input = () => {
   else {
     App.disable_lines()
   }
+
+  App.max_debouncer = App.create_debouncer(() => {
+    App.max_input_if_larger()
+  }, 500)
 }
 
 App.create_editor = () => {
@@ -553,8 +557,8 @@ App.max_input = (just_check = false) => {
   if (!just_check) {
     wrapper.style.height = `${diff}px`
     wrapper.style.width = `${max_width}%`
+    App.scope_debouncer.call()
     App.check_max_button()
-    // App.editor.requestMeasure()
   }
 
   return [diff, max_width]
@@ -644,4 +648,14 @@ App.disable_lines = () => {
   App.editor.dispatch({
     effects: App.compartment.reconfigure([]),
   })
+}
+
+App.max_input_if_larger = () => {
+  let wrapper = App.get_input_wrapper()
+  let height_1 = parseInt(wrapper.style.height)
+  let [height_2, width_2] = App.max_input(true)
+
+  if (height_1 > height_2) {
+    App.max_input()
+  }
 }
