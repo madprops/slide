@@ -1,7 +1,15 @@
 App.song_cache = {}
+App.fetched_songs_date = 0
+App.fetched_songs = []
+App.song_fetch_delay = 60 * 1000
 
 App.fetch_songs_list = async () => {
   try {
+    if (Date.now() - App.fetched_songs_date < App.song_fetch_delay) {
+      return App.fetched_songs
+    }
+
+    App.loading()
     let response = await fetch(`/songs/list`)
 
     if (!response.ok) {
@@ -12,13 +20,18 @@ App.fetch_songs_list = async () => {
 
     if (!Array.isArray(songs)) {
       console.error(`Songs list payload was not an array`)
+      App.playing()
       return []
     }
 
+    App.fetched_songs = songs
+    App.fetched_songs_date = Date.now()
+    App.playing()
     return songs
   }
   catch (err) {
     console.error(`Error fetching songs`, err)
+    App.playing()
     return []
   }
 }
