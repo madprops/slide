@@ -29,6 +29,7 @@ App.check_gestures = () => {
     else if (App.square_gesture()) {
       App.gesture_function(3, () => {
         App.glow_input()
+        App.canvas_effect_1()
       })
 
       return
@@ -37,6 +38,7 @@ App.check_gestures = () => {
     else if (App.circle_gesture()) {
       App.gesture_function(4, () => {
         App.glow_input()
+        App.canvas_effect_2()
       })
 
       return

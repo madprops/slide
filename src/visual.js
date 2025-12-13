@@ -629,8 +629,9 @@ App.canvas_effect_1 = () => {
 }
 
 App.canvas_effect_2 = () => {
-  let vol = App.get_volume()
+  let raw_vol = App.get_raw_volume()
   let ctx = App.get_bg_context()
+  let canvas = App.get_bg_canvas()
 
   ctx.save()
 
@@ -638,20 +639,17 @@ App.canvas_effect_2 = () => {
   ctx.translate(canvas.width / 2, canvas.height / 2)
 
   // scale up on the beat (pulse effect)
-  let scale = 1 + (vol * 0.2)
+  let scale = 1 + (raw_vol * 0.2)
   ctx.scale(scale, scale)
 
   // rotate slightly on very loud sounds for "chaos"
-  if (vol > 0.9) {
+  if (raw_vol > 0.9) {
     let shake = (Math.random() - 0.5) * 0.1
     ctx.rotate(shake)
   }
 
   // move back
   ctx.translate(-canvas.width / 2, -canvas.height / 2)
-
-  // draw the current visual (whatever it is)
-  current_visual.draw(ctx)
 
   ctx.restore()
   App.start_canvas_effect_timeout()
