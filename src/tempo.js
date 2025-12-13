@@ -122,46 +122,16 @@ App.init_tempo_controls = () => {
     App.update_tempo(event.target.value)
   })
 
-  DOM.ev(container, `auxclick`, (event) => {
-    if (event.button === 1) {
-      slider.value = App.default_cpm
-      App.update_tempo(App.default_cpm)
-      App.set_tempo()
-    }
-  })
-
-  DOM.ev(container, `wheel`, (event) => {
-    event.preventDefault()
-
-    if (!slider) {
-      return
-    }
-
-    let slider_step = parseInt(slider.step, 10)
-
-    if (!Number.isFinite(slider_step) || (slider_step <= 0)) {
-      slider_step = App.tempo_step
-    }
-
-    let current_value = slider.valueAsNumber
-
-    if (!Number.isFinite(current_value)) {
-      current_value = App.tempo
-    }
-
-    if (event.deltaY < 0) {
-      current_value += slider_step
-    }
-    else if (event.deltaY > 0) {
-      current_value -= slider_step
-    }
-    else {
-      return
-    }
-
-    App.on_tempo_change(false, current_value)
+  App.setup_slider(container, (slider) => {
+    // Auxclick
+    slider.value = App.default_cpm
+    App.update_tempo(App.default_cpm)
+    App.set_tempo()
+  }, (value) => {
+    // Wheel
+    App.on_tempo_change(false, value)
     App.schedule_tempo_wheel_commit()
-  }, {passive: false})
+  })
 
   DOM.ev(container, `change`, () => {
     App.on_tempo_change(true)

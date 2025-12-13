@@ -117,24 +117,9 @@ App.init_volume_controls = () => {
     step_volume(1)
   })
 
-  DOM.ev(container, `auxclick`, (event) => {
-    if (event.button === 1) {
-      App.update_volume(50)
-    }
-  })
-
-  DOM.ev(container, `wheel`, (event) => {
-    event.preventDefault()
-    let step = parseInt(slider.step, 10) || App.volume_step
-    let current = parseInt(slider.value, 10)
-
-    if (event.deltaY < 0) {
-      slider.value = current + step
-    }
-    else {
-      slider.value = current - step
-    }
-
+  App.setup_slider(container, () => {
+    App.update_volume(50)
+  }, () => {
     App.update_volume(App.read_volume_value(slider))
-  }, {passive: false})
+  })
 }

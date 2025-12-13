@@ -196,3 +196,30 @@ App.make_control_button = (el, action) => {
     clearInterval(App.ctrl_btn_interval_delay)
   })
 }
+
+App.setup_slider = (el, on_auxclick, on_wheel) => {
+  let slider = DOM.el(`input`, el)
+
+  DOM.ev(el, `auxclick`, (event) => {
+    if (event.button === 1) {
+      on_auxclick(slider)
+    }
+  })
+
+  DOM.ev(el, `wheel`, (event) => {
+    event.preventDefault()
+    let step = parseInt(slider.step, 10)
+    let current = parseInt(slider.value, 10)
+    let value
+
+    if (event.deltaY < 0) {
+      value = current + step
+    }
+    else {
+      value = current - step
+    }
+
+    slider.value = value
+    on_wheel(value)
+  }, {passive: false})
+}
