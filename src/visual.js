@@ -83,6 +83,16 @@ App.open_visual_modal = async () => {
 }
 
 App.apply_visual = (mode) => {
+  // STOP the previous loop if it exists
+  if (App.animation_id) {
+    cancelAnimationFrame(App.animation_id)
+    App.animation_id = null
+  }
+
+  // Clear specific animation states so they re-init fresh
+  App.flow_particles = null
+  App.bg_orbs = null
+
   App.visual = mode
   App.stor_save_visual()
 
@@ -96,6 +106,7 @@ App.apply_visual = (mode) => {
   }
   else {
     App.background_canvas.classList.remove(`under`)
+    // Start the new loop
     App.render_animation()
   }
 }
