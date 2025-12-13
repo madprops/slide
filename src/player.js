@@ -6,6 +6,10 @@ App.setup_player = () => {
   let previous_locations = []
 
   App.drawer = new Drawer((active_haps) => {
+    if (!App.is_playing) {
+      return
+    }
+
     let locations = []
 
     for (let hap of active_haps) {
