@@ -48,12 +48,24 @@ App.start_visual = () => {
   ]
 
   // Fix: Handle window resizing to keep canvas sharp
-  window.addEventListener(`resize`, () => {
+  DOM.ev(window, `resize`, () => {
     if (App.background_canvas) {
       App.background_canvas.width = window.innerWidth
       App.background_canvas.height = window.innerHeight
     }
   })
+
+  // Only add the listener if we haven't already (or remove the old one first)
+  if (!App.resize_listener) {
+    App.resize_listener = () => {
+      if (App.background_canvas) {
+        App.background_canvas.width = window.innerWidth
+        App.background_canvas.height = window.innerHeight
+      }
+    }
+
+    DOM.ev(window, `resize`, App.resize_listener)
+  }
 
   // Trigger initial size
   App.background_canvas.width = window.innerWidth
@@ -514,12 +526,15 @@ App.anim_aurora_borealis = (c, w, h, f) => {
 }
 
 App.render_animation = () => {
+  // Safety check: if we switched to auto/none, stop recursing
   if ([`auto`, `none`].includes(App.visual)) {
     return
   }
 
   let width = window.innerWidth
   let height = window.innerHeight
+
+  // Note: Some animations rely on trail effects, so we use a transparent fade
   let bg_fade = `rgba(0, 0, 0, 0.12)`
 
   App.background_canvas_ctx.fillStyle = bg_fade
@@ -543,13 +558,12 @@ App.render_animation = () => {
   else if (App.visual === `orb balloons`) {
     App.anim_orb_balloons(App.background_canvas_ctx, width, height, App.animation_frames)
   }
-  else {
-    App.apply_visual(`auto`)
-    return
-  }
+  // Remove the 'else' block here that calls apply_visual('auto'), it creates recursion risks
 
   App.animation_frames++
-  requestAnimationFrame(App.render_animation)
+
+  // CAPTURE the ID here
+  App.animation_id = requestAnimationFrame(App.render_animation)
 }
 
 App.clear_visual = () => {
