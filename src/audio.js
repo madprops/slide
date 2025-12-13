@@ -112,3 +112,7 @@ App.spin_panning = (duration_ms = 2000) => {
     App.stop_auto_pan()
   }, duration_ms)
 }
+
+App.get_raw_volume = () => {
+  return window.master_fx?.get_volume() || 0
+}

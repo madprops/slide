@@ -27,7 +27,7 @@
       const is_main_context = !window.master_fx
 
       if (is_main_context) {
-        console.log(`Intercepted MAIN AudioContext (Seamless Reverb + LFO Mode)`)
+        console.log(`Intercepted MAIN AudioContext (Seamless Reverb + LFO Mode + Metering)`)
       }
       else {
         console.log(`Intercepted SECONDARY AudioContext`)
@@ -54,17 +54,15 @@
       App.panning = ctx.createStereoPanner()
       App.panning.pan.value = 0
 
-      // --- LFO Panner Setup (New) ---
-      // We use a Sine wave for smooth movement, unlike the square wave of setInterval
+      // --- LFO Panner Setup ---
       let lfo = ctx.createOscillator()
       lfo.type = `sine`
-      lfo.frequency.value = 0 // Starts frozen
+      lfo.frequency.value = 0
 
       let lfo_gain = ctx.createGain()
-      lfo_gain.gain.value = 0 // Starts with 0 depth (no effect)
+      lfo_gain.gain.value = 0
 
       lfo.connect(lfo_gain)
-      // Connect LFO to the *parameter* of the panner, not the audio stream
       lfo_gain.connect(App.panning.pan)
       lfo.start()
 
@@ -78,6 +76,12 @@
       let master_gain = ctx.createGain()
       master_gain.gain.value = 1.0
 
+      // --- Analyser Setup (New) ---
+      let analyser = ctx.createAnalyser()
+      analyser.fftSize = 256 // Keep it small for performance
+      let buffer_length = analyser.frequencyBinCount
+      let data_array = new Uint8Array(buffer_length)
+
       // --- 2. Routing ---
 
       // Dry Chain
@@ -85,7 +89,10 @@
       eq_mid.connect(eq_high)
       eq_high.connect(App.panning)
       App.panning.connect(master_gain)
-      master_gain.connect(super.destination)
+
+      // Route master to Analyser, then Analyser to Speakers
+      master_gain.connect(analyser)
+      analyser.connect(super.destination)
 
       // --- 3. Compatibility ---
 
@@ -108,7 +115,31 @@
 
         window.master_fx = {
           context: ctx,
-          nodes: {eq_low, eq_mid, eq_high, panner: App.panning, reverb_gain, master_gain, lfo, lfo_gain},
+          nodes: {
+            eq_low,
+            eq_mid,
+            eq_high,
+            panner: App.panning,
+            reverb_gain,
+            master_gain,
+            lfo,
+            lfo_gain,
+            analyser // Exposed here
+          },
+          // New Helper: Get Current Volume (0.0 to 1.0)
+          get_volume: () => {
+            analyser.getByteTimeDomainData(data_array)
+            let sum = 0
+
+            for (let i = 0; i < buffer_length; i++) {
+              // Convert 128-center byte data to -1..1 float range
+              let x = (data_array[i] - 128) / 128
+              sum += x * x
+            }
+
+            // Return RMS (Root Mean Square)
+            return Math.sqrt(sum / buffer_length)
+          },
           set_eq: (low_db, mid_db, high_db) => {
             let now = ctx.currentTime
             let ramp = 0.1
@@ -129,15 +160,11 @@
             master_gain.gain.setTargetAtTime(val, ctx.currentTime, 0.1)
           },
           set_panning: (val) => {
-            // Add slight lookahead to prevent clicking
             App.panning.pan.setTargetAtTime(val, ctx.currentTime + 0.02, 0.1)
           },
-          // New LFO Control
           set_auto_pan: (rate_hz, depth) => {
             let now = ctx.currentTime
-            // Smoothly ramp the frequency
             lfo.frequency.setTargetAtTime(rate_hz, now, 0.1)
-            // Smoothly ramp the depth (amplitude of the pan swing)
             lfo_gain.gain.setTargetAtTime(depth, now, 0.1)
           },
           splash_reverb: (duration = 3) => {

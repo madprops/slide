@@ -1,5 +1,4 @@
 App.setup_strudel_mirror = () => {
-  console.log(4444444)
   let {
     EditorView, Decoration, StateField, StateEffect,
   } = window.CM

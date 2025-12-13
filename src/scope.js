@@ -34,13 +34,10 @@ App.scope_is_drawing = false
 App.scope_click_distance = 120
 App.scope_mousedown_date = 0
 App.scope_beep_delay = 300
-App.scope_slide_delay = 800
 App.scope_enable_date = 0
 App.scope_click_lock = 250
 App.scope_debouncer_delay = 50
 App.scope_click_level_time = 3 * 1000
-App.many_clicks_amount = 100
-App.scope_gestures_enabled = false
 App.scope_clicks_min = 5
 App.scope_click_rotation_speed = 0.001
 
@@ -350,52 +347,7 @@ App.handle_scope_mouse_move = (event) => {
 
 App.handle_scope_mouse_up = (event) => {
   App.mouse_up_coords = App.get_scope_coords(event)
-
-  if ((Date.now() - App.scope_mousedown_date) <= App.scope_slide_delay) {
-    if (App.check_scope_slide()) {
-      App.scope_gestures_enabled = false
-      return
-    }
-  }
-
-  if (App.scope_gestures_enabled) {
-    if (App.triangle_gesture()) {
-      App.gesture_function(2, () => {
-        App.glow_input()
-      })
-
-      return
-    }
-    else if (App.square_gesture()) {
-      App.gesture_function(3, () => {
-        App.glow_input()
-      })
-
-      return
-    }
-    else if (App.circle_gesture()) {
-      App.gesture_function(4, () => {
-        App.glow_input()
-      })
-
-      return
-    }
-    else if (App.scope_clicks.length >= App.many_clicks_amount) {
-      App.gesture_function(5, () => {
-        App.glow_input()
-      })
-
-      return
-    }
-  }
-
-  if ((Date.now() - App.scope_mousedown_date) <= App.scope_beep_delay) {
-    App.splash_reverb(2)
-
-    if (!App.check_scope_panning()) {
-      App.beep_sound()
-    }
-  }
+  App.check_gestures()
 }
 
 App.increase_scope_click_level = (level) => {

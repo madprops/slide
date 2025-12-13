@@ -2,6 +2,64 @@ App.max_scope_slide_y_dff = 50
 App.scope_panning_zone = 100
 App.scope_padding_amount = 0.9
 App.scope_slide_distance = 180
+App.scope_slide_delay = 800
+App.scope_gestures_enabled = false
+App.many_clicks_amount = 100
+
+App.check_gestures = () => {
+  // Slide
+  if ((Date.now() - App.scope_mousedown_date) <= App.scope_slide_delay) {
+    if (App.check_scope_slide()) {
+      App.scope_gestures_enabled = false
+      return
+    }
+  }
+
+  if (App.scope_gestures_enabled) {
+    // Triangle
+    if (App.triangle_gesture()) {
+      App.gesture_function(2, () => {
+        App.glow_input()
+        App.canvas_effect_1()
+      })
+
+      return
+    }
+    // Square
+    else if (App.square_gesture()) {
+      App.gesture_function(3, () => {
+        App.glow_input()
+      })
+
+      return
+    }
+    // Circle
+    else if (App.circle_gesture()) {
+      App.gesture_function(4, () => {
+        App.glow_input()
+      })
+
+      return
+    }
+    // Many stars
+    else if (App.scope_clicks.length >= App.many_clicks_amount) {
+      App.gesture_function(5, () => {
+        App.glow_input()
+      })
+
+      return
+    }
+  }
+
+  // Click
+  if ((Date.now() - App.scope_mousedown_date) <= App.scope_beep_delay) {
+    App.splash_reverb(2)
+
+    if (!App.check_scope_panning()) {
+      App.beep_sound()
+    }
+  }
+}
 
 App.check_scope_slide = () => {
   let a = App.mouse_down_coords
