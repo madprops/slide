@@ -32,7 +32,7 @@ App.setup_strudel_mirror = () => {
 
 App.clean_mirror = () => {
   App.editor.dispatch({
-    effects: App.set_highlight.of([])
+    effects: App.set_highlight.of([]),
   })
 }
 
