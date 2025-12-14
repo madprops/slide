@@ -1,4 +1,3 @@
-const {evalScope} = strudelCore
 import * as strudelCore from "@strudel/core"
 import * as strudelMini from "@strudel/mini"
 import * as strudelWebAudio from "@strudel/webaudio"
@@ -602,7 +601,14 @@ App.init_scope_checkbox = () => {
 
 App.ensure_scope = () => {
   if (!App.scope_promise) {
-    App.scope_promise = evalScope(strudelCore, strudelMini, strudelWebAudio, strudelTonal).catch((err) => {
+    // Access evalScope directly from the imported namespace object
+    // This injects the core functions (s, note, etc.) into the REPL
+    App.scope_promise = strudelCore.evalScope(
+      strudelCore,
+      strudelMini,
+      strudelWebAudio,
+      strudelTonal
+    ).catch((err) => {
       App.scope_promise = undefined
       console.error(`Strudel scope failed to load`, err)
       throw err
