@@ -334,7 +334,9 @@ App.setup_cycle = () => {
   App.is_dragging = false // New flag to track interaction
 
   App.on_slider_change = (target_percent) => {
-    if (!App.scheduler) return
+    if (!App.scheduler) {
+      return
+    }
 
     let current_time = App.scheduler.now()
     let cps = App.scheduler.cps || 1
