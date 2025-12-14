@@ -257,7 +257,7 @@ App.run_eval = async (code) => {
   return {ok: true}
 }
 
-App.rewind_player = (seconds = 2) => {
+App.rewind_player = (seconds = 1.5) => {
   // Get current tempo (default to 1 if unknown)
   // 'scheduler.cps' is usually available, or check your specific state
   let current_cps = App.scheduler.cps || 1
@@ -270,7 +270,7 @@ App.rewind_player = (seconds = 2) => {
   App.update_playback()
 }
 
-App.forward_player = (seconds = 2) => {
+App.forward_player = (seconds = 1.5) => {
   let current_cps = App.scheduler.cps || 1
   let cycles_to_shift = seconds * current_cps
 
@@ -307,48 +307,65 @@ App.update_ui_loop = () => {
     return requestAnimationFrame(App.update_ui_loop)
   }
 
+  const loop_length = 4
   let current_time = App.scheduler.now()
   let cps = App.scheduler.cps || 1
   let virtual_cycles = (current_time * cps) - App.seek_offset
-  let phase = virtual_cycles % 1
+  let phrase_position = virtual_cycles % loop_length
 
-  if (phase < 0) {
-    phase += 1
+  if (phrase_position < 0) {
+    phrase_position += loop_length
   }
 
   let slider = DOM.el(`#cycle-slider`)
 
-  if (slider && document.activeElement !== slider) {
-    slider.value = phase
+  // CHECK: Only update if user is NOT dragging
+  if (slider && !App.is_dragging) {
+    slider.value = phrase_position / loop_length
   }
 
   requestAnimationFrame(App.update_ui_loop)
 }
 
 App.setup_cycle = () => {
-  App.on_slider_change = (target_phase) => {
-    let current_time = App.audio_ctx.currentTime
+  const loop_length = 4
+  App.is_dragging = false // New flag to track interaction
+
+  App.on_slider_change = (target_percent) => {
+    if (!App.scheduler) return
+
+    let current_time = App.scheduler.now()
     let cps = App.scheduler.cps || 1
+    let current_virtual_cycles = (current_time * cps) - App.seek_offset
+    let current_phrase_index = Math.floor(current_virtual_cycles / loop_length)
+    let target_cycle_within_phrase = target_percent * loop_length
+    let new_virtual_cycles = (current_phrase_index * loop_length) + target_cycle_within_phrase
 
-    // 1. Calculate current Virtual Time to find which "Measure" we are in
-    let current_virtual = (current_time * cps) - App.seek_offset
-
-    // 2. Get the integer part (The measure number, e.g., 42)
-    let current_measure = Math.floor(current_virtual)
-
-    // 3. Construct the NEW Virtual Time
-    // Measure 42 + Slider 0.5 = 42.5
-    let new_virtual = current_measure + target_phase
-
-    // 4. Reverse calculate the Offset needed to achieve this time
-    // Offset = Real - Virtual
-    App.seek_offset = (current_time * cps) - new_virtual
-
-    // 5. Apply
+    App.seek_offset = (current_time * cps) - new_virtual_cycles
     App.update_playback()
   }
 
-  // Bind the event
+  // 1. Handle Drag Start
+  DOM.ev(`#cycle-slider`, `mousedown`, () => {
+    App.is_dragging = true
+  })
+
+  // 1b. Handle Touch Start (for mobile)
+  DOM.ev(`#cycle-slider`, `touchstart`, () => {
+    App.is_dragging = true
+  })
+
+  // 2. Handle Drag End (Release)
+  DOM.ev(`#cycle-slider`, `mouseup`, () => {
+    App.is_dragging = false
+  })
+
+  // 2b. Handle Touch End
+  DOM.ev(`#cycle-slider`, `touchend`, () => {
+    App.is_dragging = false
+  })
+
+  // 3. Handle Value Change (The actual dragging logic)
   DOM.ev(`#cycle-slider`, `input`, (e) => {
     App.on_slider_change(parseFloat(e.target.value))
   })
