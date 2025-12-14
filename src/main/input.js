@@ -263,6 +263,7 @@ App.init_code_input_controls = () => {
           resize_handle.style.opacity = ``
           resize_handle.style.pointerEvents = ``
           resize_handle.classList.remove(`active`)
+          App.resize_scope()
 
           document.removeEventListener(`mousemove`, mouse_move)
           document.removeEventListener(`mouseup`, mouse_up)

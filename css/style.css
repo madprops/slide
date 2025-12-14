@@ -137,6 +137,7 @@ body, html {
 
 #scope-wrapper button {
   width: 1.8rem;
+  min-width: 1.8rem;
   /* Reset padding so it does not conflict with width */
   padding-left: 0;
   padding-right: 0;
