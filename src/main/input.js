@@ -390,15 +390,24 @@ App.cursive_input = () => {
   }, App.input_grow_time)
 }
 
-App.max_input = (just_check = false) => {
+App.max_input = (just_check = false, mode = `normal`) => {
   let wrapper = App.get_input_wrapper()
   let style = getComputedStyle(document.documentElement)
   let max_width = parseInt(style.getPropertyValue(`--input_max_width`))
   let diff = App.get_input_diff()
 
   if (!just_check) {
-    wrapper.style.height = `${diff}px`
-    wrapper.style.width = `${max_width}%`
+    if (mode === `normal`) {
+      wrapper.style.height = `${diff}px`
+      wrapper.style.width = `${max_width}%`
+    }
+    else if (mode === `width`) {
+      wrapper.style.width = `${max_width}%`
+    }
+    else if (mode === `height`) {
+      wrapper.style.height = `${diff}px`
+    }
+
     App.resize_scope()
     App.check_max_button()
   }
@@ -481,6 +490,6 @@ App.max_input_if_larger = () => {
   let [height_2, width_2] = App.max_input(true)
 
   if (height_1 > height_2) {
-    App.max_input()
+    App.max_input(false, `height`)
   }
 }
