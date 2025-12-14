@@ -242,6 +242,7 @@ App.run_eval = async (code) => {
   code = App.filter_code(code)
   App.last_code = code
   App.set_input(code)
+  App.seek_offset = 0
 
   try {
     App.pattern = await App.evaluate(code)
@@ -251,6 +252,7 @@ App.run_eval = async (code) => {
     App.start_drawer()
   }
   catch (err) {
+    console.error(err)
     return {ok: false, error: err}
   }
 
