@@ -2,34 +2,43 @@
   "name": "slide",
   "version": "1.0.0",
   "devDependencies": {
-    "vite": "latest",
-    "eslint": "~9.11.1",
-    "globals": "~15.9.0",
-    "fast-glob": "latest",
-    "codemirror": "latest",
-    "@codemirror/lang-javascript": "latest",
     "@codemirror/autocomplete": "latest",
-    "@codemirror/state": "latest",
+    "@codemirror/lang-javascript": "latest",
     "@codemirror/search": "latest",
-    "cm6-theme-nord": "latest",
-    "rollup": "latest",
+    "@codemirror/state": "latest",
+    "@replit/codemirror-vscode-keymap": "latest",
     "@rollup/plugin-node-resolve": "latest",
-    "@replit/codemirror-vscode-keymap": "latest"
+    "cm6-theme-nord": "latest",
+    "codemirror": "latest",
+    "eslint": "~9.11.1",
+    "fast-glob": "latest",
+    "globals": "~15.9.0",
+    "rollup": "latest",
+    "vite": "latest"
   },
   "dependencies": {
-    "fraction.js": "^5.2.1",
-    "nanostores": "^0.11.3",
+    "@strudel/core": "^1.2.5",
+    "@strudel/draw": "^1.2.5",
+    "@strudel/hydra": "^1.2.5",
+    "@strudel/mini": "^1.2.5",
+    "@strudel/soundfonts": "^1.2.6",
+    "@strudel/tonal": "^1.2.5",
+    "@strudel/transpiler": "^1.2.5",
+    "@strudel/webaudio": "^1.2.6",
+    "@tonaljs/tonal": "^4.10.0",
     "acorn": "^8.14.0",
+    "chord-voicings": "^0.0.1",
     "escodegen": "^2.1.0",
     "estree-walker": "^3.0.3",
-    "@tonaljs/tonal": "^4.10.0",
-    "chord-voicings": "^0.0.1",
+    "fraction.js": "^5.2.1",
+    "nanostores": "^0.11.3",
     "sfumato": "^0.1.2",
-    "soundfont2": "^0.5.0"
+    "soundfont2": "^0.5.0",
+    "superdough": "^1.2.6"
   },
-	"scripts": {
-		"lint":	"eslint --cache -c eslint.config.mjs",
-		"fix": "eslint --fix -c eslint.config.mjs",
-		"codemirror": "npx rollup codemirror.mjs -f iife -o src/libs/codemirror.bundle.js -p @rollup/plugin-node-resolve"
-	}
+  "scripts": {
+    "lint": "eslint --cache -c eslint.config.mjs",
+    "fix": "eslint --fix -c eslint.config.mjs",
+    "codemirror": "npx rollup codemirror.mjs -f iife -o src/libs/codemirror.bundle.js -p @rollup/plugin-node-resolve"
+  }
 }

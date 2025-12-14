@@ -1,9 +1,9 @@
 const {evalScope} = strudelCore
-import * as strudelCore from "@strudel.cycles/core"
-import * as strudelMini from "@strudel.cycles/mini"
-import * as strudelWebAudio from "@strudel.cycles/webaudio"
-import * as strudelTonal from "@strudel.cycles/tonal"
-import {getAudioContext, getSuperdoughAudioController} from "superdough"
+import * as strudelCore from "@strudel/core"
+import * as strudelMini from "@strudel/mini"
+import * as strudelWebAudio from "@strudel/webaudio"
+import * as strudelTonal from "@strudel/tonal"
+import {getAudioContext} from "superdough"
 
 App.scope_container_el = undefined
 App.scope_canvas_el = undefined
@@ -246,7 +246,7 @@ App.connect_scope_analyser = () => {
   }
 
   try {
-    let controller = getSuperdoughAudioController()
+    let controller = getAudioContext()
     let destination = controller?.output?.destinationGain
 
     if (!destination) {

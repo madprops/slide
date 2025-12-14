@@ -1,5 +1,3 @@
-import {Pattern} from "@strudel.cycles/core"
-
 // Generic code filter to remove or neutralize unwanted calls
 App.filter_code = (code) => {
   // Replace multiple empty lines with single empty line

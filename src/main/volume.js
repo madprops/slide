@@ -1,4 +1,4 @@
-import {getSuperdoughAudioController} from "superdough"
+import {getAudioContext} from "superdough"
 
 App.volume = 100
 App.volume_step = 1
@@ -54,7 +54,7 @@ App.apply_volume = () => {
   }
 
   try {
-    let controller = getSuperdoughAudioController()
+    let controller = getAudioContext()
     let destination_gain = controller?.output?.destinationGain
 
     if (!destination_gain) {
