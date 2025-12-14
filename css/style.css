@@ -117,6 +117,7 @@ body, html {
   width: 100%;
   flex-direction: row;
   max-width: var(--input_width);
+  border: 1px solid #444;
 }
 
 /* The scope container fills the space between buttons */
@@ -125,10 +126,6 @@ body, html {
   width: auto;
   min-width: 0; /* Important for flex items to shrink properly */
   height: 120px;
-
-  /* Visuals */
-  border-top: 1px solid #444;
-  border-bottom: 1px solid #444;
   background: #000;
 }
 
@@ -149,8 +146,21 @@ body, html {
   justify-content: center;
   align-items: center;
   background-color: #232323;
-  color: rgb(220, 220, 220);
-  border-color: #373737;
+  color: rgb(187, 187, 187);
+}
+
+#time-rewind {
+    border-left: 1px solid #444;
+    border-right: 0px solid #444;
+    border-top: 0px solid #444;
+    border-bottom: 0px solid #444;
+}
+
+#time-forward {
+    border-right: 1px solid #444;
+    border-left: 0px solid #444;
+    border-top: 0px solid #444;
+    border-bottom: 0px solid #444;
 }
 
 #scope-control {
