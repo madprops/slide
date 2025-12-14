@@ -242,8 +242,10 @@ App.run_eval = async (code) => {
   App.set_input(code)
 
   try {
-    App.seek_offset = 0
     App.pattern = await App.evaluate(code)
+    let now = App.scheduler.now() // Current time in seconds
+    let cps = App.scheduler.cps || 1
+    App.seek_offset = now * cps
     App.start_drawer()
   }
   catch (err) {
