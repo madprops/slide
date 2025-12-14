@@ -421,7 +421,7 @@ App.get_input_diff = () => {
   let bottom_height = App.get_bottom_height()
   let height_sum = top_height + scope_height + bottom_height
   let total_height = App.viewport_height()
-  return total_height - height_sum - 33
+  return total_height - height_sum - 50
 }
 
 App.check_max_button = () => {

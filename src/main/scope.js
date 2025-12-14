@@ -672,3 +672,12 @@ App.resize_scope = () => {
     ctx.scale(ratio, ratio)
   }
 }
+
+App.get_scope_height = () => {
+  if (App.scope_enabled) {
+    let el = App.get_scope_wrapper()
+    return App.get_el_height(el)
+  }
+
+  return 0
+}

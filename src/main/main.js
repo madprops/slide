@@ -375,15 +375,6 @@ App.get_top_height = () => {
   return App.get_el_height(el)
 }
 
-App.get_scope_height = () => {
-  if (App.scope_enabled) {
-    let el = DOM.el(`#scope-container`)
-    return App.get_el_height(el)
-  }
-
-  return 0
-}
-
 App.get_bottom_height = () => {
   let el = DOM.el(`#bottom`)
   return App.get_el_height(el)
