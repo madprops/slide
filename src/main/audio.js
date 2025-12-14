@@ -89,6 +89,10 @@ App.set_gain = (value) => {
   window.master_fx.set_volume(value)
 }
 
+App.get_gain = () => {
+  return window.master_fx.get_volume()
+}
+
 App.set_eq = (low, mid, high) => {
   window.master_fx.set_eq_freqs(low, mid, high)
 }
@@ -111,8 +115,4 @@ App.spin_panning = (duration_ms = 2000) => {
   setTimeout(() => {
     App.stop_auto_pan()
   }, duration_ms)
-}
-
-App.get_raw_volume = () => {
-  return window.master_fx?.get_volume() || 0
 }

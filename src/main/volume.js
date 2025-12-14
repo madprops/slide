@@ -52,15 +52,8 @@ App.apply_volume = () => {
   }
 
   try {
-    let controller = getAudioContext()
-    let destination_gain = controller?.output?.destinationGain
-
-    if (!destination_gain) {
-      console.warn(`Destination gain node missing`)
-      return
-    }
-
-    destination_gain.gain.value = App.volume / 100
+    let vol = App.volume / 100
+    App.set_gain(vol)
   }
   catch (err) {
     console.error(`Failed to apply volume`, err)

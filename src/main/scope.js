@@ -234,33 +234,34 @@ App.ensure_scope_analyser = () => {
 }
 
 App.connect_scope_analyser = () => {
-  if (App.scope_connected) {
-    return true
-  }
+  if (App.scope_connected) return true
 
-  let analyser = App.ensure_scope_analyser()
+  // 1. Get the visualizer's analyser node
+  let scope_analyser = App.ensure_scope_analyser()
+  if (!scope_analyser) return false
 
-  if (!analyser) {
-    return false
-  }
+  // 2. Try to connect using your Hijack system
+  if (window.master_fx && window.master_fx.nodes && window.master_fx.nodes.master_gain) {
+    try {
+      // Connect your custom Master Gain to the scope
+      window.master_fx.nodes.master_gain.connect(scope_analyser)
 
-  try {
-    let controller = getAudioContext()
-    let destination = controller?.output?.destinationGain
-
-    if (!destination) {
-      console.warn(`Scope destination missing`)
-      return false
+      console.log("Connected Scope to Hijacked Master Gain")
+      App.scope_connected = true
+      return true
+    } catch (err) {
+      console.warn("Failed to connect to master_fx:", err)
     }
+  }
 
-    destination.connect(analyser)
-    App.scope_connected = true
-    return true
+  // 3. Fallback (If hijack isn't active for some reason)
+  try {
+     // ... keep your old fallback logic here if you want ...
+  } catch (err) {
+    console.warn("Failed fallback connection", err)
   }
-  catch (err) {
-    console.warn(`Failed to connect scope analyser`, err)
-    return false
-  }
+
+  return false
 }
 
 App.stop_scope_loop = () => {

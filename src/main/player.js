@@ -262,7 +262,7 @@ App.run_eval = async (code) => {
   return {ok: true}
 }
 
-App.rewind_player = (seconds = 1.5) => {
+App.rewind_player = (seconds = 1) => {
   // Get current tempo (default to 1 if unknown)
   // 'scheduler.cps' is usually available, or check your specific state
   let current_cps = App.scheduler.cps || 1
@@ -275,7 +275,7 @@ App.rewind_player = (seconds = 1.5) => {
   App.update_playback()
 }
 
-App.forward_player = (seconds = 1.5) => {
+App.forward_player = (seconds = 1) => {
   let current_cps = App.scheduler.cps || 1
   let cycles_to_shift = seconds * current_cps
 
