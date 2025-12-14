@@ -1,6 +1,6 @@
 import "./process-env.js"
 import * as strudelMini from "@strudel/mini"
-import {initAudio, samples, registerSynthSounds} from "superdough"
+import {initAudio, samples, registerSynthSounds, getAudioContext} from "superdough"
 import {webaudioRepl} from "@strudel/webaudio"
 import {transpiler} from "@strudel/transpiler"
 import {registerSoundfonts} from "@strudel/soundfonts"
@@ -430,3 +430,4 @@ window.registerSoundfonts = registerSoundfonts
 window.registerSynthSounds = registerSynthSounds
 window.initAudio = initAudio
 window.samples = samples
+window.getAudioContext = getAudioContext

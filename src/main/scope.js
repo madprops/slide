@@ -3,7 +3,6 @@ import * as strudelCore from "@strudel/core"
 import * as strudelMini from "@strudel/mini"
 import * as strudelWebAudio from "@strudel/webaudio"
 import * as strudelTonal from "@strudel/tonal"
-import {getAudioContext} from "superdough"
 
 App.scope_container_el = undefined
 App.scope_canvas_el = undefined
