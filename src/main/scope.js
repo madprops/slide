@@ -363,8 +363,8 @@ App.draw_scope_frame = () => {
   // 2. Draw Waveform
   let waveform = App.ensure_scope_waveform()
   let analyser = App.scope_analyser
-
   ctx.strokeStyle = App.scope_color
+
   // FIX: Divide by ratio to keep line thickness consistent on all screens
   ctx.lineWidth = 2 / ratio
   ctx.beginPath()
@@ -374,6 +374,7 @@ App.draw_scope_frame = () => {
     analyser.getByteTimeDomainData(waveform)
     let slice_width = width / waveform.length
     let x = 0
+
     for (let i = 0; i < waveform.length; i++) {
       let v = waveform[i] / 128.0
       let y = (v * height) / 2
@@ -420,7 +421,6 @@ App.draw_scope_frame = () => {
     let cps = App.scheduler.cps || 1
     let cycles = (now * cps) - App.seek_offset
     let progress = ((cycles % loop_len) + loop_len) % loop_len / loop_len
-
     let sweep_x = progress * width
 
     let gradient = ctx.createLinearGradient(sweep_x, 0, sweep_x, height)
