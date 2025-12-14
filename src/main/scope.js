@@ -378,22 +378,39 @@ App.draw_scope_frame = () => {
     for (let i = 0; i < waveform.length; i++) {
       let v = waveform[i] / 128.0
       let y = (v * height) / 2
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y)
+
+      if (i === 0) {
+        ctx.moveTo(x, y)
+      }
+      else {
+        ctx.lineTo(x, y)
+      }
+
       x += slice_width
     }
-  } else {
+  }
+  else {
     // Idle Animation
     App.scope_sine_time += 0.012
     let num_points = 2048
     let slice_width = width / num_points
     let x = 0
+
     for (let i = 0; i < num_points; i++) {
       let phase = (i / num_points) * Math.PI * 12
       let y = (height / 2) + (Math.sin(phase + App.scope_sine_time) * (height * 0.15))
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y)
+
+      if (i === 0) {
+        ctx.moveTo(x, y)
+      }
+      else {
+        ctx.lineTo(x, y)
+      }
+
       x += slice_width
     }
   }
+
   ctx.stroke()
 
   // 3. Draw Sweep (Progress Bar)
@@ -427,7 +444,7 @@ App.draw_scope_frame = () => {
 
   for (let click of App.scope_clicks) {
     let age = now - click.timestamp
-    let angle = (App.scope_click_level > 1) ? (age * App.scope_click_rotation_speed) : 0
+    let angle = App.scope_click_level > 1 ? age * App.scope_click_rotation_speed : 0
 
     ctx.fillStyle = App[`scope_click_color_${App.scope_click_level}`]
 
@@ -618,7 +635,9 @@ App.resize_scope = () => {
   let canvas = App.scope_canvas_el
   let ctx = App.scope_canvas_ctx
 
-  if (!input_wrapper || !scope_wrapper || !canvas || !ctx) return
+  if (!input_wrapper || !scope_wrapper || !canvas || !ctx) {
+    return
+  }
 
   // 1. Set the Wrapper Width (Layout)
   // This matches the external alignment with the editor
@@ -639,7 +658,7 @@ App.resize_scope = () => {
   let scaled_height = Math.round(css_height * ratio)
 
   // 4. Update Buffer if changed
-  if (canvas.width !== scaled_width || canvas.height !== scaled_height) {
+  if ((canvas.width !== scaled_width) || (canvas.height !== scaled_height)) {
     canvas.width = scaled_width
     canvas.height = scaled_height
 
