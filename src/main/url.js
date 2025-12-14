@@ -100,8 +100,6 @@ App.load_song_from_query = async () => {
     App.set_input(code)
     App.set_song_tempo(code)
     App.set_song_context(requested_song)
-    let name = App.clean_song_name(requested_song)
-    App.set_status(`Loaded: ${name}`)
     return true
   }
   catch (err) {
@@ -122,7 +120,7 @@ App.set_beat_title_from_query = () => {
 }
 
 App.get_beat_url = () => {
-  let url = prompt(`URL of the beat (javascript/text file)`)
+  let url = prompt(`URL of the beat (javascript/text file)`, App.beat_url || ``)
 
   if (!url) {
     return
@@ -164,13 +162,19 @@ App.load_beat_url = async () => {
     App.stop_action()
     App.stop_status_watch()
     App.last_code = code
+    let filtered = App.filter_code(code)
+    App.url_code = filtered
     App.set_input(code)
     App.set_song_tempo(code)
-    App.set_status(`Loaded URL 🌐`)
     App.update_url()
+    App.playing()
   }
   catch (err) {
     console.error(err)
     App.playing()
   }
+}
+
+App.is_url_beat = () => {
+  return App.url_code === App.last_code
 }

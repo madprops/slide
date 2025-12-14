@@ -336,6 +336,8 @@ App.start_events = async () => {
       }
     }
   }
+
+  App.playing()
 }
 
 App.get_main = () => {

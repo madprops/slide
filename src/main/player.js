@@ -42,14 +42,13 @@ App.play_action = async (code = ``, force = false) => {
     return
   }
 
+  App.is_playing = true
   App.restart_code_scroll(false)
-  App.last_code = code
   App.stor_save_code()
   App.clear_draw_context()
   App.start_color_cycle()
   App.clean_canvas()
   App.update_title()
-  App.is_playing = true
 
   try {
     await App.strudel_update(code)
@@ -63,12 +62,12 @@ App.play_action = async (code = ``, force = false) => {
 
 App.stop_action = () => {
   console.info(`🔮 Stop Action`)
+  App.is_playing = false
   App.stop_strudel()
   App.stop_code_scroll()
   App.clear_draw_context()
-  App.set_stop_status()
   App.set_song_context(``)
-  App.is_playing = false
+  App.playing()
 }
 
 App.stop_strudel = () => {
@@ -109,6 +108,15 @@ App.strudel_update = async (code) => {
 }
 
 App.playing = (extra) => {
+  if (App.is_playing) {
+    App.set_play_status(extra)
+  }
+  else {
+    App.set_stop_status(extra)
+  }
+}
+
+App.set_play_status = (extra) => {
   let msg = ``
   let name = App.get_song_name(true)
 
@@ -122,6 +130,9 @@ App.playing = (extra) => {
     }
     else if (App.beat_title) {
       msg = `Playing: ${App.beat_title}`
+    }
+    else if (App.is_url_beat()) {
+      msg = `Playing 🌐`
     }
     else {
       msg = `Playing 🥁`
@@ -140,6 +151,12 @@ App.set_stop_status = () => {
 
   if (name) {
     App.set_status(`Stopped: ${name}`)
+  }
+  else if (App.beat_title) {
+    App.set_status(`Stopped: ${App.beat_title}`)
+  }
+  else if (App.is_url_beat()) {
+    App.set_status(`Stopped 🌐`)
   }
   else {
     App.set_status(`Stopped`)
@@ -207,6 +224,8 @@ App.strudel_init = async () => {
       App.play_action(App.code_to_play)
       App.code_to_play = ``
     }
+
+    App.playing()
   }
   catch (err) {
     console.error(`Audio Failed:`, err)
@@ -217,6 +236,7 @@ App.strudel_init = async () => {
 App.run_eval = async (code) => {
   App.reset_eval_state()
   code = App.filter_code(code)
+  App.last_code = code
   App.set_input(code)
 
   try {

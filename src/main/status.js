@@ -47,17 +47,14 @@ App.ask_for_title = () => {
     return
   }
 
-  let title = prompt(`Title of this beat`)
+  let title = prompt(`Title of this beat`, App.beat_title || ``)
 
   if (!title) {
-    return
+    title = ``
   }
 
   App.beat_title = title.trim()
   App.update_url()
   App.update_title()
-
-  if (App.is_playing) {
-    App.playing()
-  }
+  App.playing()
 }
