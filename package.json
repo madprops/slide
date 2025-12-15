@@ -7,7 +7,8 @@
     "eslint": "~9.11.1",
     "globals": "~15.9.0",
     "rollup": "latest",
-    "vite": "latest"
+    "vite": "latest",
+    "vite-plugin-bundle-audioworklet": "^0.1.1"
   },
   "dependencies": {
     "@codemirror/autocomplete": "latest",
@@ -18,9 +19,6 @@
     "@codemirror/state": "latest",
     "@codemirror/view": "latest",
     "@replit/codemirror-vscode-keymap": "latest",
-    "cm6-theme-nord": "latest",
-    "codemirror": "latest",
-    "fast-glob": "latest",
     "@strudel/core": "workspace:*",
     "@strudel/draw": "workspace:*",
     "@strudel/hydra": "workspace:*",
@@ -32,8 +30,11 @@
     "@tonaljs/tonal": "^4.10.0",
     "acorn": "^8.14.0",
     "chord-voicings": "^0.0.1",
+    "cm6-theme-nord": "latest",
+    "codemirror": "latest",
     "escodegen": "^2.1.0",
     "estree-walker": "^3.0.3",
+    "fast-glob": "latest",
     "fraction.js": "^5.2.1",
     "nanostores": "^0.11.3",
     "sfumato": "^0.1.2",

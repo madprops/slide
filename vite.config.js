@@ -2,26 +2,13 @@
 import { defineConfig } from `vite`
 import path from `node:path`
 import fg from `fast-glob`
+// Import the plugin found in the official config
+import bundleAudioWorkletPlugin from `vite-plugin-bundle-audioworklet`
 
 export default defineConfig(() => {
   const project_root = __dirname
 
-  // Fix for Strudel's custom ?audioworklet suffix
-  const strudel_worklet_fix = () => {
-    return {
-      name: `strudel-worklet-fix`,
-      enforce: `pre`,
-      async resolveId(source, importer) {
-        if (source.endsWith(`?audioworklet`)) {
-          // Redirect "?audioworklet" to "?worker&url"
-          // This creates a bundled worker file and returns its URL string
-          return this.resolve(source.replace(`?audioworklet`, `?worker&url`), importer)
-        }
-      },
-    }
-  }
-
-  // Keep your custom import sorter
+  // Custom import sorter (kept from your original config)
   const ordered_imports_plugin = () => {
     return {
       name: `ordered-imports`,
@@ -46,10 +33,10 @@ export default defineConfig(() => {
   }
 
   return {
-    // No aliases needed!
-    // No dedupe needed! (NPM handles this)
     plugins: [
-      strudel_worklet_fix(),
+      // The official plugin handles bundling the worklet
+      // and resolving internal imports like 'ola-processor'
+      bundleAudioWorkletPlugin(),
       ordered_imports_plugin()
     ],
     build: {
