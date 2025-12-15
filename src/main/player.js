@@ -1,7 +1,4 @@
-import * as strudelCore from "@strudel/core"
 import * as strudelMini from "@strudel/mini"
-import * as strudelWebAudio from "@strudel/webaudio"
-import * as strudelTonal from "@strudel/tonal"
 
 App.is_playing = false
 App.play_running = false
@@ -24,12 +21,6 @@ App.play_action = async (code = ``, force = false) => {
 
   App.play_running = true
   App.update_url()
-  let ready = await App.ensure_strudel_ready()
-
-  if (!ready) {
-    App.reset_playing()
-    return
-  }
 
   if (!code) {
     code = App.get_input_value()
@@ -86,13 +77,14 @@ App.stop_strudel = () => {
 }
 
 App.strudel_update = async (code) => {
+  await App.init_audio()
+
   if (!App.audio_started) {
-    console.warn(`Audio not started yet. Call strudel_init() first.`)
+    console.warn(`Audio not started yet. Call init_audio() first.`)
     return
   }
 
   console.info(`Updating 💨`)
-  await App.setup_eval()
   App.set_song_tempo(code)
   App.update_url()
   let full_result = await App.run_eval(code)
@@ -190,7 +182,7 @@ App.restart_code_scroll = (to_top = true) => {
 
 // 1. Export a setup function to the global window object
 // This allows your HTML/Flask templates to call it easily.
-App.strudel_init = async () => {
+App.init_audio = async () => {
   if (App.audio_started) {
     console.info(`Audio already initialized`)
     return
@@ -201,6 +193,7 @@ App.strudel_init = async () => {
   try {
     // This must be called in response to a user interaction
     console.info(`Initializing audio context...`)
+    await App.setup_eval()
     await initAudio()
 
     // Enable mini-notation for strings
@@ -211,15 +204,13 @@ App.strudel_init = async () => {
 
     console.info(`Loading samples and soundfonts...`)
 
-    await Promise.all([
-      registerSynthSounds(),
-      registerSoundfonts(),
-      samples(`${ds}/tidal-drum-machines.json`),
-      samples(`${ds}/piano.json`),
-      samples(`${ds}/Dirt-Samples.json`),
-      samples(`${ds}/vcsl.json`),
-      samples(`${ds}/mridangam.json`),
-    ])
+    await registerSynthSounds(),
+    await registerSoundfonts(),
+    await samples(`${ds}/tidal-drum-machines.json`),
+    await samples(`${ds}/piano.json`),
+    await samples(`${ds}/Dirt-Samples.json`),
+    await samples(`${ds}/vcsl.json`),
+    await samples(`${ds}/mridangam.json`),
 
     App.audio_started = true
     App.apply_volume()
@@ -247,13 +238,15 @@ App.run_eval = async (code) => {
 
   try {
     App.pattern = await App.evaluate(code)
-    let now = App.scheduler.now() // Current time in seconds
-    let cps = App.scheduler.cps || 1
-    App.seek_offset = now * cps
-    App.start_drawer()
+
+    if (App.pattern) {
+      let now = App.scheduler.now() // Current time in seconds
+      let cps = App.scheduler.cps || 1
+      App.seek_offset = now * cps
+      App.start_drawer()
+    }
   }
   catch (err) {
-    console.error(err)
     return {ok: false, error: err}
   }
 
@@ -307,20 +300,4 @@ App.setup_time_controls = () => {
 
   App.remove_context(rewind)
   App.remove_context(forward)
-}
-
-App.setup_eval = async () => {
-  // Access evalScope directly from the imported namespace object
-  // This injects the core functions (s, note, etc.) into the REPL
-  try{
-    await strudelCore.evalScope(
-      strudelCore,
-      strudelMini,
-      strudelWebAudio,
-      strudelTonal,
-    )
-  }
-  catch (err) {
-    console.error(`Strudel scope failed to load`, err)
-  }
 }

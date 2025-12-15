@@ -126,12 +126,6 @@ App.start_auto = async (endpoint) => {
 
   App.auto_endpoint = endpoint.trim()
   App.stor_save_auto_endpoint()
-  let ready = await App.ensure_strudel_ready()
-
-  if (!ready) {
-    return
-  }
-
   App.strudel_watch_status()
 }
 

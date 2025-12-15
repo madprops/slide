@@ -417,6 +417,10 @@ App.draw_scope_frame = () => {
     let progress = ((cycles % loop_len) + loop_len) % loop_len / loop_len
     let sweep_x = progress * width
 
+    if (isNaN(sweep_x)) {
+      return
+    }
+
     let gradient = ctx.createLinearGradient(sweep_x, 0, sweep_x, height)
     gradient.addColorStop(0, `rgba(255, 255, 255, 0)`)
     gradient.addColorStop(0.5, `rgba(255, 255, 255, 0.5)`)

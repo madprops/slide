@@ -1,12 +1,19 @@
 import "./process-env.js"
-import * as strudelMini from "@strudel/mini"
+import {LZString} from "../libs/lz-string.js"
 import {initAudio, samples, registerSynthSounds, getAudioContext} from "superdough"
-import {webaudioRepl} from "@strudel/webaudio"
+
+import * as strudelCore from "@strudel/core"
+import * as strudelMini from "@strudel/mini"
+import * as strudelWebAudio from "@strudel/webaudio"
+import * as strudelTonal from "@strudel/tonal"
+import * as strudelDraw from '@strudel/draw';
+import * as strudelHydra from '@strudel/hydra';
 import {transpiler} from "@strudel/transpiler"
+
+import {webaudioRepl} from "@strudel/webaudio"
 import {registerSoundfonts} from "@strudel/soundfonts"
 import {Drawer, cleanupDraw} from "@strudel/draw"
 import {initHydra, clearHydra, H as H_hydra} from "@strudel/hydra"
-import {LZString} from "../libs/lz-string.js"
 
 App.last_eval_error = ``
 
@@ -245,17 +252,6 @@ App.apply_partial_update = async (code) => {
   return true
 }
 
-App.ensure_strudel_ready = async () => {
-  if (!App.strudel_init) {
-    App.set_status(`Bundle not loaded. Check console for errors`)
-    console.error(`strudel.bundle.js is missing or failed to load`)
-    return false
-  }
-
-  await App.strudel_init()
-  return true
-}
-
 App.start_events = async () => {
   if (App.events_started) {
     return
@@ -404,6 +400,26 @@ App.start_resize_observer = () => {
   DOM.ev(window, `resize`, () => {
     App.max_debouncer.call()
   })
+}
+
+App.setup_eval = async () => {
+  try {
+    // 2. Pass them into evalScope
+    await strudelCore.evalScope(
+      strudelCore,
+      strudelMini,
+      strudelWebAudio,
+      strudelTonal,
+      strudelDraw,
+      strudelHydra,
+      transpiler,
+    )
+
+    console.log(`Setup Eval done.`);
+  }
+  catch (err) {
+    console.error(`Strudel scope failed to load`, err);
+  }
 }
 
 window.H = H_hydra
