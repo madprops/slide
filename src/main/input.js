@@ -9,15 +9,6 @@ import {foldGutter, indentOnInput, bracketMatching} from "@codemirror/language"
 import {closeBrackets} from "@codemirror/autocomplete"
 import {highlightSelectionMatches, searchKeymap, search, selectNextOccurrence} from "@codemirror/search"
 
-    EditorView, EditorState, Compartment,
-    lineNumbers, highlightActiveLineGutter, foldGutter, // Gutter components
-    history, drawSelection, dropCursor, // Core basics
-    indentOnInput, bracketMatching, closeBrackets, rectangularSelection, crosshairCursor, // UI basics
-    keymap, defaultKeymap, historyKeymap, indentWithTab, // Keymaps
-    highlightSelectionMatches, searchKeymap, search, selectNextOccurrence,
-    javascript, nord, vscodeKeymap, Prec, copyLineDown, copyLineUp,
-
-
 App.input_mirror_time = 3 * 1000
 App.input_grow_time = 3 * 1000
 App.lines_enabled = true
