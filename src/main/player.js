@@ -246,8 +246,12 @@ App.run_eval = async (code) => {
       App.seek_offset = now * cps
       App.start_drawer()
     }
+    else {
+      App.stop_action()
+    }
   }
   catch (err) {
+    App.stop_action()
     return {ok: false, error: err}
   }
 

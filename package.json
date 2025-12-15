@@ -21,11 +21,10 @@
     "@strudel/draw": "^1.2.5",
     "@strudel/hydra": "^1.2.5",
     "@strudel/mini": "^1.2.5",
-    "@strudel/soundfonts": "^1.2.5",
+    "@strudel/soundfonts": "^1.2.6",
     "@strudel/tonal": "^1.2.5",
     "@strudel/transpiler": "^1.2.5",
-    "@strudel/webaudio": "^1.2.5",
-
+    "@strudel/webaudio": "^1.2.6",
     "@tonaljs/tonal": "^4.10.0",
     "acorn": "^8.14.0",
     "chord-voicings": "^0.0.1",
