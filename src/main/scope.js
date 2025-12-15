@@ -10,7 +10,7 @@ App.scope_enabled = true
 App.scope_max_y = -1
 App.scope_min_y = -1
 
-App.scope_background = `#111111da`
+App.scope_background = `rgb(18, 18, 18)`
 App.scope_color = `rgba(204, 198, 239, 1)`
 App.scope_click_color_1 = `rgba(162, 171, 234, 0.5)`
 App.scope_click_color_2 = `rgba(255, 137, 204, 1)`

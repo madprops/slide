@@ -399,6 +399,7 @@ App.start_resize_observer = () => {
 
   DOM.ev(window, `resize`, () => {
     App.max_debouncer.call()
+    App.resize_scope()
   })
 }
 
