@@ -21,7 +21,6 @@ App.scope_click_level = 1
 
 App.scope_sine_time = 0
 App.scope_clicks = []
-App.scope_click_time = 3 * 1000
 App.scope_click_size = 18
 App.scope_is_drawing = false
 App.scope_click_distance = 120
@@ -29,9 +28,10 @@ App.scope_mousedown_date = 0
 App.scope_beep_delay = 300
 App.scope_enable_date = 0
 App.scope_click_lock = 250
-App.scope_click_level_time = 3 * 1000
 App.scope_clicks_min = 5
 App.scope_click_rotation_speed = 0.001
+App.scope_click_time = 3 * 1000
+App.scope_click_level_time = 3 * 1000
 
 App.setup_scope = () => {
   App.stor_load_scope()
@@ -328,6 +328,7 @@ App.increase_scope_click_level = (level) => {
   App.color_interface(level)
 
   App.scope_click_level_timeout = setTimeout(() => {
+    App.clear_clicks()
     App.scope_click_level = 1
     App.restore_interface_colors()
   }, App.scope_click_level_time)
