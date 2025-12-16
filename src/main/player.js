@@ -20,7 +20,6 @@ App.play_action = async (code = ``, force = false) => {
   }
 
   App.play_running = true
-  App.update_url()
 
   if (!code) {
     code = App.get_input_value()
@@ -54,6 +53,7 @@ App.play_action = async (code = ``, force = false) => {
     App.set_status(`Error: ${e.message}`)
   }
 
+  App.update_url()
   App.reset_playing()
 }
 
