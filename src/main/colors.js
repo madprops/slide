@@ -1,4 +1,5 @@
 App.colors_enabled = true
+App.border_color = `#444`
 
 App.apply_color = (color) => {
   let volume_value = DOM.el(`#volume-value`)

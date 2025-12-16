@@ -47,7 +47,6 @@ App.color_cycle_timer = undefined
 App.do_partial_updates = false
 App.fetch_delay_seconds = 5
 App.code_url_max = 1920
-App.border_color = `#444`
 App.default_cpm = 30
 
 App.cycle_colors = [

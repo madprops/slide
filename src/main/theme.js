@@ -9,6 +9,7 @@ App.editor_theme = {
     backgroundColor: `#202020 !important`,
     borderRight: `1px solid #4C566A`,
     paddingRight: `0.66rem`,
+    userSelect: `none`,
   },
   "& .cm-lineNumbers .cm-gutterElement": {
     paddingLeft: `8px`,
