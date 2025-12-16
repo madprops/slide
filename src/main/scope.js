@@ -152,7 +152,7 @@ App.ensure_scope_analyser = () => {
     let audio_ctx = App.get_audio_context()
 
     if (!audio_ctx) {
-      console.warn("No audio context found yet.")
+      console.warn(`No audio context found yet.`)
       return
     }
 
@@ -173,7 +173,7 @@ App.ensure_scope_analyser = () => {
       // Fallback for raw context (though less likely to capture all sound)
       // Usually, you can't just "connect context to analyser",
       // you need a specific node.
-      console.log("Connecting analyser to destination input")
+      console.log(`Connecting analyser to destination input`)
       // Note: You can't connect destination TO analyser.
       // You usually insert the analyser BEFORE the destination.
     }
