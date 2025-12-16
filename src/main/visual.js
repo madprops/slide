@@ -141,7 +141,7 @@ App.anim_bio_tunnel = (c, w, h, f) => {
   // --- THE SHATTERED CORE ---
   for (let layer = 0; layer < 2; layer++) {
     let shards = 12
-    let direction = (layer % 2 === 0) ? 1 : -1
+    let direction = layer % 2 === 0 ? 1 : -1
 
     let r_base = (layer + 1) * 40
     let hue_base = t * 80
