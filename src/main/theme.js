@@ -118,5 +118,5 @@ App.editor_theme = {
   },
   ".cm-tooltip.cm-tooltip-autocomplete ul li[aria-selected='true'] .cm-completionIcon": {
     color: `white`,
-  }
+  },
 }

@@ -72,7 +72,7 @@ App.custom_completion_source = (context) => {
   }
 
   // Safety check to ensure array exists and has items
-  if (!options_data || options_data.length === 0) {
+  if (!options_data || (options_data.length === 0)) {
     return null
   }
 
