@@ -7,7 +7,6 @@ App.scope_gestures_enabled = false
 App.many_clicks_amount = 100
 
 App.gesture_actions = () => {
-  App.glow_input()
   App.canvas_effect_1()
 }
 
