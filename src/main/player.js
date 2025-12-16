@@ -1,4 +1,5 @@
 import * as strudelMini from "@strudel/mini"
+import {aliasBank} from '@strudel/webaudio'
 
 App.is_playing = false
 App.play_running = false
