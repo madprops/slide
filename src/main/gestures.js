@@ -20,8 +20,10 @@ App.check_gestures = () => {
     }
   }
 
+  let min_clicks = len >= 10
+
   // Triangle
-  if ((len >= 10) && App.triangle_gesture()) {
+  if (min_clicks && App.triangle_gesture()) {
     App.gesture_function(2, () => {
       App.gesture_actions()
     })
@@ -29,7 +31,7 @@ App.check_gestures = () => {
     return
   }
   // Square
-  else if ((len >= 10) && App.square_gesture()) {
+  else if (min_clicks && App.square_gesture()) {
     App.gesture_function(3, () => {
       App.gesture_actions()
     })
@@ -37,7 +39,7 @@ App.check_gestures = () => {
     return
   }
   // Circle
-  else if ((len >= 10) && App.circle_gesture()) {
+  else if (min_clicks && App.circle_gesture()) {
     App.gesture_function(4, () => {
       App.gesture_actions()
     })
