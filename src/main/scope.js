@@ -472,9 +472,9 @@ App.draw_scope_frame = () => {
 
   for (let click of App.scope_clicks) {
     let age = now - click.timestamp
-    let angle = App.scope_click_level > 1 ? age * App.scope_click_rotation_speed : 0
+    let angle = click.level > 1 ? age * App.scope_click_rotation_speed : 0
 
-    ctx.fillStyle = App[`scope_click_color_${App.scope_click_level}`]
+    ctx.fillStyle = App[`scope_click_color_${click.level}`]
 
     // Important: Ensure draw_star isn't scaling internally
     App.draw_star(ctx, click.x, click.y, 3, 5, App.scope_click_size, angle)
@@ -649,9 +649,11 @@ App.get_scope_height = () => {
   return 0
 }
 
-App.set_scope_clicks = (what, value) => {
-  for (let click of App.scope_clicks) {
-    click[what] = value
+App.set_scope_clicks = (values) => {
+  for (let click of App.get_scope_clicks()) {
+    for (let key in values) {
+      click[key] = values[key]
+    }
   }
 }
 
@@ -661,5 +663,6 @@ App.get_scope_clicks = () => {
 
 App.push_scope_click = (args) => {
   args.locked = false
+  args.level = 1
   App.scope_clicks.push(args)
 }
