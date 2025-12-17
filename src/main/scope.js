@@ -21,7 +21,7 @@ App.scope_click_level = 1
 
 App.scope_sine_time = 0
 App.scope_clicks = []
-App.scope_click_size = 18
+App.scope_click_size = 16
 App.scope_is_drawing = false
 App.scope_click_distance = 120
 App.scope_mousedown_date = 0
