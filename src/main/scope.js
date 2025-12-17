@@ -545,12 +545,6 @@ App.init_scope_click_handler = () => {
     }
   })
 
-  DOM.ev(canvas, `click`, (event) => {
-    if (App.scope_mouse_enabled()) {
-      App.handle_scope_click(event)
-    }
-  })
-
   DOM.ev(document, `mouseup`, (event) => {
     if (App.scope_mouse_enabled()) {
       App.handle_scope_mouse_up(event)
