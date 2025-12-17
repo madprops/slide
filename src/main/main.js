@@ -380,13 +380,17 @@ App.loading = () => {
 }
 
 App.new_beat = () => {
-  if (confirm(`Start a new beat?`)) {
-    App.last_code = ``
-    App.current_song = ``
-    App.set_input(``)
-    App.stop_action()
-    App.focus_input()
-  }
+  App.show_confirm({
+    title: `New Beat`,
+    message: `Clear and write a beat from scratch`,
+    ok_action: () => {
+      App.last_code = ``
+      App.current_song = ``
+      App.set_input(``)
+      App.stop_action()
+      App.focus_input()
+    }
+  })
 }
 
 App.start_resize_observer = () => {

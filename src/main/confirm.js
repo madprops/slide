@@ -42,6 +42,14 @@ App.show_confirm = (args = {}) => {
   App.confirm_cancel_action = args.cancel_action
   let message = DOM.el(`#modal-message-confirm`)
   message.textContent = args.message
+
+  if (args.message) {
+    message.classList.add(`modal-text-filled`)
+  }
+  else {
+    message.classList.remove(`modal-text-filled`)
+  }
+
   App.open_modal(`confirm`)
 }
 

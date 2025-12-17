@@ -836,3 +836,7 @@ a.popup:hover {
     /* Green Border */
     transition: all 0.1s;
 }
+
+.modal-text-filled {
+    padding-bottom: 0.8rem;
+}
