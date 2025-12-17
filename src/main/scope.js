@@ -16,7 +16,8 @@ App.scope_click_color_1 = `rgba(162, 171, 234, 0.5)`
 App.scope_click_color_2 = `rgba(255, 137, 204, 1)`
 App.scope_click_color_3 = `rgba(222, 242, 92, 1)`
 App.scope_click_color_4 = `rgba(91, 163, 240, 1)`
-App.scope_click_color_5 = `rgba(255, 255, 255, 1)`
+App.scope_click_color_5 = `rgba(114, 248, 146, 1)`
+App.scope_click_color_6 = `rgba(255, 255, 255, 1)`
 App.scope_click_level = 1
 
 App.scope_sine_time = 0

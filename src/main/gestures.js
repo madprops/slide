@@ -52,13 +52,21 @@ App.check_gestures = () => {
 
     return
   }
+  // Plus
+  else if (min_clicks && App.plus_gesture(clicks.slice(0))) {
+    App.gesture_function(5, () => {
+      App.gesture_actions()
+    })
+
+    return
+  }
 
   clicks = App.get_gesture_clicks()
   len = clicks.length
 
   // Many stars
   if (len >= App.many_clicks_amount) {
-    App.gesture_function(5, () => {
+    App.gesture_function(6, () => {
       App.gesture_actions()
     })
 
@@ -459,6 +467,71 @@ App.square_gesture = (clicks) => {
 
   // We need at least 2 decent corners to confirm it's rect-like
   return right_angles >= 2
+}
+
+App.plus_gesture = (clicks) => {
+  let len = clicks.length
+  let min_x = Infinity
+  let max_x = -Infinity
+  let min_y = Infinity
+  let max_y = -Infinity
+
+  for (let i = 0; i < len; i++) {
+    let p = clicks[i]
+
+    if (p.x < min_x) {
+      min_x = p.x
+    }
+
+    if (p.x > max_x) {
+      max_x = p.x
+    }
+
+    if (p.y < min_y) {
+      min_y = p.y
+    }
+
+    if (p.y > max_y) {
+      max_y = p.y
+    }
+  }
+
+  let width = max_x - min_x
+  let height = max_y - min_y
+
+  if ((width === 0) || (height === 0)) {
+    return false
+  }
+
+  let ratio = width / height
+
+  // A plus should be roughly square in aspect ratio
+  if ((ratio < 0.4) || (ratio > 2.5)) {
+    return false
+  }
+
+  let center_x = min_x + (width / 2)
+  let center_y = min_y + (height / 2)
+
+  // Define the thickness of the cross bars (25% of total size)
+  // Points must fall inside this vertical or horizontal strip
+  let tol_x = width * 0.25
+  let tol_y = height * 0.25
+  let in_cross = 0
+
+  for (let i = 0; i < len; i++) {
+    let p = clicks[i]
+    let on_v_bar = Math.abs(p.x - center_x) < tol_x
+    let on_h_bar = Math.abs(p.y - center_y) < tol_y
+
+    if (on_v_bar || on_h_bar) {
+      in_cross++
+    }
+  }
+
+  // If 85% of points are within the cross shape, it is a match
+  let score = in_cross / len
+  return score > 0.85
 }
 
 App.gesture_function = (level, action) => {
