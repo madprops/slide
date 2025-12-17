@@ -456,7 +456,7 @@ App.square_gesture = () => {
 
 App.gesture_function = (level, action) => {
   App.increase_scope_click_level(level)
-  App.set_scope_clicks({locked: true, level: level})
+  App.set_scope_clicks({locked: true, level})
   App.spin_panning()
   action()
 }
