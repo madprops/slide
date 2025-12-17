@@ -254,18 +254,13 @@ App.handle_scope_click = (event) => {
   let x = event.clientX - rect.left
   let y = event.clientY - rect.top
 
-  App.scope_clicks.push({x, y, timestamp: Date.now()})
+  App.push_scope_click({x, y, timestamp: Date.now()})
 }
 
 App.handle_scope_mouse_down = (event) => {
   App.mouse_down_coords = App.get_scope_coords(event)
   App.scope_mousedown_date = Date.now()
   App.scope_is_drawing = true
-
-  if (App.scope_clicks.length <= App.scope_clicks_min) {
-    App.scope_gestures_enabled = true
-  }
-
   App.handle_scope_click(event)
 }
 
@@ -308,11 +303,11 @@ App.handle_scope_mouse_move = (event) => {
       for (let i = 1; i <= steps; i++) {
         let intermediate_x = last_x + (dx * i / steps)
         let intermediate_y = last_y + (dy * i / steps)
-        App.scope_clicks.push({x: intermediate_x, y: intermediate_y, timestamp: Date.now()})
+        App.push_scope_click({x: intermediate_x, y: intermediate_y, timestamp: Date.now()})
       }
     }
 
-    App.scope_clicks.push({x, y, timestamp: Date.now()})
+    App.push_scope_click({x, y, timestamp: Date.now()})
     App.scope_last_point = {x, y}
   }
 }
@@ -325,17 +320,12 @@ App.handle_scope_mouse_up = (event) => {
 App.increase_scope_click_level = (level) => {
   App.scope_click_level = level
   clearTimeout(App.scope_click_level_timeout)
-  clearTimeout(App.clear_scope_clicks_timeout)
   App.color_interface(level)
 
   App.scope_click_level_timeout = setTimeout(() => {
     App.scope_click_level = 1
     App.restore_interface_colors()
   }, App.scope_click_level_time)
-
-  App.clear_scope_clicks_timeout = setTimeout(() => {
-    App.clear_scope_clicks()
-  }, App.scope_click_level_time - 140)
 }
 
 App.draw_star = (ctx, x, y, radius, spikes, outer_radius, rotation_offset = 0) => {
@@ -663,4 +653,19 @@ App.get_scope_height = () => {
   }
 
   return 0
+}
+
+App.set_scope_clicks = (what, value) => {
+  for (let click of App.scope_clicks) {
+    click[what] = value
+  }
+}
+
+App.get_scope_clicks = () => {
+  return App.scope_clicks.filter((x) => !x.locked)
+}
+
+App.push_scope_click = (args) => {
+  args.locked = false
+  App.scope_clicks.push(args)
 }

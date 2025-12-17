@@ -3,7 +3,6 @@ App.scope_panning_zone = 100
 App.scope_padding_amount = 0.9
 App.scope_slide_distance = 180
 App.scope_slide_delay = 800
-App.scope_gestures_enabled = false
 App.many_clicks_amount = 100
 
 App.gesture_actions = () => {
@@ -11,47 +10,47 @@ App.gesture_actions = () => {
 }
 
 App.check_gestures = () => {
-  if (App.scope_gestures_enabled) {
-    // Slide
-    if ((Date.now() - App.scope_mousedown_date) <= App.scope_slide_delay) {
-      if (App.check_scope_slide()) {
-        App.scope_gestures_enabled = false
-        return
-      }
-    }
+  let clicks = App.get_scope_clicks()
+  let len = clicks.length
 
-    // Triangle
-    if (App.triangle_gesture()) {
-      App.gesture_function(2, () => {
-        App.gesture_actions()
-      })
-
+  // Slide
+  if ((Date.now() - App.scope_mousedown_date) <= App.scope_slide_delay) {
+    if (App.check_scope_slide()) {
       return
     }
-    // Square
-    else if (App.square_gesture()) {
-      App.gesture_function(3, () => {
-        App.gesture_actions()
-      })
+  }
 
-      return
-    }
-    // Circle
-    else if (App.circle_gesture()) {
-      App.gesture_function(4, () => {
-        App.gesture_actions()
-      })
+  // Triangle
+  if ((len >= 10) && App.triangle_gesture()) {
+    App.gesture_function(2, () => {
+      App.gesture_actions()
+    })
 
-      return
-    }
-    // Many stars
-    else if (App.scope_clicks.length >= App.many_clicks_amount) {
-      App.gesture_function(5, () => {
-        App.gesture_actions()
-      })
+    return
+  }
+  // Square
+  else if ((len >= 10) && App.square_gesture()) {
+    App.gesture_function(3, () => {
+      App.gesture_actions()
+    })
 
-      return
-    }
+    return
+  }
+  // Circle
+  else if ((len >= 10) && App.circle_gesture()) {
+    App.gesture_function(4, () => {
+      App.gesture_actions()
+    })
+
+    return
+  }
+  // Many stars
+  else if (len >= App.many_clicks_amount) {
+    App.gesture_function(5, () => {
+      App.gesture_actions()
+    })
+
+    return
   }
 
   // Click
@@ -109,7 +108,7 @@ App.check_scope_panning = () => {
 }
 
 App.circle_gesture = () => {
-  let clicks = App.scope_clicks
+  let clicks = App.get_scope_clicks()
 
   // Safety check
   if (!clicks || !Array.isArray(clicks)) {
@@ -117,10 +116,6 @@ App.circle_gesture = () => {
   }
 
   let len = clicks.length
-
-  if (len < 8) {
-    return false
-  }
 
   let min_x = Infinity
   let max_x = -Infinity
@@ -278,12 +273,9 @@ App.triangle_gesture = () => {
     return [points[0], points[end]]
   }
 
-  let detect_triangle = (points) => {
-    let len = points.length
-
-    if (len < 10) {
-      return false
-    }
+  let detect_triangle = () => {
+    let clicks = App.get_scope_clicks()
+    let len = clicks.length
 
     let min_x = Infinity
     let max_x = -Infinity
@@ -291,15 +283,15 @@ App.triangle_gesture = () => {
     let max_y = -Infinity
 
     for (let i = 0; i < len; i++) {
-      min_x = Math.min(min_x, points[i].x)
-      max_x = Math.max(max_x, points[i].x)
-      min_y = Math.min(min_y, points[i].y)
-      max_y = Math.max(max_y, points[i].y)
+      min_x = Math.min(min_x, clicks[i].x)
+      max_x = Math.max(max_x, clicks[i].x)
+      min_y = Math.min(min_y, clicks[i].y)
+      max_y = Math.max(max_y, clicks[i].y)
     }
 
     let diag = Math.hypot(max_x - min_x, max_y - min_y)
-    let start = points[0]
-    let end = points[len - 1]
+    let start = clicks[0]
+    let end = clicks[len - 1]
     let gap = Math.hypot(start.x - end.x, start.y - end.y)
 
     // loose: allow a 20% gap relative to size (easy to close)
@@ -309,7 +301,7 @@ App.triangle_gesture = () => {
 
     // loose: allow 15% curvature (allows messy mouse movement)
     let tolerance = diag * 0.15
-    let simple_shape = simplify_path(points, tolerance)
+    let simple_shape = simplify_path(clicks, tolerance)
     let v_count = simple_shape.length
 
     if ((v_count < 3) || (v_count > 4)) {
@@ -335,21 +327,17 @@ App.triangle_gesture = () => {
     return true
   }
 
-  return detect_triangle(App.scope_clicks)
+  return detect_triangle()
 }
 
 App.square_gesture = () => {
-  let clicks = App.scope_clicks
+  let clicks = App.get_scope_clicks()
 
   if (!clicks || !Array.isArray(clicks)) {
     return false
   }
 
   let len = clicks.length
-
-  if (len < 10) {
-    return false
-  }
 
   let get_sq_dist = (p1, p2) => {
     let dx = p1.x - p2.x
@@ -476,8 +464,8 @@ App.square_gesture = () => {
 }
 
 App.gesture_function = (level, action) => {
-  App.scope_gestures_enabled = false
   App.increase_scope_click_level(level)
+  App.set_scope_clicks(`locked`, true)
   App.spin_panning()
   action()
 }
