@@ -12,15 +12,15 @@ App.setup_eq = () => {
     App.set_eq(low_val, mid_val, high_val)
   }
 
-  function increase(el) {
+  function increase(el, amount) {
     let value = parseInt(el.value)
-    el.value = Math.min(App.eq_range, value + 1)
+    el.value = Math.min(App.eq_range, value + amount)
     apply_eq()
   }
 
-  function decrease(el) {
+  function decrease(el, amount) {
     let value = parseInt(el.value)
-    el.value = Math.max(-App.eq_range, value - 1)
+    el.value = Math.max(-App.eq_range, value - amount)
     apply_eq()
   }
 
@@ -39,11 +39,21 @@ App.setup_eq = () => {
     })
 
     DOM.ev(what, `wheel`, (event) => {
+      let amount = 1
+
       if (event.deltaY < 0) {
-        increase(event.target)
+        if (event.shiftKey) {
+          amount = 2
+        }
+
+        increase(event.target, amount)
       }
       else if (event.deltaY > 0) {
-        decrease(event.target)
+        if (event.shiftKey) {
+          amount = 2
+        }
+
+        decrease(event.target, amount)
       }
 
       event.preventDefault()
