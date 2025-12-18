@@ -328,6 +328,7 @@ App.start_events = async () => {
   App.set_beat_title_from_query()
   App.max_input()
   App.resize_scope()
+  App.init_tooltips()
 
   if (!await App.load_song_from_query()) {
     if (!App.load_url_from_query()) {

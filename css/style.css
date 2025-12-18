@@ -33,7 +33,7 @@ body, html {
     width: 100%;
     height: 100%;
     background: rgba(28, 28, 28, 0.8);
-    z-index: 99999998;
+    z-index: 99995;
 }
 
 #main {
@@ -44,7 +44,7 @@ body, html {
     flex-direction: column;
     padding: 0.8rem;
     box-sizing: border-box;
-    z-index: 99999999;
+    z-index: 99996;
     position: relative;
     transition: opacity 1500ms linear;
 }
@@ -735,7 +735,7 @@ a.popup:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 99999997;
+    z-index: 99994;
     background-color: #000;
 }
 
@@ -854,4 +854,21 @@ a.popup:hover {
     width: 2.9rem;
     border: none;
     outline: none;
+}
+
+#custom-tooltip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none;
+    pointer-events: none;
+    z-index: 99997;
+    background-color: #222;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 18px;
+    font-family: sans-serif;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    max-width: 20rem;
 }
