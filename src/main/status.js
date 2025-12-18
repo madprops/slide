@@ -1,4 +1,5 @@
 App.beat_title = ``
+App.status_enabled = true
 
 App.setup_status = () => {
   App.status_debouncer = App.create_debouncer((status) => {
@@ -21,6 +22,8 @@ App.setup_status = () => {
 
     event.preventDefault()
   })
+
+  App.check_status()
 }
 
 App.get_status = () => {
@@ -62,4 +65,27 @@ App.ask_for_title = () => {
 App.get_status_height = () => {
   let el = DOM.el(`#status`)
   return App.get_el_height(el)
+}
+
+App.enable_status = () => {
+  DOM.show(App.get_status())
+}
+
+App.disable_status = () => {
+  DOM.hide(App.get_status())
+}
+
+App.check_status = () => {
+  if (App.status_enabled) {
+    App.enable_status()
+  }
+  else {
+    App.disable_status()
+  }
+}
+
+App.toggle_status = () => {
+  App.status_enabled = !App.status_enabled
+  App.check_status()
+  App.stor_save_status()
 }

@@ -9,6 +9,7 @@ App.lines_storage_key = `slide.lines`
 App.mirror_storage_key = `slide.mirror`
 App.theme_storage_key = `slide.theme`
 App.eq_storage_key = `slide.eq`
+App.status_storage_key = `slide.status`
 
 App.load_storage = (what, on_value) => {
   let value = localStorage.getItem(App[`${what}_storage_key`])
@@ -38,6 +39,7 @@ App.load_all_storage = () => {
   App.stor_load_mirror()
   App.stor_load_theme()
   App.stor_load_eq()
+  App.stor_load_status()
 }
 
 App.stor_load_auto_endpoint = () => {
@@ -100,6 +102,14 @@ App.stor_load_mirror = () => {
   App.load_storage(`mirror`,
     (value) => {
       App.mirror_enabled = App.boolstring(value)
+    },
+  )
+}
+
+App.stor_load_status = () => {
+  App.load_storage(`status`,
+    (value) => {
+      App.status_enabled = App.boolstring(value)
     },
   )
 }
@@ -172,4 +182,8 @@ App.stor_save_theme = () => {
 
 App.stor_save_eq = () => {
   App.save_storage(`eq`, JSON.stringify(App.eq))
+}
+
+App.stor_save_status = () => {
+  App.save_storage(`status`, JSON.stringify(App.status_enabled))
 }

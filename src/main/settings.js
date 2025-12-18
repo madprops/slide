@@ -35,9 +35,9 @@ App.open_settings_modal = () => {
       title: `Show or hide the scope visualizer`,
     },
     {
-      text: `Toggle Colors`,
-      action: () => {App.toggle_colors()},
-      title: `Enable or disable the color animation`,
+      text: `Toggle Status`,
+      action: () => {App.toggle_status()},
+      title: `Show or hide the status bar`,
     },
     {
       text: `Toggle Lines`,

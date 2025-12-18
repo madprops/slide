@@ -36,7 +36,6 @@ App.scope_click_level_time = 3 * 1000
 App.gesture_scope_clicks = []
 
 App.setup_scope = () => {
-  App.stor_load_scope()
   App.setup_scope_canvas()
 
   if (App.scope_enabled) {

@@ -2,7 +2,6 @@ App.eq_range_min = -12
 App.eq_range_max = 12
 
 App.setup_eq = () => {
-  App.stor_load_eq()
   let low = DOM.el(`#eq-low`)
   let mid = DOM.el(`#eq-mid`)
   let high = DOM.el(`#eq-high`)
