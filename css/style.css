@@ -14,6 +14,8 @@
     --color-transition: 0.8s;
     --slider-width: 5rem;
     --number-border-color: #171717;
+    --custom-number-background: rgb(55, 55, 55);
+    --custom-number-background-hover: rgb(72, 72, 72);
 }
 
 body, html {
@@ -849,15 +851,6 @@ a.popup:hover {
     border-radius: 50%;
 }
 
-.eq-input {
-    background-color: rgb(20, 20, 20);
-    color: #eee;
-    font-size: 1rem;
-    width: 2.5rem;
-    border: none;
-    outline: none;
-}
-
 #custom-tooltip {
     position: fixed;
     top: 0;
@@ -876,82 +869,50 @@ a.popup:hover {
     white-space: pre-wrap;
 }
 
+#eq-controls {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
 .custom-number {
-  display: flex;
-  align-items: center;
-  border: 1px solid #393939; /* Match your theme */
-  border-radius: 4px;
-  background-color: #393939;
-  /* IMPORTANT: Remove 'overflow: hidden' if you want outlines to stick out,
-     OR keep it and use inset box-shadows. I removed it here. */
+    display: flex;
+    flex-direction: row;
+    border: 1px solid rgb(91, 91, 91);
+    background-color: var(--custom-number-background);
 }
 
-/* 1. The Down Arrow (Left) */
-.custom-number::before {
-  content: "▼";
-  /* Natural order is first, no need for 'order' property */
+.custom-number-button {
+    background-color: var(--custom-number-background);
+    color: #eee;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    cursor: pointer;
 }
 
-/* 2. The Input (Middle) */
-.custom-number input {
-  /* Natural order is second */
-  text-align: center;
-  border: none;
-  background: transparent;
-  color: white; /* Assuming you want white text in the input */
-  margin: 0;
-  flex-grow: 1; /* Takes up remaining space between arrows */
-  height: 100%;
-  appearance: textfield; /* Standard fix for Firefox */
+.custom-number-button:hover {
+    background-color: var(--custom-number-background-hover);
+    color: #ffffff;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }
 
-/* 3. The Up Arrow (Right) */
-.custom-number::after {
-  content: "▲";
-  /* Natural order is third */
+.custom-number input[type=number] {
+    color: #eee;
+    font-size: 1rem;
+    width: 2.5rem;
+    border: none;
+    outline: none;
+    text-align: center;
+    background-color: var(--custom-number-background);
 }
 
-/* Shared Button Styles */
-.custom-number::before,
-.custom-number::after {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 30px;
-  height: 30px; /* Force height if flex stretch is acting up */
-  cursor: pointer;
-  user-select: none;
-  background-color: #393939;
-  color: #b0b0b0;
-  pointer-events: auto; /* Required for hover/click */
-  transition: all 0.1s ease;
+.custom-number-decrease {
+    border-right: 1px solid var(--number-border-color);
 }
 
-/* Borders to separate buttons from input */
-.custom-number::before {
-  border-right: 1px solid var(--number-border-color);
-}
-
-.custom-number::after {
-  border-left: 1px solid var(--number-border-color);
-}
-
-/* Hover States */
-.custom-number::before:hover,
-.custom-number::after:hover {
-  background-color: #555;
-  color: white;
-  /* 'Outline' often gets clipped. Use box-shadow for a glowing border effect
-     that sits inside/outside without layout issues */
-  box-shadow: inset 0 0 0 1px rgb(213, 73, 73);
-}
-
-/* Active States */
-.custom-number::before:active,
-.custom-number::after:active {
-  background-color: #000;
-  color: white;
-  box-shadow: inset 0 0 0 2px rgb(230, 145, 145);
+.custom-number-increase {
+    border-left: 1px solid var(--number-border-color);
 }
 
 /* Hide native arrows in Chrome, Safari, Edge, Opera */
