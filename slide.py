@@ -18,14 +18,12 @@ from watchdog.events import FileSystemEventHandler  # type: ignore
 
 PROMPT = """
 This is a program that writes strudel.cc patterns using the strudel syntax (or tidal notation).
-Each beat should be around 3-5 seconds in length.
-The aim is to automate the beat changes, building upon the last section, altering it a bit,
-leaving that run for an indefinite amount of time for the user to listen to,
-as some sort of ambient sound machine.
+Your aim is to generate pure strudel code I can run in the evaluator.
+Each beat should be around 5-10 seconds in length.
 Please try to keep a progression that makes sense.
-Please try to make pleasant beats, in the vein of lo-fi hip-hop and experimental (futurebeats).
+Please try to make pleasant beats, in the vein of lo-fi hip-hop or futurebeats.
 Don't try overly complex beats, to avoid syntax errors (this is important).
-The beats shouldn't be too rough, avoid overpowered screeching/highs.
+The beats shouldn't be too rough and avoid overpowered screeching/highs.
 Response format: Just the raw syntax.
 """.strip()
 
@@ -546,8 +544,7 @@ def get_director_instruction(intensity="medium"):
 
     prompt_addition = (
         f"DIRECTOR'S INSTRUCTION: {selected_strategy} "
-        f"INTENSITY: {modifier} "
-        "Keep the rest of the code as close to the original as possible."
+        f"\nINTENSITY: {modifier} "
     )
 
     return prompt_addition
@@ -564,6 +561,9 @@ def main() -> None:
     else:
         logging.info("AI interval disabled; worker not started")
 
+    print(make_prompt())
+    print("--------------")
+    print(make_prompt())
     start_status_watcher()
     atexit.register(shutdown_worker)
     app.run(host="0.0.0.0", port=PORT, debug=False)
