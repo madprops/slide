@@ -1,7 +1,7 @@
 App.tooltip_el = null
 App.tooltips_offset = 8
 App.tooltips_enabled = true
-App.tooltip_delay = 500
+App.tooltip_delay = 800
 
 App.create_tooltip_element = () => {
   if (App.tooltip_el) {
