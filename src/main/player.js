@@ -105,12 +105,7 @@ App.strudel_update = async (code) => {
 }
 
 App.playing = (extra) => {
-  if (App.is_playing) {
-    App.set_play_status(extra)
-  }
-  else {
-    App.set_stop_status(extra)
-  }
+  App.set_play_status(extra)
 }
 
 App.set_play_status = (extra) => {
@@ -118,21 +113,21 @@ App.set_play_status = (extra) => {
   let name = App.get_song_name(true)
 
   if (name) {
-    msg = `Playing: ${name}`
+    msg = name
   }
 
   if (!msg) {
     if (App.fetch_timer) {
-      msg = `Playing 🤖`
+      msg = `Auto 🤖`
     }
     else if (App.beat_title) {
-      msg = `Playing: ${App.beat_title}`
+      msg = App.beat_title
     }
     else if (App.is_url_beat()) {
-      msg = `Playing 🌐`
+      msg = `URL 🌐`
     }
     else {
-      msg = `Playing 🥁`
+      msg = `Custom 🥁`
     }
   }
 
@@ -141,23 +136,6 @@ App.set_play_status = (extra) => {
   }
 
   App.set_status(msg)
-}
-
-App.set_stop_status = () => {
-  let name = App.get_song_name(true)
-
-  if (name) {
-    App.set_status(`Stopped: ${name}`)
-  }
-  else if (App.beat_title) {
-    App.set_status(`Stopped: ${App.beat_title}`)
-  }
-  else if (App.is_url_beat()) {
-    App.set_status(`Stopped 🌐`)
-  }
-  else {
-    App.set_status(`Stopped`)
-  }
 }
 
 App.load_last_code = () => {
