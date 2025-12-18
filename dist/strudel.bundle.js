@@ -150,8 +150,8 @@
     <div class="about-item">Clicking the scope produces a tone and a reverb affect.</div>
     <div class="about-item">Clicking the scope on the left produces left panning.</div>
     <div class="about-item">Clicking the scope on the right produces right panning.</div>
-    <div class="about-item">A straight line to the left on the scope sets the next visual.</div>
-    <div class="about-item">A straight line to the right on the scope opens a random song.</div>
+    <div class="about-item">A straight line to the left rewinds 5 seconds.</div>
+    <div class="about-item">A straight line to the right forwards 5 seconds.</div>
     <div class="about-item">Ctrl+s = Starts playback / Updates code.</div>
     <div class="about-item">Escape = Closes top modal or stops playback.</div>
     <div class="about-item">Ctrl+1 = Show the sound context.</div>
@@ -160,10 +160,8 @@
     <div class="about-item">Try drawing a triangle on the scope.</div>
     <div class="about-item">Try drawing a rectangle on the scope.</div>
     <div class="about-item">Try drawing a circle on the scope.</div>
-    <hr>
-    <div class="about-item">Credit: Gemini</div>
-    <div class="about-item">Credit: ChatGPT</div>
-    <div class="about-item">Credit: Claude</div>
+    <div class="about-item">Try drawing a plus sign on the scope.</div>
+    <div class="about-item">Try drawing many stars on the scope.</div>
   `},App.open_about_modal=()=>{App.open_modal("about")},App.beep_sound=()=>{try{let o=App.get_audio_context(),e=o.createOscillator(),a=o.createGain();e.type="triangle",e.frequency.setValueAtTime(440,o.currentTime),e.frequency.linearRampToValueAtTime(445,o.currentTime+.1),a.gain.setValueAtTime(.05,o.currentTime),a.gain.exponentialRampToValueAtTime(.001,o.currentTime+.2),e.connect(a),a.connect(o.destination),e.start(),e.stop(o.currentTime+.2)}catch(o){console.error("Failed to play sound",o)}},App.get_audio_context=()=>{if(window.master_fx&&window.master_fx.context)return window.master_fx.context;if(App.audio_context)return App.audio_context;try{return App.audio_context=new(AudioContext||window.webkitAudioContext),App.audio_context}catch{return console.error("Web Audio API is not supported"),null}},App.splash_reverb=o=>{window.master_fx&&window.master_fx.splash_reverb(o)},App.set_panning=(o,e=0)=>{if(window.master_fx&&(window.master_fx.set_panning(o),e>0)){clearInterval(App.panning_interval);let a=o/(e*1e3/50),l=o;App.panning_interval=setInterval(()=>{l-=a,Math.abs(l)<=Math.abs(a)?(window.master_fx.set_panning(0),clearInterval(App.panning_interval)):window.master_fx.set_panning(l)},50)}},App.get_panning=()=>App.panning.pan.value,App.set_gain=o=>{window.master_fx&&window.master_fx.set_volume(o)},App.get_gain=()=>{if(window.master_fx)return window.master_fx.get_volume()},App.set_eq=(o,e,a)=>{window.master_fx&&window.master_fx.set_eq_freqs(o,e,a)},App.start_auto_pan=(o=2,e=.8)=>{window.master_fx&&window.master_fx.set_auto_pan(o,e)},App.stop_auto_pan=()=>{window.master_fx&&window.master_fx.set_auto_pan(0,0)},App.spin_panning=(o=2e3)=>{App.start_auto_pan(4,1),setTimeout(()=>{App.stop_auto_pan()},o)},App.auto_delay=5,App.auto_endpoint="/status",App.setup_auto=()=>{let o=DOM.el("#auto-start");o&&DOM.ev(o,"click",()=>{let p=DOM.el("#auto-input");p&&App.start_auto(p.value)});let e=DOM.el("#auto-stop");e&&DOM.ev(e,"click",()=>{App.stop_status_watch()});let a=DOM.el("#auto-default");a&&DOM.ev(a,"click",()=>{App.start_auto("/status")});let l=DOM.el("#auto-input");l&&DOM.ev(l,"keydown",p=>{if(p.key==="Enter"){p.preventDefault();let d=DOM.el("#auto-input");d&&App.start_auto(d.value)}});let u=DOM.el("#auto-delay");u&&DOM.ev(u,"change",p=>{App.auto_delay=parseInt(p.target.value,10),App.stor_save_auto_delay(),App.fetch_timer&&App.strudel_watch_status()})},App.create_auto_modal=()=>{let o=App.create_modal("auto"),e=DOM.el(".modal-title",o);e.textContent="Auto Mode";let a=DOM.el(".modal-body",o);a.id="modal-body-auto";let l=DOM.create("div","","auto-info");l.textContent="Code will be fetched periodically";let u=DOM.create("select","modal-select","auto-delay");u.innerHTML=`
     <option value="1">1 second</option>
     <option value="5" selected>5 seconds</option>
