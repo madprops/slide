@@ -94,10 +94,10 @@ App.check_scope_slide = () => {
 
   if (Math.abs(a.x - b.x) >= App.scope_slide_distance) {
     if (a.x < b.x) {
-      App.random_song()
+      App.on_slide_right()
     }
     else {
-      App.next_visual()
+      App.on_slide_left()
     }
 
     App.clear_scope_clicks()
@@ -539,4 +539,12 @@ App.gesture_function = (level, action) => {
   App.set_scope_clicks({locked: true, level})
   App.spin_panning()
   action()
+}
+
+App.on_slide_right = () => {
+  App.prev_scope_color()
+}
+
+App.on_slide_left = () => {
+  App.next_scope_color()
 }

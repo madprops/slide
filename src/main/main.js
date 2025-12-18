@@ -294,11 +294,18 @@ App.start_events = async () => {
   })
 
   App.remove_context(`#controls`)
-  let about_image = DOM.el(`#image`)
+  let image = DOM.el(`#image`)
 
-  if (about_image) {
-    DOM.ev(about_image, `click`, () => {
+  if (image) {
+    DOM.ev(image, `click`, () => {
       App.open_settings_modal()
+    })
+
+    DOM.ev(image, `auxclick`, (event) => {
+      if (event.button === 1) {
+        App.next_visual()
+        event.preventDefault()
+      }
     })
   }
 

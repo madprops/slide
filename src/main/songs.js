@@ -88,7 +88,7 @@ App.open_songs_modal = async () => {
 }
 
 App.load_song = async (song_name) => {
-  App.close_all_modals()
+  App.close_modal(`songs`)
 
   try {
     App.loading()

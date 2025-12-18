@@ -14,6 +14,11 @@ App.create_settings_modal = () => {
       App.toggle_scope()
     })
 
+  let scope_colors = App.register_setting(`Scope Color`,
+    `Select scope color`, () => {
+      App.show_scope_color_modal()
+    })
+
   let colors = App.register_setting(`Toggle Colors`,
     `Enable or disable the color animation`, () => {
       App.toggle_colors()
@@ -31,6 +36,7 @@ App.create_settings_modal = () => {
 
   body.appendChild(visual)
   body.appendChild(scope)
+  body.appendChild(scope_colors)
   body.appendChild(colors)
   body.appendChild(lines)
   body.appendChild(mirror)

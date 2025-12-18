@@ -27,6 +27,7 @@ App.create_modals = () => {
   App.create_settings_modal()
   App.create_prompt_modal()
   App.create_confirm_modal()
+  App.create_scope_color_modal()
 
   DOM.ev(`#main`, `click`, (event) => {
     let close_btn = event.target.closest(`.modal-close`)

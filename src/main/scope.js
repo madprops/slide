@@ -10,8 +10,16 @@ App.scope_enabled = true
 App.scope_max_y = -1
 App.scope_min_y = -1
 
-App.scope_background = `rgb(18, 18, 18)`
-App.scope_color = `rgba(204, 198, 239, 1)`
+App.scope_colors = {
+  white: `rgba(204, 198, 239, 1)`,
+  blue: `rgba(121, 100, 239, 1)`,
+  red: `rgba(254, 107, 171, 1)`,
+  yellow: `rgba(255, 245, 109, 1)`,
+  green: `rgba(128, 255, 137, 1)`,
+}
+
+App.scope_color = `white`
+App.scope_background = `rgb(20, 20, 20)`
 App.scope_click_color_1 = `rgba(162, 171, 234, 0.5)`
 App.scope_click_color_2 = `rgba(255, 137, 204, 1)`
 App.scope_click_color_3 = `rgba(222, 242, 92, 1)`
@@ -37,6 +45,7 @@ App.gesture_scope_clicks = []
 
 App.setup_scope = () => {
   App.stor_load_scope()
+  App.stor_load_scope_color()
   App.setup_scope_canvas()
 
   if (App.scope_enabled) {
@@ -46,6 +55,7 @@ App.setup_scope = () => {
     App.set_scope_visibility(false)
   }
 
+  App.setup_time_controls()
   App.init_scope_click_handler()
   App.start_scope_loop()
 }
@@ -392,7 +402,7 @@ App.draw_scope_frame = () => {
   // 2. Draw Waveform
   let waveform = App.ensure_scope_waveform()
   let analyser = App.scope_analyser
-  ctx.strokeStyle = App.scope_color
+  ctx.strokeStyle = App.get_scope_color()
 
   // FIX: Divide by ratio to keep line thickness consistent on all screens
   ctx.lineWidth = 2 / ratio
@@ -730,4 +740,93 @@ App.push_scope_click = (args) => {
   args.locked = false
   args.level = 1
   App.scope_clicks.push(args)
+}
+
+App.setup_time_controls = () => {
+  let rewind = DOM.el(`#time-rewind`)
+  let forward = DOM.el(`#time-forward`)
+
+  DOM.ev(rewind, `click`, () => {
+    App.rewind_player()
+  })
+
+  DOM.ev(forward, `click`, () => {
+    App.forward_player()
+  })
+
+  DOM.ev(rewind, `auxclick`, (event) => {
+    if (event.button === 1) {
+      App.prev_scope_color()
+      event.preventDefault()
+    }
+  })
+
+  DOM.ev(forward, `auxclick`, (event) => {
+    if (event.button === 1) {
+      App.next_scope_color()
+      event.preventDefault()
+    }
+  })
+
+  App.remove_context(rewind)
+  App.remove_context(forward)
+}
+
+App.get_scope_color = () => {
+  return App.scope_colors[App.scope_color] || App.scope_colors.white
+}
+
+App.prev_scope_color = () => {
+  let keys = Object.keys(App.scope_colors)
+  let index = keys.indexOf(App.scope_color)
+
+  if (index === -1) {
+    App.scope_color = keys[0]
+    return
+  }
+
+  index = (index - 1 + keys.length) % keys.length
+  App.scope_color = keys[index]
+  App.stor_save_scope_color()
+}
+
+App.next_scope_color = () => {
+  let keys = Object.keys(App.scope_colors)
+  let index = keys.indexOf(App.scope_color)
+
+  if (index === -1) {
+    App.scope_color = keys[0]
+    return
+  }
+
+  index = (index + 1) % keys.length
+  App.scope_color = keys[index]
+  App.stor_save_scope_color()
+}
+
+App.create_scope_color_modal = () => {
+  let modal = App.create_list_modal(`scope_color`)
+  let title = DOM.el(`.modal-title`, modal)
+  title.textContent = `Scope Color`
+}
+
+App.show_scope_color_modal = () => {
+  let items = []
+
+  for (let key in App.scope_colors) {
+    items.push({
+      text: App.capitalize(key),
+      title: `Set this color for the scope waveform`,
+      value: key,
+    })
+  }
+
+  App.show_items_modal(`scope_color`, {
+    items,
+    action: (item) => {
+      App.scope_color = item.value
+      App.stor_save_scope_color()
+      App.close_modal(`scope_color`)
+    },
+  })
 }
