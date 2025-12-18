@@ -287,6 +287,12 @@ App.start_events = async () => {
     App.open_songs_modal()
   })
 
+  DOM.ev(`#btn-songs`, `auxclick`, (event) => {
+    if (event.button === 1) {
+      App.random_song()
+    }
+  })
+
   App.remove_context(`#controls`)
   let about_image = DOM.el(`#image`)
 
