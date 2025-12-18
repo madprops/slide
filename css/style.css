@@ -1,5 +1,6 @@
 :root {
     --input-width: 88%;
+    --input-width-update: 88%;
     --input-height: 420px;
     --input-max-width: 88%;
     --input-min-width: 600px;
@@ -133,9 +134,9 @@ body, html {
 /* Ensure the scope wrapper fills the studio width */
 #scope-wrapper {
     display: flex;
-    width: 100%;
+    width: var(--input-width-update);
     flex-direction: row;
-    max-width: var(--input-width);
+    max-width: var(--input-width-update);
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
 }
@@ -455,8 +456,8 @@ button:hover {
     height: 100%;
     font-size: 1.2rem;
     transition: color var(--color-transition) ease;
-    max-width: var(--input-width);
-    max-width: var(--input-width);
+    max-width: var(--input-width-update);
+    width: var(--input-width-update);
     cursor: pointer;
     white-space: nowrap;
     overflow-x: auto;

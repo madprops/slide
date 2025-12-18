@@ -224,7 +224,6 @@ App.init_code_input_controls = () => {
       let is_resizing = false
 
       DOM.ev(resize_handle, `mousedown`, (event) => {
-        let scope_wrapper = App.get_scope_wrapper()
         event.preventDefault()
         is_resizing = true
         document.body.style.userSelect = `none`
@@ -255,9 +254,13 @@ App.init_code_input_controls = () => {
           new_width = Math.max(min_width, new_width)
           new_height = Math.max(min_height, new_height)
 
-          wrapper.style.width = `${new_width}px`
-          wrapper.style.height = `${new_height}px`
-          scope_wrapper.style.width = `${new_width}px`
+          let sw = `${new_width}px`
+          let sh = `${new_height}px`
+
+          wrapper.style.width = sw
+          wrapper.style.height = sh
+
+          App.set_css_var(`input-width-update`, sw)
           App.enable_max_button()
         }
 
