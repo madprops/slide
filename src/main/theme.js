@@ -4,7 +4,13 @@ App.themes = {
   red: `rgb(222, 143, 143)`,
   yellow: `rgb(197, 187, 106)`,
   green: `rgb(148, 221, 148)`,
+  orange: `rgb(235, 178, 134)`,
+  purple: `rgb(176, 156, 217)`,
+  teal: `rgb(115, 194, 191)`,
+  pink: `rgb(232, 161, 193)`,
 }
+
+App.theme = `green`
 
 App.setup_theme = () => {
   App.apply_color(App.themes[App.theme])

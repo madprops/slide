@@ -94,7 +94,6 @@ App.load_song = async (song_name) => {
     App.loading()
     let content = await App.fetch_song_code(song_name)
     App.stop_status_watch()
-    App.stop_color_cycle()
     App.clear_draw_context()
 
     if (App.code_scroll_active) {
