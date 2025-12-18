@@ -33,10 +33,9 @@ App.setup_eq = () => {
       if (event.button === 1) {
         event.target.value = 0
         apply_eq()
+        event.target.blur()
+        event.preventDefault()
       }
-
-      event.target.blur()
-      event.preventDefault()
     })
 
     DOM.ev(what, `wheel`, (event) => {
