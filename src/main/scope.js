@@ -818,11 +818,14 @@ App.show_scope_color_modal = () => {
       text: App.capitalize(key),
       title: `Set this color for the scope waveform`,
       value: key,
+      icon_color: App.scope_colors[key],
     })
   }
 
   App.show_items_modal(`scope_color`, {
     items,
+    icons: false,
+    color_icons: true,
     action: (item) => {
       App.scope_color = item.value
       App.stor_save_scope_color()

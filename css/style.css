@@ -840,3 +840,7 @@ a.popup:hover {
 .modal-text-filled {
     padding-bottom: 0.8rem;
 }
+
+.color-icon {
+    border-radius: 50%;
+}

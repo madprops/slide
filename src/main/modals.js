@@ -84,6 +84,8 @@ App.show_items_modal = async (id, args = {}) => {
       return
     }
 
+    let icon_size = 25
+
     for (let [i, item] of list.entries()) {
       let item_div = DOM.create(`div`)
       let item_text = DOM.create(`div`)
@@ -92,10 +94,17 @@ App.show_items_modal = async (id, args = {}) => {
 
       if (args.icons) {
         let item_icon = DOM.create(`canvas`, `modal-icon`)
-        item_icon.width = 25
-        item_icon.height = 25
+        item_icon.width = icon_size
+        item_icon.height = icon_size
         item_div.appendChild(item_icon)
         jdenticon.update(item_icon, name)
+      }
+      else if (args.color_icons) {
+        let item_icon = DOM.create(`div`, `color-icon`)
+        item_icon.style.width = `${icon_size}px`
+        item_icon.style.height = `${icon_size}px`
+        item_icon.style.backgroundColor = item.icon_color
+        item_div.appendChild(item_icon)
       }
 
       name = App.underspace(name)
