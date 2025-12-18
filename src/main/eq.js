@@ -2,9 +2,16 @@ App.eq_range_min = -12
 App.eq_range_max = 12
 
 App.setup_eq = () => {
+  App.stor_load_eq()
   let low = DOM.el(`#eq-low`)
   let mid = DOM.el(`#eq-mid`)
   let high = DOM.el(`#eq-high`)
+
+  if (App.eq) {
+    low.value = App.eq.low || 0
+    mid.value = App.eq.mid || 0
+    high.value = App.eq.high || 0
+  }
 
   function apply_eq() {
     let low_val = parseInt(low.value)

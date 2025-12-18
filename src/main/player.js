@@ -52,6 +52,7 @@ App.play_action = async (code = ``, force = false) => {
     App.set_status(`Error: ${e.message}`)
   }
 
+  App.update_eq()
   App.update_url()
   App.reset_playing()
 }

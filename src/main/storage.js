@@ -8,6 +8,7 @@ App.code_storage_key = `slide.code`
 App.lines_storage_key = `slide.lines`
 App.mirror_storage_key = `slide.mirror`
 App.theme_storage_key = `slide.theme`
+App.eq_storage_key = `slide.eq`
 
 App.load_storage = (what, on_value) => {
   let value = localStorage.getItem(App[`${what}_storage_key`])
@@ -36,6 +37,7 @@ App.load_all_storage = () => {
   App.stor_load_lines()
   App.stor_load_mirror()
   App.stor_load_theme()
+  App.stor_load_eq()
 }
 
 App.stor_load_auto_endpoint = () => {
@@ -118,6 +120,14 @@ App.stor_load_theme = () => {
   )
 }
 
+App.stor_load_eq = () => {
+  App.load_storage(`eq`,
+    (value) => {
+      App.eq = JSON.parse(value)
+    },
+  )
+}
+
 // Save
 
 App.stor_save_auto_delay = () => {
@@ -158,4 +168,8 @@ App.stor_save_code = () => {
 
 App.stor_save_theme = () => {
   App.save_storage(`theme`, App.theme)
+}
+
+App.stor_save_eq = () => {
+  App.save_storage(`eq`, JSON.stringify(App.eq))
 }

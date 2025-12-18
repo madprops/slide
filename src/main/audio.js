@@ -110,11 +110,18 @@ App.get_gain = () => {
 }
 
 App.set_eq = (low, mid, high) => {
-  if (!window.master_fx) {
-    return
-  }
+  App.eq = {low, mid, high}
+  App.stor_save_eq()
 
-  window.master_fx.set_eq(low, mid, high)
+  if (window.master_fx) {
+    window.master_fx.set_eq(low, mid, high)
+  }
+}
+
+App.update_eq = () => {
+  if (App.eq && window.master_fx) {
+    window.master_fx.set_eq(App.eq.low, App.eq.mid, App.eq.high)
+  }
 }
 
 // Rate: Speed in Hz (e.g., 0.5 is once every 2 seconds)
