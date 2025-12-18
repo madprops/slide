@@ -867,7 +867,7 @@ a.popup:hover {
     color: #fff;
     padding: 6px 10px;
     border-radius: 4px;
-    font-size: 18px;
+    font-size: 1rem;
     font-family: sans-serif;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     max-width: 20rem;

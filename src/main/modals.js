@@ -116,6 +116,7 @@ App.show_items_modal = async (id, args = {}) => {
       item_text.textContent = name
       item_div.title = item.title
       DOM.ev(item_div, `click`, () => args.action(item))
+      App.register_tooltip(item_div)
 
       if (args.active === i) {
         item_div.classList.add(`modal-active-item`)
