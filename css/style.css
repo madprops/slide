@@ -16,6 +16,7 @@
     --number-border-color: #171717;
     --custom-number-background: rgb(55, 55, 55);
     --custom-number-background-hover: rgb(72, 72, 72);
+    --button-background: #424242;
 }
 
 body, html {
@@ -402,15 +403,14 @@ body, html {
 }
 
 button {
-    padding: 5px 12px;
     cursor: pointer;
     font-weight: bold;
     font-weight: normal;
-    background-color: #424242;
-    color: rgb(225, 225, 225);
     font-size: 1.1rem;
     border-color: #717070;
     border-style: solid;
+    background-color: var(--button-background);
+    color: rgb(225, 225, 225);
 }
 
 button:hover {
@@ -438,6 +438,13 @@ button:hover {
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
+    box-sizing: border-box;
+}
+
+#controls button {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    height: 100%;
 }
 
 #status {
@@ -873,38 +880,44 @@ a.popup:hover {
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
+    height: 100%;
 }
 
 .custom-number {
     display: flex;
     flex-direction: row;
-    border: 1px solid rgb(91, 91, 91);
-    background-color: var(--custom-number-background);
+    height: 100%;
 }
 
 .custom-number-button {
-    background-color: var(--custom-number-background);
-    color: #eee;
+    background-color: var(--button-background);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-color: #717070;
+    border-style: solid;
+    color: rgb(225, 225, 225);
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    cursor: pointer;
 }
 
 .custom-number-button:hover {
     background-color: var(--custom-number-background-hover);
     color: #ffffff;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
 }
 
-.custom-number input[type=number] {
+.custom-number input[type=text] {
     color: #eee;
     font-size: 1rem;
     width: 2.5rem;
     border: none;
     outline: none;
     text-align: center;
-    background-color: var(--custom-number-background);
+    border-color: #717070;
+    border-style: solid;
+    color: rgb(225, 225, 225);
+    background-color: var(--button-background);
 }
 
 .custom-number-decrease {
@@ -913,17 +926,4 @@ a.popup:hover {
 
 .custom-number-increase {
     border-left: 1px solid var(--number-border-color);
-}
-
-/* Hide native arrows in Chrome, Safari, Edge, Opera */
-.custom-number input::-webkit-outer-spin-button,
-.custom-number input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-  display: none; /* explicitly remove them from the layout */
-}
-
-/* Hide native arrows in Firefox */
-.custom-number input[type=number] {
-  -moz-appearance: textfield;
 }

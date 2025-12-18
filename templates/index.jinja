@@ -51,26 +51,6 @@
 
                         <span id="tempo-value">60 cpm</span>
                     </div>
-
-                    <div id="eq-controls" class="control-container">
-                        <div class="custom-number">
-                            <div class="custom-number-button custom-number-decrease" title="Decrease">▼</div>
-                            <input type="number" id="eq-low" min="-12" max="12" value="0" title="EQ: Low Frequency\nMiddle Click to reset\nWheel to increase or decrease\nShift + Wheel for a stronger effect">
-                            <div class="custom-number-button custom-number-increase" title="Increase">▲</div>
-                        </div>
-
-                        <div class="custom-number">
-                            <div class="custom-number-button custom-number-decrease" title="Decrease">▼</div>
-                            <input type="number" id="eq-mid" min="-12" max="12" value="0" title="EQ: Mid Frequency\nMiddle Click to reset\nWheel to increase or decrease\nShift + Wheel for a stronger effect">
-                            <div class="custom-number-button custom-number-increase" title="Increase">▲</div>
-                        </div>
-
-                        <div class="custom-number">
-                            <div class="custom-number-button custom-number-decrease" title="Decrease">▼</div>
-                            <input type="number" id="eq-high" min="-12" max="12" value="0" title="EQ: High Frequency\nMiddle Click to reset\nWheel to increase or decrease\nShift + Wheel for a stronger effect">
-                            <div class="custom-number-button custom-number-increase" title="Increase">▲</div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -111,6 +91,26 @@
                     <button id="btn-url" title="Load a song from a text file using a URL">URL</button>
                     <button id="btn-auto" title="Let the code be updated automatically\n(This might not be available at the time)">Auto</button>
                     <button id="btn-songs" title="Play an available song\nMiddle Click to play a random song">Songs</button>
+
+                    <div id="eq-controls" class="control-container">
+                        <div class="custom-number">
+                            <div class="custom-number-button custom-number-decrease" title="Decrease">▼</div>
+                            <input type="text" id="eq-low" value="0" title="EQ: Low Frequency\nMiddle Click to reset\nWheel to increase or decrease\nShift + Wheel for a stronger effect">
+                            <div class="custom-number-button custom-number-increase" title="Increase">▲</div>
+                        </div>
+
+                        <div class="custom-number">
+                            <div class="custom-number-button custom-number-decrease" title="Decrease">▼</div>
+                            <input type="text" id="eq-mid" value="0" title="EQ: Mid Frequency\nMiddle Click to reset\nWheel to increase or decrease\nShift + Wheel for a stronger effect">
+                            <div class="custom-number-button custom-number-increase" title="Increase">▲</div>
+                        </div>
+
+                        <div class="custom-number">
+                            <div class="custom-number-button custom-number-decrease" title="Decrease">▼</div>
+                            <input type="text" id="eq-high" value="0" title="EQ: High Frequency\nMiddle Click to reset\nWheel to increase or decrease\nShift + Wheel for a stronger effect">
+                            <div class="custom-number-button custom-number-increase" title="Increase">▲</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="status" title="Click to set the title">Ready to play</div>
