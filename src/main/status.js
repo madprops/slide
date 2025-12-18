@@ -56,3 +56,8 @@ App.ask_for_title = () => {
     },
   })
 }
+
+App.get_status_height = () => {
+  let el = DOM.el(`#status`)
+  return App.get_el_height(el)
+}

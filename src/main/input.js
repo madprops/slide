@@ -249,8 +249,8 @@ App.init_code_input_controls = () => {
           let new_height = start_height + (move_event.clientY - start_y)
 
           let style = getComputedStyle(document.documentElement)
-          let min_width = parseInt(style.getPropertyValue(`--input_min_width`))
-          let min_height = parseInt(style.getPropertyValue(`--input_min_height`))
+          let min_width = parseInt(style.getPropertyValue(`--input-min-width`))
+          let min_height = parseInt(style.getPropertyValue(`--input-min-height`))
 
           new_width = Math.max(min_width, new_width)
           new_height = Math.max(min_height, new_height)
@@ -308,8 +308,8 @@ App.restore_input = () => {
   }
 
   let style = getComputedStyle(document.documentElement)
-  let height = parseInt(style.getPropertyValue(`--input_height`))
-  let max_width = parseInt(style.getPropertyValue(`--input_max_width`))
+  let height = parseInt(style.getPropertyValue(`--input-height`))
+  let max_width = parseInt(style.getPropertyValue(`--input-max-width`))
   wrapper.style.height = `${height}px`
   wrapper.style.width = `${max_width}%`
 }
@@ -414,7 +414,7 @@ App.cursive_input = () => {
 App.max_input = (just_check = false, mode = `normal`) => {
   let wrapper = App.get_input_wrapper()
   let style = getComputedStyle(document.documentElement)
-  let max_width = parseInt(style.getPropertyValue(`--input_max_width`))
+  let max_width = parseInt(style.getPropertyValue(`--input-max-width`))
   let diff = App.get_input_diff()
 
   if (!just_check) {
@@ -439,8 +439,9 @@ App.max_input = (just_check = false, mode = `normal`) => {
 App.get_input_diff = () => {
   let top_height = App.get_top_height()
   let scope_height = App.get_scope_height()
+  let status_height = App.get_status_height()
   let bottom_height = App.get_bottom_height()
-  let height_sum = top_height + scope_height + bottom_height
+  let height_sum = top_height + scope_height + bottom_height + status_height
   let total_height = App.viewport_height()
   return total_height - height_sum - 50
 }
