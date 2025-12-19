@@ -555,7 +555,7 @@ button:hover {
     border: 1px solid #555;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
     font-size: 1.1rem;
     display: flex;
     flex-direction: row;
@@ -837,7 +837,6 @@ a.popup:hover {
 
 .sh-executing {
     outline: 1px solid rgb(176, 176, 176);
-    /* Green Border */
     transition: all 0.1s;
 }
 
