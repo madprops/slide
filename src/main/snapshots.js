@@ -124,6 +124,26 @@ App.get_snapshots = async () => {
   })
 }
 
+App.clear_snapshots = async () => {
+  let db = await App.init_db()
+  let transaction = db.transaction([App.db_store_name], `readwrite`)
+  let store = transaction.objectStore(App.db_store_name)
+
+  return new Promise((resolve, reject) => {
+    let request = store.clear()
+
+    request.onsuccess = () => {
+      console.log(`Snapshots cleared successfully`)
+      resolve()
+    }
+
+    request.onerror = () => {
+      console.error(`Failed to clear history`, request.error)
+      reject(request.error)
+    }
+  })
+}
+
 App.create_snapshots_modal = () => {
   let modal = App.create_list_modal(`snapshots`)
   let title = DOM.el(`.modal-title`, modal)
@@ -132,6 +152,13 @@ App.create_snapshots_modal = () => {
 
 App.show_snapshots = async () => {
   let snapshots = await App.get_snapshots()
+
+  if (snapshots.length === 0) {
+    let msg = `No snapshots yet. Snapshots are saved automatically when you play code.`
+    App.show_alert(msg, `Empty List`)
+    return
+  }
+
   snapshots.reverse()
   snapshots = snapshots.slice(0, 100)
   let items = []
