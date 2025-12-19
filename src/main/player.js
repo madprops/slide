@@ -75,8 +75,8 @@ App.stop_strudel = () => {
   if (App.scheduler) {
     App.scheduler.stop()
     App.scheduler.setPattern(null)
-    clearHydra()
-    hush()
+    window.clearHydra()
+    window.hush()
   }
 
   App.stop_drawer()
