@@ -433,7 +433,10 @@ App.max_input = (just_check = false, mode = `normal`) => {
       wrapper.style.height = `${diff}px`
     }
 
-    App.set_css_var(`input-width-update`, sw)
+    if ([`normal`, `width`].includes(mode)) {
+      App.set_css_var(`input-width-update`, sw)
+    }
+
     App.resize_scope()
     App.check_max_button()
   }
