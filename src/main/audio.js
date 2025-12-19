@@ -110,8 +110,8 @@ App.get_gain = () => {
 }
 
 App.set_eq = (low, mid, high) => {
-  App.eq_value = {low, mid, high}
-  App.stor_save_eq_value()
+  App.eq = {low, mid, high}
+  App.stor_save_eq()
 
   if (window.master_fx) {
     window.master_fx.set_eq(low, mid, high)
@@ -119,8 +119,8 @@ App.set_eq = (low, mid, high) => {
 }
 
 App.update_eq = () => {
-  if (App.eq_value && window.master_fx) {
-    window.master_fx.set_eq(App.eq_value.low, App.eq_value.mid, App.eq_value.high)
+  if (App.eq && window.master_fx) {
+    window.master_fx.set_eq(App.eq.low, App.eq.mid, App.eq.high)
   }
 }
 

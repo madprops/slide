@@ -2,11 +2,12 @@ App.eq_range_min = -12
 App.eq_range_max = 12
 App.effects_enabled = true
 App.reverb_enabled = false
-App.eq_value = ``
+App.eq = ``
 
 App.setup_effects = () => {
   App.setup_eq()
   App.setup_reverb()
+  App.check_effects()
 }
 
 App.setup_eq = () => {
@@ -14,10 +15,10 @@ App.setup_eq = () => {
   let mid = DOM.el(`#eq-mid`)
   let high = DOM.el(`#eq-high`)
 
-  if (App.eq_value) {
-    low.value = App.eq_value.low || 0
-    mid.value = App.eq_value.mid || 0
-    high.value = App.eq_value.high || 0
+  if (App.eq) {
+    low.value = App.eq.low || 0
+    mid.value = App.eq.mid || 0
+    high.value = App.eq.high || 0
   }
 
   function apply_eq() {
@@ -89,7 +90,6 @@ App.setup_eq = () => {
   register(low)
   register(mid)
   register(high)
-  App.check_effects()
 }
 
 App.setup_reverb = () => {
@@ -132,6 +132,7 @@ App.get_effects = () => {
 App.toggle_reverb = () => {
   App.reverb_enabled = !App.reverb_enabled
   App.check_reverb()
+  App.stor_save_reverb()
 }
 
 App.check_reverb = () => {

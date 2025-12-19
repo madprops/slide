@@ -41,7 +41,7 @@ App.open_settings_modal = () => {
     },
     {
       text: `Toggle Effects`,
-      action: () => {App.toggle_eq()},
+      action: () => {App.toggle_effects()},
       title: `Show or hide the effects controls`,
     },
     {

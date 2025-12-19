@@ -137,7 +137,7 @@ App.stor_load_theme = () => {
 App.stor_load_eq = () => {
   App.load_storage(`eq`,
     (value) => {
-      App.eq_values = JSON.parse(value)
+      App.eq = JSON.parse(value)
     },
   )
 }
@@ -201,7 +201,7 @@ App.stor_save_theme = () => {
 }
 
 App.stor_save_eq = () => {
-  App.save_storage(`eq`, JSON.stringify(App.eq_values))
+  App.save_storage(`eq`, JSON.stringify(App.eq))
 }
 
 App.stor_save_effects = () => {
