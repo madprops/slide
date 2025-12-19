@@ -18,41 +18,46 @@ App.register_setting = (text, title, action) => {
 }
 
 App.open_settings_modal = () => {
+  let select = `Select`
+  let toggle = `Toggle`
+  let show_or_hide = `Show or hide`
+  let enable_or_disable = `Enable or disable`
+
   let items = [
     {
-      text: `Select Theme`,
+      text: `${select} Theme`,
       action: () => {App.show_theme_modal()},
-      title: `Select theme color`,
+      title: `${select} the theme color`,
     },
     {
-      text: `Select Visual`,
+      text: `${select} Visual`,
       action: () => {App.open_visual_modal()},
-      title: `Change the background animation`,
+      title: `${select} the background animation`,
     },
     {
-      text: `Toggle Scope`,
+      text: `${toggle} Scope`,
       action: () => {App.toggle_scope()},
-      title: `Show or hide the scope visualizer`,
+      title: `${show_or_hide} the scope visualizer`,
     },
     {
-      text: `Toggle Status`,
+      text: `${toggle} Status`,
       action: () => {App.toggle_status()},
-      title: `Show or hide the status bar`,
+      title: `${show_or_hide} the status bar`,
     },
     {
-      text: `Toggle Effects`,
+      text: `${toggle} Effects`,
       action: () => {App.toggle_effects()},
-      title: `Show or hide the effects controls`,
+      title: `${show_or_hide} the effects controls`,
     },
     {
-      text: `Toggle Lines`,
+      text: `${toggle} Lines`,
       action: () => {App.toggle_lines()},
-      title: `Enable or disable the line numbers`,
+      title: `${enable_or_disable} the line numbers`,
     },
     {
-      text: `Toggle Mirror`,
+      text: `${toggle} Mirror`,
       action: () => {App.toggle_mirror()},
-      title: `Enable or disable the playback reflection on the code`,
+      title: `${enable_or_disable} the playback reflection on the code`,
     },
   ]
 
