@@ -404,6 +404,7 @@ App.start_resize_observer = () => {
 
   DOM.ev(window, `resize`, () => {
     App.resize_scope()
+    App.check_max_button()
   })
 }
 
