@@ -567,7 +567,6 @@ button:hover {
 }
 
 .modal-item:hover {
-    background-color: #424242;
     border-color: var(--theme-color);
     color: var(--theme-color);
 }
