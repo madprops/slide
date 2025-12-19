@@ -1,7 +1,13 @@
 App.eq_range_min = -12
 App.eq_range_max = 12
-App.eq_enabled = true
+App.effects_enabled = true
+App.reverb_enabled = false
 App.eq_value = ``
+
+App.setup_effects = () => {
+  App.setup_eq()
+  App.setup_reverb()
+}
 
 App.setup_eq = () => {
   let low = DOM.el(`#eq-low`)
@@ -83,32 +89,60 @@ App.setup_eq = () => {
   register(low)
   register(mid)
   register(high)
-  App.check_eq()
+  App.check_effects()
 }
 
-App.enable_eq = () => {
-  DOM.show(App.get_eq())
+App.setup_reverb = () => {
+  let el = DOM.el(`#reverb`)
+
+  DOM.ev(el, `click`, () => {
+    App.toggle_reverb()
+  })
+
+  App.check_reverb()
 }
 
-App.disable_eq = () => {
-  DOM.hide(App.get_eq())
+App.enable_effects = () => {
+  DOM.show(App.get_effects())
 }
 
-App.check_eq = () => {
-  if (App.eq_enabled) {
-    App.enable_eq()
+App.disable_effects = () => {
+  DOM.hide(App.get_effects())
+}
+
+App.check_effects = () => {
+  if (App.effects_enabled) {
+    App.enable_effects()
   }
   else {
-    App.disable_eq()
+    App.disable_effects()
   }
 }
 
-App.toggle_eq = () => {
-  App.eq_enabled = !App.eq_enabled
-  App.check_eq()
-  App.stor_save_eq()
+App.toggle_effects = () => {
+  App.effects_enabled = !App.effects_enabled
+  App.check_effects()
+  App.stor_save_effects()
 }
 
-App.get_eq = () => {
-  return DOM.el(`#eq-controls`)
+App.get_effects = () => {
+  return DOM.el(`#effects`)
+}
+
+App.toggle_reverb = () => {
+  App.reverb_enabled = !App.reverb_enabled
+  App.check_reverb()
+}
+
+App.check_reverb = () => {
+  let el = DOM.el(`#reverb`)
+
+  if (App.reverb_enabled) {
+    el.classList.add(`active`)
+  }
+  else {
+    el.classList.remove(`active`)
+  }
+
+  App.update_reverb()
 }

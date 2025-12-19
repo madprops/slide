@@ -53,6 +53,7 @@ App.play_action = async (code = ``, force = false) => {
   }
 
   App.update_eq()
+  App.update_reverb()
   App.update_url()
   App.reset_playing()
 }

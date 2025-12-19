@@ -209,6 +209,37 @@
               reverb_state.is_connected = false
             }, (duration + fade_out_time) * 1000 + 100)
           },
+          toggle_reverb: (enable, volume = 0.5) => {
+            let now = ctx.currentTime
+            let ramp = 0.1
+
+            if (enable) {
+              if (!reverb_state.is_connected) {
+                // Connect nodes if they aren't already
+                App.panning.connect(convolver)
+                convolver.connect(reverb_gain)
+                reverb_gain.connect(master_gain)
+
+                reverb_gain.gain.setValueAtTime(0, now)
+                reverb_state.is_connected = true
+              }
+
+              reverb_gain.gain.setTargetAtTime(volume, now, ramp)
+            }
+            else {
+              reverb_gain.gain.setTargetAtTime(0, now, ramp)
+
+              // We wait for the ramp to finish before disconnecting to avoid clicks
+              setTimeout(() => {
+                // Check if it's still disabled to avoid race conditions
+                if (reverb_gain.gain.value === 0) {
+                  reverb_gain.disconnect()
+                  convolver.disconnect()
+                  reverb_state.is_connected = false
+                }
+              }, 500)
+            }
+          },
         }
       }
     }

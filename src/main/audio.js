@@ -55,7 +55,7 @@ App.get_audio_context = () => {
 }
 
 App.splash_reverb = (seconds) => {
-  if (!window.master_fx) {
+  if (!window.master_fx || App.reverb_enabled) {
     return
   }
 
@@ -150,4 +150,10 @@ App.spin_panning = (duration_ms = 2000) => {
   setTimeout(() => {
     App.stop_auto_pan()
   }, duration_ms)
+}
+
+App.update_reverb = () => {
+  if (window.master_fx) {
+    window.master_fx.toggle_reverb(App.reverb_enabled)
+  }
 }

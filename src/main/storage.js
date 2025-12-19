@@ -8,8 +8,9 @@ App.code_storage_key = `slide.code`
 App.lines_storage_key = `slide.lines`
 App.mirror_storage_key = `slide.mirror`
 App.theme_storage_key = `slide.theme`
+App.effects_storage_key = `slide.effects`
 App.eq_storage_key = `slide.eq`
-App.eq_value_storage_key = `slide.eq_value`
+App.reverb_storage_key = `slide.reverb`
 App.status_storage_key = `slide.status`
 
 App.load_storage = (what, on_value) => {
@@ -40,8 +41,9 @@ App.load_all_storage = () => {
   App.stor_load_mirror()
   App.stor_load_theme()
   App.stor_load_eq()
-  App.stor_load_eq_value()
   App.stor_load_status()
+  App.stor_load_effects()
+  App.stor_load_reverb()
 }
 
 App.stor_load_auto_endpoint = () => {
@@ -135,15 +137,23 @@ App.stor_load_theme = () => {
 App.stor_load_eq = () => {
   App.load_storage(`eq`,
     (value) => {
-      App.eq_enabled = JSON.parse(value)
+      App.eq_values = JSON.parse(value)
     },
   )
 }
 
-App.stor_load_eq_value = () => {
-  App.load_storage(`eq_value`,
+App.stor_load_effects = () => {
+  App.load_storage(`effects`,
     (value) => {
-      App.eq_value = JSON.parse(value)
+      App.effects_enabled = App.boolstring(value)
+    },
+  )
+}
+
+App.stor_load_reverb = () => {
+  App.load_storage(`reverb`,
+    (value) => {
+      App.reverb_enabled = App.boolstring(value)
     },
   )
 }
@@ -191,13 +201,17 @@ App.stor_save_theme = () => {
 }
 
 App.stor_save_eq = () => {
-  App.save_storage(`eq`, JSON.stringify(App.eq_enabled))
+  App.save_storage(`eq`, JSON.stringify(App.eq_values))
 }
 
-App.stor_save_eq_value = () => {
-  App.save_storage(`eq_value`, JSON.stringify(App.eq_value))
+App.stor_save_effects = () => {
+  App.save_storage(`effects`, JSON.stringify(App.effects_enabled))
 }
 
 App.stor_save_status = () => {
   App.save_storage(`status`, JSON.stringify(App.status_enabled))
+}
+
+App.stor_save_reverb = () => {
+  App.save_storage(`reverb`, JSON.stringify(App.reverb_enabled))
 }

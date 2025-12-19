@@ -40,9 +40,9 @@ App.open_settings_modal = () => {
       title: `Show or hide the status bar`,
     },
     {
-      text: `Toggle EQ`,
+      text: `Toggle Effects`,
       action: () => {App.toggle_eq()},
-      title: `Show or hide the EQ controls`,
+      title: `Show or hide the effects controls`,
     },
     {
       text: `Toggle Lines`,
