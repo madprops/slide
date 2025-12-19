@@ -284,7 +284,7 @@ class StatusFileHandler(FileSystemEventHandler):  # type: ignore
                 record_history(content)
 
 
-def start_status_watcher() -> None:
+def start_status_fetcher() -> None:
     """Start watching status.txt for external changes."""
 
     global STATUS_OBSERVER
@@ -303,8 +303,8 @@ def start_status_watcher() -> None:
     logging.info("Started watching %s for changes", STATE_FILE)
 
 
-def stop_status_watcher() -> None:
-    """Stop the status file watcher."""
+def stop_status_fetcher() -> None:
+    """Stop the status file fetcher."""
 
     global STATUS_OBSERVER
 
@@ -524,7 +524,7 @@ def song_shortcut(song_name: str):
 
 def shutdown_worker() -> None:
     STOP_EVENT.set()
-    stop_status_watcher()
+    stop_status_fetcher()
 
     if WORKER_THREAD:
         WORKER_THREAD.join(timeout=2)
@@ -561,7 +561,7 @@ def main() -> None:
     else:
         logging.info("AI interval disabled; worker not started")
 
-    start_status_watcher()
+    start_status_fetcher()
     atexit.register(shutdown_worker)
     app.run(host="0.0.0.0", port=PORT, debug=False)
 

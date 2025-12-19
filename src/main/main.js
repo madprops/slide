@@ -39,7 +39,6 @@ App.current_song = ``
 App.events_started = false
 App.audio_started = false
 App.fetch_in_flight = false
-App.status_watch_cancelled = false
 App.default_cpm = 60
 App.tempo = App.default_cpm
 App.tempo_debounce_timer = undefined

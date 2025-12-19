@@ -165,7 +165,7 @@ App.load_beat_url = async (play = false) => {
     }
 
     App.stop_action()
-    App.stop_status_watch()
+    App.stop_status_fetch()
     App.last_code = code
     let filtered = App.filter_code(code)
     App.url_code = filtered

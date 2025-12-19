@@ -1,5 +1,6 @@
 App.auto_delay = 5
 App.auto_endpoint = `/status`
+App.fetch_cancelled = false
 
 App.setup_auto = () => {
   let auto_start = DOM.el(`#auto-start`)
@@ -18,7 +19,7 @@ App.setup_auto = () => {
 
   if (auto_stop) {
     DOM.ev(auto_stop, `click`, () => {
-      App.stop_status_watch()
+      App.stop_status_fetch()
     })
   }
 
@@ -54,7 +55,7 @@ App.setup_auto = () => {
 
       // Restart interval if it's currently runni\ng
       if (App.fetch_timer) {
-        App.strudel_watch_status()
+        App.fetch_status()
       }
     })
   }
@@ -126,7 +127,7 @@ App.start_auto = async (endpoint) => {
 
   App.auto_endpoint = endpoint.trim()
   App.stor_save_auto_endpoint()
-  App.strudel_watch_status()
+  App.fetch_status()
 }
 
 App.fetch_status_code = async () => {
@@ -139,21 +140,16 @@ App.fetch_status_code = async () => {
   return response.text()
 }
 
-App.strudel_watch_status = () => {
-  if (!App.strudel_watch_status) {
-    console.warn(`Polling function missing. Did strudel bundle load?`)
-    return
-  }
-
+App.fetch_status = () => {
   if (!App.auto_delay || (App.auto_delay <= 0)) {
     console.error(`Provide a fetch interval in seconds greater than zero`)
     return
   }
 
-  App.status_watch_cancelled = false
-  const interval_ms = App.auto_delay * 1000
+  App.fetch_cancelled = false
+  let interval_ms = App.auto_delay * 1000
 
-  const fetch_status = async () => {
+  let fetch_status = async () => {
     console.info(`🤖 Fetching auto code`)
 
     if (App.fetch_in_flight) {
@@ -163,26 +159,24 @@ App.strudel_watch_status = () => {
     App.fetch_in_flight = true
 
     try {
-      const code = await App.fetch_status_code()
-      const next_code = code.trim()
+      let code = await App.fetch_status_code()
 
-      if (!next_code) {
-        return
-      }
-
-      if (App.status_watch_cancelled) {
+      if (App.fetch_cancelled) {
         console.info(`Status watch was cancelled, skipping play action`)
         return
       }
 
-      App.set_song_context()
+      if (!code) {
+        return
+      }
 
-      if (!App.audio_started) {
-        App.code_to_play = next_code
+      code = code.trim()
+
+      if (!code) {
+        return
       }
-      else {
-        await App.play_action(next_code)
-      }
+
+      await App.play_action(code, true)
     }
     catch (err) {
       console.error(`Failed to update Strudel status`, err)
@@ -192,7 +186,7 @@ App.strudel_watch_status = () => {
     }
   }
 
-  App.stop_status_watch(false) // Don't set cancelled flag for restart
+  App.stop_status_fetch(false) // Don't set cancelled flag for restart
   fetch_status()
 
   App.fetch_timer = setInterval(() => {
@@ -202,7 +196,7 @@ App.strudel_watch_status = () => {
   console.info(`Interval started.`)
 }
 
-App.stop_status_watch = (set_cancelled = true) => {
+App.stop_status_fetch = (set_cancelled = true) => {
   App.close_modal(`auto`)
 
   if (!App.fetch_timer) {
@@ -214,6 +208,6 @@ App.stop_status_watch = (set_cancelled = true) => {
   App.fetch_timer = undefined
 
   if (set_cancelled) {
-    App.status_watch_cancelled = true
+    App.fetch_cancelled = true
   }
 }
