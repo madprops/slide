@@ -286,33 +286,37 @@ body, html {
     font-size: 1.4rem !important;
 }
 
-.code-input-controls {
+.code-input-controls-wrapper {
+    display: flex;
     position: absolute;
     right: 2rem;
-    display: flex;
-    gap: 0.4rem;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 1s ease;
+    width: 22rem;
+    height: 8rem;
     z-index: 999;
+    transition: opacity 1s ease;
+    opacity: 0;
 }
 
-#code-input-controls-top {
+#code-input-controls-top-wrapper {
+    justify-content: flex-end;
+    align-items: flex-start;
     top: 0.6rem;
 }
 
-#code-input-controls-bottom {
+#code-input-controls-bottom-wrapper {
+    justify-content: flex-end;
+    align-items: flex-end;
     bottom: 0.6rem;
 }
 
-.code-input-wrapper:hover .code-input-controls {
-    opacity: 1;
-    pointer-events: auto;
+.code-input-controls {
+    display: flex;
+    gap: 0.4rem;
+    height: 2rem;
 }
 
-.code-input-controls.active {
-    opacity: 1 !important;
-    pointer-events: auto !important;
+.code-input-controls-wrapper:hover {
+    opacity: 1;
 }
 
 .code-input-control {

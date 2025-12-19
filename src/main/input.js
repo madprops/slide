@@ -229,9 +229,6 @@ App.init_code_input_controls = () => {
         document.body.style.userSelect = `none`
         document.body.style.cursor = `se-resize`
 
-        App.activate_top_input_controls()
-        App.activate_bottom_input_controls()
-
         resize_handle.style.opacity = `1`
         resize_handle.style.pointerEvents = `auto`
         resize_handle.classList.add(`active`)
@@ -242,7 +239,9 @@ App.init_code_input_controls = () => {
         let start_height = wrapper.offsetHeight
 
         let mouse_move = (move_event) => {
-          if (!is_resizing) {return}
+          if (!is_resizing) {
+            return
+          }
 
           let new_width = start_width + (move_event.clientX - start_x)
           let new_height = start_height + (move_event.clientY - start_y)
@@ -268,9 +267,6 @@ App.init_code_input_controls = () => {
           is_resizing = false
           document.body.style.userSelect = ``
           document.body.style.cursor = ``
-
-          App.deactivate_top_input_controls()
-          App.deactivate_bottom_input_controls()
 
           resize_handle.style.opacity = ``
           resize_handle.style.pointerEvents = ``
@@ -342,46 +338,6 @@ App.add_text_to_input = (text) => {
 
 App.focus_input = () => {
   App.editor.focus()
-}
-
-App.activate_top_input_controls = () => {
-  let controls = DOM.el(`#code-input-controls-top`)
-
-  if (controls) {
-    controls.style.opacity = `1`
-    controls.style.pointerEvents = `auto`
-    controls.classList.add(`active`)
-  }
-}
-
-App.activate_bottom_input_controls = () => {
-  let controls = DOM.el(`#code-input-controls-bottom`)
-
-  if (controls) {
-    controls.style.opacity = `1`
-    controls.style.pointerEvents = `auto`
-    controls.classList.add(`active`)
-  }
-}
-
-App.deactivate_top_input_controls = () => {
-  let controls = DOM.el(`#code-input-controls-top`)
-
-  if (controls) {
-    controls.style.opacity = `1`
-    controls.style.pointerEvents = `auto`
-    controls.classList.remove(`active`)
-  }
-}
-
-App.deactivate_bottom_input_controls = () => {
-  let controls = DOM.el(`#code-input-controls-bottom`)
-
-  if (controls) {
-    controls.style.opacity = `1`
-    controls.style.pointerEvents = `auto`
-    controls.classList.remove(`active`)
-  }
 }
 
 App.mirror_input = () => {
