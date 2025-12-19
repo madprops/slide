@@ -61,3 +61,11 @@ The `PROMPT` variable holds the general prompt sent to the AI.
 The history/beats are also included if they exist.
 
 If `USE_INSTRUCTIONS` is true, the contents of `instructions.txt` is sent with the prompt, which is a general explanation of how `strudel` works.
+
+---
+
+# Credits
+
+A big thank you to `Strudel` for creating the audio engine.
+
+And to the AIs that assisted me on writing some of the code, especially `Gemini`.
