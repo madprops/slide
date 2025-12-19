@@ -58,7 +58,7 @@ App.save_snapshot = async (code = ``, title = ``) => {
     let cursor = event.target.result
 
     // If the code is identical to the last save, abort the transaction
-    if (cursor && (cursor.value.code === code)) {
+    if (cursor && (cursor.value.code === code) && cursor.value.title === title) {
       return
     }
 
