@@ -112,7 +112,7 @@ App.set_play_status = (extra) => {
   let msg = ``
   let song_name = App.get_song_name(true)
 
-  if (false) {
+  if (false) { // eslint-disable-line no-constant-condition
     // Used to unlock else if re-ordering
   }
   else if (App.beat_title) {
