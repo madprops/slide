@@ -178,3 +178,9 @@ App.check_panning = () => {
 
   App.update_panning()
 }
+
+App.update_effects = () => {
+  App.update_eq()
+  App.update_reverb()
+  App.update_panning()
+}

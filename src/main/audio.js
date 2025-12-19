@@ -144,6 +144,10 @@ App.stop_auto_pan = () => {
 }
 
 App.spin_panning = (duration_ms = 2000) => {
+  if (!window.master_fx || window.panning_enabled) {
+    return
+  }
+
   // Start spinning fast (4hz) with full depth
   App.start_auto_pan(4, 1.0)
 
@@ -160,6 +164,11 @@ App.update_reverb = () => {
 
 App.update_panning = () => {
   if (window.master_fx) {
-    window.master_fx.toggle_panning(App.panning_enabled)
+    if (App.panning_enabled) {
+      App.start_auto_pan(4, 1.0)
+    }
+    else {
+      App.stop_auto_pan()
+    }
   }
 }
