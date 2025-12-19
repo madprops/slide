@@ -189,7 +189,6 @@ App.open_modal = (id) => {
 App.do_open_modal = (modal) => {
   let body = DOM.el(`.modal-body`, modal)
   App.show_overlay()
-  body.scrollTop = 0
 
   if (!App.active_modals.includes(modal)) {
     App.active_modals.push(modal)
@@ -199,6 +198,7 @@ App.do_open_modal = (modal) => {
   let zindex = App.modal_zindex + len
   modal.style.zIndex = zindex
   App.refresh_modals()
+  body.scrollTop = 0
 }
 
 App.close_modal = (id) => {

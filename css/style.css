@@ -451,7 +451,8 @@ button:hover {
 }
 
 #status:hover {
-    text-shadow: 0 0 0.2rem currentcolor;;
+    text-shadow: 0 0 0.2rem currentcolor;
+    ;
 }
 
 #modal-overlay {
@@ -852,83 +853,81 @@ a.popup:hover {
 }
 
 #custom-tooltip {
-  /* --- Layout & Positioning --- */
-  position: fixed;
-  top: 0;
-  left: 0;
-  display: none;
-  pointer-events: none;
-  z-index: 99997;
-  max-width: 20rem;
+    /* --- Layout & Positioning --- */
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none;
+    pointer-events: none;
+    z-index: 99997;
+    max-width: 20rem;
 
-  /* --- Visual Style --- */
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-family: sans-serif;
-  color: #fff;
-  white-space: pre-wrap;
+    /* --- Visual Style --- */
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: sans-serif;
+    color: #fff;
+    white-space: pre-wrap;
 
-  /* Critical: This contains the effect inside the border */
-  overflow: hidden;
-  background: transparent;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Critical: This contains the effect inside the border */
+    overflow: hidden;
+    background: transparent;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* 1. The Rotating Gradient Layer */
 #custom-tooltip::before {
-  content: "";
-  position: absolute;
+    content: "";
+    position: absolute;
 
-  /* Center the spinner perfectly */
-  top: 50%;
-  left: 50%;
+    /* Center the spinner perfectly */
+    top: 50%;
+    left: 50%;
 
-  /* Force a PERFECT SQUARE relative to the screen size (vmax).
+    /* Force a PERFECT SQUARE relative to the screen size (vmax).
      This ensures it is always huge and square, preventing gaps
      caused by rotating rectangles.
   */
-  width: 100vmax;
-  height: 100vmax;
+    width: 100vmax;
+    height: 100vmax;
 
-  /* The colors */
-  background: conic-gradient(
-    from 0deg,
-    #ff0000,
-    #00f2ff,
-    #7000ff,
-    #ff00c8,
-    #ff0000
-  );
+    background: conic-gradient(from 0deg,
+            #76bfc6,
+            #b3baca,
+            #a15f94,
+            #8caef2,
+            #a3af83);
 
-  /* IMPORTANT: We use a specific animation that preserves
+    /* IMPORTANT: We use a specific animation that preserves
      the centering translate while rotating.
   */
-  animation: rotate-border 4s linear infinite;
-  z-index: -2;
+    animation: rotate-border 5s linear infinite;
+    z-index: -2;
 }
 
 /* 2. The Inner Mask (The Background) */
 #custom-tooltip::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  /* Controls border thickness */
-  inset: 2px;
-  /* Matches parent radius slightly smaller for nested look */
-  border-radius: 4px;
-  background: #222;
+    content: "";
+    position: absolute;
+    z-index: -1;
+    /* Controls border thickness */
+    inset: 2px;
+    /* Matches parent radius slightly smaller for nested look */
+    border-radius: 4px;
+    background: #222;
 }
 
 /* 3. The Animation */
 @keyframes rotate-border {
-  from {
-    /* We must keep the translate to stay centered */
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
+    from {
+        /* We must keep the translate to stay centered */
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
 }
 
 .custom-number {
