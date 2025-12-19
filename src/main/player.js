@@ -1,7 +1,7 @@
 import * as strudelMini from "@strudel/mini"
 import {aliasBank} from '@strudel/webaudio'
 
-App.is_playing = false
+App.play_state = `stopped`
 App.play_running = false
 
 App.setup_player = () => {
@@ -38,7 +38,6 @@ App.play_action = async (code = ``, force = false) => {
     return
   }
 
-  App.is_playing = true
   App.restart_code_scroll(false)
   App.stor_save_code()
   App.clear_draw_context()
@@ -47,6 +46,7 @@ App.play_action = async (code = ``, force = false) => {
 
   try {
     await App.strudel_update(code)
+    App.play_state = `playing`
   }
   catch (e) {
     App.set_status(`Error: ${e.message}`)
@@ -60,7 +60,7 @@ App.play_action = async (code = ``, force = false) => {
 
 App.stop_action = () => {
   console.info(`🔮 Stop Action`)
-  App.is_playing = false
+  App.play_state = `stopped`
   App.stop_strudel()
   App.stop_code_scroll()
   App.clear_draw_context()
@@ -74,6 +74,18 @@ App.stop_strudel = () => {
   App.stop_drawer()
   App.clean_mirror()
   App.clean_canvas()
+}
+
+App.pause_action = () => {
+  console.info(`🔮 Pause Action`)
+  App.play_state = `paused`
+  App.pause_strudel()
+  App.stop_code_scroll()
+}
+
+App.pause_strudel = () => {
+  App.scheduler.pause()
+  App.stop_drawer()
 }
 
 App.strudel_update = async (code) => {
@@ -204,22 +216,26 @@ App.run_eval = async (code) => {
   code = App.filter_code(code)
   App.last_code = code
   App.set_input(code)
-  App.seek_offset = 0
 
   try {
     App.pattern = await App.evaluate(code)
 
     if (App.pattern) {
-      let now = App.scheduler.now() // Current time in seconds
-      let cps = App.scheduler.cps || 1
-      App.seek_offset = now * cps
+      if (App.is_stopped()) {
+        let now = App.scheduler.now() // Current time in seconds
+        let cps = App.scheduler.cps || 1
+        App.seek_offset = now * cps
+      }
+
       App.start_drawer()
     }
     else {
+      App.seek_offset = 0
       App.stop_action()
     }
   }
   catch (err) {
+    App.seek_offset = 0
     App.stop_action()
     return {ok: false, error: err}
   }
@@ -258,4 +274,16 @@ App.update_playback = () => {
   if (App.pattern) {
     App.scheduler.setPattern(App.pattern.late(App.seek_offset))
   }
+}
+
+App.is_playing = () => {
+  return App.play_state === `playing`
+}
+
+App.is_paused = () => {
+  return App.play_state === `paused`
+}
+
+App.is_stopped = () => {
+  return App.play_state === `stopped`
 }

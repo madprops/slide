@@ -67,7 +67,7 @@ App.toggle_mirror = () => {
   App.mirror_enabled = !App.mirror_enabled
 
   if (App.mirror_enabled) {
-    if (App.is_playing) {
+    if (App.is_playing()) {
       App.start_drawer()
     }
   }

@@ -399,7 +399,7 @@ App.draw_scope_frame = () => {
   ctx.beginPath()
 
   // (Your existing waveform logic is fine here)
-  if (App.is_playing && analyser && waveform) {
+  if (App.is_playing() && analyser && waveform) {
     analyser.getByteTimeDomainData(waveform)
     let slice_width = width / waveform.length
     let x = 0
@@ -443,7 +443,7 @@ App.draw_scope_frame = () => {
   ctx.stroke()
 
   // 3. Draw Sweep (Progress Bar)
-  if (App.scheduler && App.is_playing) {
+  if (App.scheduler && App.is_playing()) {
     // Calculate phrase progress... (reusing your logic)
     let loop_len = 4
     let now = App.scheduler.now()

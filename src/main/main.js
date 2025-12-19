@@ -267,6 +267,10 @@ App.start_events = async () => {
     App.open_auto_modal()
   })
 
+  DOM.ev(`#btn-pause`, `click`, () => {
+    App.pause_action()
+  })
+
   DOM.ev(`#btn-stop`, `click`, () => {
     App.stop_action()
   })
