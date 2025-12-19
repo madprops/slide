@@ -27,6 +27,7 @@
     "@strudel/tonal": "workspace:*",
     "@strudel/transpiler": "workspace:*",
     "@strudel/webaudio": "workspace:*",
+    "@strudel/web": "workspace:*",
     "@tonaljs/tonal": "^4.10.0",
     "acorn": "^8.14.0",
     "chord-voicings": "^0.0.1",

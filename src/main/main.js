@@ -14,6 +14,7 @@ import {webaudioRepl} from "@strudel/webaudio"
 import {registerSoundfonts} from "@strudel/soundfonts"
 import {Drawer, cleanupDraw} from "@strudel/draw"
 import {initHydra, clearHydra, H as H_hydra} from "@strudel/hydra"
+import {hush} from "@strudel/web"
 
 App.last_eval_error = ``
 
@@ -441,3 +442,4 @@ window.registerSynthSounds = registerSynthSounds
 window.initAudio = initAudio
 window.samples = samples
 window.getAudioContext = getAudioContext
+window.hush = hush

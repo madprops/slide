@@ -1,5 +1,5 @@
 import * as strudelMini from "@strudel/mini"
-import {aliasBank} from '@strudel/webaudio'
+import {aliasBank} from "@strudel/webaudio"
 
 App.play_state = `stopped`
 App.play_running = false
@@ -70,7 +70,15 @@ App.stop_action = () => {
 
 App.stop_strudel = () => {
   App.clear_draw_context()
-  App.scheduler.stop()
+
+  // 1. Stop the scheduler
+  if (App.scheduler) {
+    App.scheduler.stop()
+    App.scheduler.setPattern(null)
+    clearHydra()
+    hush()
+  }
+
   App.stop_drawer()
   App.clean_mirror()
   App.clean_canvas()
@@ -159,8 +167,6 @@ App.restart_code_scroll = (to_top = true) => {
   }
 }
 
-// 1. Export a setup function to the global window object
-// This allows your HTML/Flask templates to call it easily.
 App.init_player = async () => {
   if (App.audio_started) {
     console.info(`Audio already initialized`)
@@ -173,10 +179,8 @@ App.init_player = async () => {
     await App.setup_eval()
     await initAudio()
 
-    // Enable mini-notation for strings
     strudelMini.miniAllStrings()
 
-    // Load samples and sounds in parallel
     let ds = `https://raw.githubusercontent.com/felixroos/dough-samples/main`
     let ts = `https://raw.githubusercontent.com/todepond/samples/main`
     let tc = `https://raw.githubusercontent.com/tidalcycles/uzu-drumkit/main`
@@ -222,7 +226,7 @@ App.run_eval = async (code) => {
 
     if (App.pattern) {
       if (App.is_stopped()) {
-        let now = App.scheduler.now() // Current time in seconds
+        let now = App.scheduler.now()
         let cps = App.scheduler.cps || 1
         App.seek_offset = now * cps
       }
@@ -248,14 +252,9 @@ App.run_eval = async (code) => {
 }
 
 App.rewind_player = (seconds = 1) => {
-  // Get current tempo (default to 1 if unknown)
-  // 'scheduler.cps' is usually available, or check your specific state
   let current_cps = App.scheduler.cps || 1
-
-  // Convert real seconds to Strudel cycles
   let cycles_to_shift = seconds * current_cps
 
-  // Add to offset (Delaying the stream = moving back in time)
   App.seek_offset += cycles_to_shift
   App.update_playback()
 }
@@ -264,13 +263,11 @@ App.forward_player = (seconds = 1) => {
   let current_cps = App.scheduler.cps || 1
   let cycles_to_shift = seconds * current_cps
 
-  // Subtract from offset (Advancing the stream = skipping ahead)
   App.seek_offset -= cycles_to_shift
   App.update_playback()
 }
 
 App.update_playback = () => {
-  // Apply the total calculated offset
   if (App.pattern) {
     App.scheduler.setPattern(App.pattern.late(App.seek_offset))
   }

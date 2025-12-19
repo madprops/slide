@@ -26,7 +26,10 @@ App.start_keyboard = () => {
 
         App.close_current_modal()
       }
-      else {
+      else if (App.is_playing()) {
+        App.pause_action()
+      }
+      else if (App.is_paused()) {
         App.stop_action()
       }
     }
