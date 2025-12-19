@@ -42,7 +42,7 @@ App.refresh_volume_ui = () => {
   }
 
   if (display) {
-    display.innerText = `${App.volume}%`
+    display.innerText = App.volume
   }
 }
 

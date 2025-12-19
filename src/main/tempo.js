@@ -56,7 +56,7 @@ App.refresh_tempo_ui = () => {
   }
 
   if (display) {
-    display.textContent = `${App.tempo} cpm`
+    display.textContent = App.tempo
   }
 }
 
