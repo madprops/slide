@@ -31,10 +31,10 @@ App.create_about_modal = () => {
     <div class="about-item">Try drawing many stars.</div>
     <hr>
     <div class="about-item">Ctrl+s = Starts playback / Updates code.</div>
-    <div class="about-item">Escape = Closes top modal or stops playback.</div>
     <div class="about-item">Ctrl+1 = Show the sound context.</div>
     <div class="about-item">Ctrl+2 = Show the note context.</div>
     <div class="about-item">Ctrl+3 = Show the bank context.</div>
+    <div class="about-item">Escape = Closes top modal or stops playback.</div>
   `
 }
 
