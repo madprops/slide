@@ -150,6 +150,15 @@ App.load_beat_url = async (play = false) => {
       throw new Error(`Failed to fetch the beat at ${App.beat_url}`)
     }
 
+    try {
+      let item = await response.json()
+      App.load_snapshot(item)
+      return
+    }
+    catch (err) {
+      // Not json
+    }
+
     let content = await response.text()
 
     if (!content) {

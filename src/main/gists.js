@@ -42,6 +42,7 @@ App.save_gist = async (content, filename) => {
   if (response.ok) {
     let result = await response.json()
     console.log(`Gist created:`, result.html_url)
+    App.show_gist_url(result.html_url)
     return result.html_url
   }
 
@@ -54,4 +55,9 @@ App.save_gist = async (content, filename) => {
   }
 
   return null
+}
+
+App.show_gist_url = (url) => {
+  let location = window.location.origin
+  App.show_alert(`${location}?url=${url}`)
 }
