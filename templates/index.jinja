@@ -28,25 +28,25 @@
 
                 <div id="top-controls">
                     <div id="volume-control" class="control-container">
-                        <label for="volume-slider">Vol</label>
+                        <label for="volume-slider" title="The main volume control">Vol</label>
 
                         <div class="control-stepper">
-                            <button id="volume-decrement" class="step-button step-button-decrease" type="button" title="Decrease the volume (%)"></button>
+                            <button id="volume-decrement" class="step-button step-button-decrease" type="button" title="Decrease the volume"></button>
                             <input id="volume-slider" class="control-slider" type="range" min="0" max="100" value="100" step="1">
-                            <button id="volume-increment" class="step-button" type="button" title="Increase the volume (%)">+</button>
+                            <button id="volume-increment" class="step-button" type="button" title="Increase the volume">+</button>
                         </div>
 
                         <span id="volume-value" class="control-value">100</span>
                     </div>
 
                     <div id="tempo-control" class="control-container">
-                        <label for="tempo-slider">CPM</label>
+                        <label for="tempo-slider" title="Cycles Per Minute\nThe tempo or speed\nA lower CPM = slower\nA higher CPM = faster">CPM</label>
 
                         <div class="control-stepper">
-                            <button id="tempo-decrement" class="step-button step-button-decrease" type="button" title="Decrease the tempo"></button>
+                            <button id="tempo-decrement" class="step-button step-button-decrease" type="button" title="Decrease the CPM"></button>
                             <input id="tempo-slider" class="control-slider" type="range" min="2" max="120" value="30" step="2">
-                            <button id="tempo-increment" class="step-button" type="button" title="Increase the tempo">+</button>
-                            <button id="tempo-intended" class="step-button" type="button" title="Use the intended tempo">&gt;</button>
+                            <button id="tempo-increment" class="step-button" type="button" title="Increase the CPM">+</button>
+                            <button id="tempo-intended" class="step-button" type="button" title="Use the intended CPM">&gt;</button>
                         </div>
 
                         <span id="tempo-value" class="control-value">60</span>
