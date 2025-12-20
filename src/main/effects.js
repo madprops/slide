@@ -4,13 +4,14 @@ App.effects_enabled = true
 App.reverb_enabled = false
 App.panning_enabled = false
 App.eq = {low: 0, mid: 0, high: 0}
+App.effects_debouncer_delay = 3 * 1000
 
 App.setup_effects = () => {
   App.effects_debouncer = App.create_debouncer(() => {
     if (App.is_playing()) {
       App.save_snapshot(App.last_code)
     }
-  }, 1000)
+  }, App.effects_debouncer_delay)
 
   App.setup_eq()
   App.setup_reverb()
