@@ -252,3 +252,17 @@ App.cond = (branches) => {
 App.remove_multiple_spaces = (s) => {
   return s.replace(/\s+/g, ` `).trim()
 }
+
+App.get_weekday = (timestamp) => {
+  let date = new Date(timestamp)
+  let options = { weekday: `long` }
+  return date.toLocaleDateString(undefined, options)
+}
+
+App.num_lines = (s) => {
+  if (!s) {
+    return 0
+  }
+
+  return s.split(`\n`).length
+}

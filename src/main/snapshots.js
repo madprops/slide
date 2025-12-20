@@ -166,6 +166,9 @@ App.show_snapshots = async () => {
 
   for (let snapshot of snapshots) {
     let text = snapshot.title || `Untitled`
+    let day = App.get_weekday(snapshot.timestamp)
+    let lines = App.num_lines(snapshot.code)
+    text += ` | ${day} | ${lines}`
     let code = snapshot.code
     let beat_title = snapshot.title
 

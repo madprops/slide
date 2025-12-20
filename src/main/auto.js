@@ -100,6 +100,7 @@ App.create_auto_modal = () => {
   body.appendChild(select)
   body.appendChild(input)
   body.appendChild(buttons)
+  App.setup_auto()
 }
 
 App.show_auto = () => {

@@ -135,9 +135,9 @@ App.set_play_status = (extra) => {
   msg = App.cond([
     [() => App.beat_title, App.beat_title],
     [() => song_name, song_name],
-    [() => App.fetch_timer, `Auto 🤖`],
-    [() => App.is_url_beat(), `URL 🌐`],
-    [true, `Custom 🥁`],
+    [() => App.fetch_timer, `Auto`],
+    [() => App.is_url_beat(), `URL`],
+    [true, `Custom`],
   ])
 
   App.last_playing = msg

@@ -318,7 +318,6 @@ App.start_events = async () => {
   App.setup_player()
   App.setup_status()
   App.setup_volume()
-  App.setup_auto()
   App.setup_input()
   App.setup_scope()
   App.setup_theme()
