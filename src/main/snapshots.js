@@ -58,15 +58,38 @@ App.save_snapshot = async (code = ``, title = ``) => {
   latest_request.onsuccess = (event) => {
     let cursor = event.target.result
 
-    // If the code is identical to the last save, abort the transaction
-    if (cursor && (cursor.value.code === code) && (cursor.value.title === title)) {
-      return
+    if (cursor) {
+      let v = cursor.value
+
+      let same_code = v.code === code
+      let same_title = v.title = title
+      let same_eq_low = v.eq_low === App.eq.low
+      let same_eq_mid = v.eq_mid === App.eq.mid
+      let same_eq_high = v.eq_high === App.eq.high
+      let same_reverb = v.reverb === App.reverb_enabled
+      let same_panning = v.panning === App.panning_enabled
+      let same_cutoff = v.cutoff === App.cutoff_enabled
+      let same_delay = v.delay === App.delay_enabled
+
+      if (same_code && same_title && same_eq_low && same_eq_mid &&
+          same_eq_high && same_reverb && same_panning &&
+          same_cutoff && same_delay) {
+        // No changes, abort save
+        return
+      }
     }
 
     // Add the new snapshot
     let entry = {
       code,
       title,
+      eq_low: App.eq.low,
+      eq_mid: App.eq.mid,
+      eq_high: App.eq.high,
+      reverb: App.reverb_enabled,
+      panning: App.panning_enabled,
+      cutoff: App.cutoff_enabled,
+      delay: App.delay_enabled,
       timestamp: Date.now(),
     }
 
@@ -169,27 +192,35 @@ App.show_snapshots = async () => {
     let day = App.get_weekday(snapshot.timestamp)
     let lines = App.num_lines(snapshot.code)
     text += ` | ${day} | ${lines}`
-    let code = snapshot.code
-    let beat_title = snapshot.title
 
     items.push({
       text,
-      code,
-      beat_title,
       title: `Click to load and play this snapshot`,
+      snapshot,
     })
   }
 
   App.show_items_modal(`snapshots`, {
     items,
     action: (item) => {
-      App.load_snapshot(item)
+      App.load_snapshot(item.snapshot)
     },
   })
 }
 
 App.load_snapshot = (item) => {
   App.stop_auto()
+
+  App.eq.low = item.eq_low || 0
+  App.eq.mid = item.eq_mid || 0
+  App.eq.high = item.eq_high || 0
+  App.reverb_enabled = item.reverb || false
+  App.panning_enabled = item.panning || false
+  App.cutoff_enabled = item.cutoff || false
+  App.delay_enabled = item.delay || false
+  App.check_effects()
+  App.save_effects()
+
   App.beat_title = item.beat_title
   App.play_action(item.code, true)
 }

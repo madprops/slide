@@ -3,7 +3,7 @@ App.eq_range_max = 12
 App.effects_enabled = true
 App.reverb_enabled = false
 App.panning_enabled = false
-App.eq = ``
+App.eq = {low: 0, mid: 0, high: 0}
 
 App.setup_effects = () => {
   App.setup_eq()
@@ -115,6 +115,12 @@ App.setup_eq = () => {
   register(low)
   register(mid)
   register(high)
+}
+
+App.check_eq = () => {
+  DOM.el(`#eq-low`).value = App.eq.low
+  DOM.el(`#eq-mid`).value = App.eq.mid
+  DOM.el(`#eq-high`).value = App.eq.high
 }
 
 App.setup_reverb = () => {
@@ -266,4 +272,20 @@ App.check_delay = () => {
   }
 
   App.update_delay()
+}
+
+App.save_effects = () => {
+  App.stor_save_eq()
+  App.stor_save_reverb()
+  App.stor_save_panning()
+  App.stor_save_cutoff()
+  App.stor_save_delay()
+}
+
+App.check_effects = () => {
+  App.check_eq()
+  App.check_reverb()
+  App.check_panning()
+  App.check_cutoff()
+  App.check_delay()
 }
