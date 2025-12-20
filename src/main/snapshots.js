@@ -44,7 +44,7 @@ App.get_snapshot_hash = async (data) => {
     data.reverb,
     data.panning,
     data.cutoff,
-    data.delay
+    data.delay,
   ].join(`|||`)
 
   let msg_buffer = new TextEncoder().encode(source)

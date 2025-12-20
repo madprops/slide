@@ -17,7 +17,7 @@ App.show_collections = async () => {
       action: () => {
         App.show_snapshots()
       },
-    }
+    },
   ]
 
   App.show_items_modal(`collections`, {
