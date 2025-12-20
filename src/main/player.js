@@ -186,22 +186,17 @@ App.init_player = async () => {
     await initAudio()
 
     strudelMini.miniAllStrings()
-
-    let ds = `https://raw.githubusercontent.com/felixroos/dough-samples/main`
-    let ts = `https://raw.githubusercontent.com/todepond/samples/main`
-    let tc = `https://raw.githubusercontent.com/tidalcycles/uzu-drumkit/main`
-
-    console.info(`Loading samples and soundfonts...`)
+    let sd = `/samples`
 
     await registerSynthSounds(),
     await registerSoundfonts(),
-    await samples(`${ds}/tidal-drum-machines.json`),
-    await samples(`${ds}/piano.json`),
-    await samples(`${ds}/Dirt-Samples.json`),
-    await samples(`${ds}/vcsl.json`),
-    await samples(`${ds}/mridangam.json`),
-    samples(`${tc}/strudel.json`),
-    aliasBank(`${ts}/tidal-drum-machines-alias.json`)
+    await samples(`${sd}/tidal-drum-machines.json`),
+    await samples(`${sd}/piano.json`),
+    await samples(`${sd}/Dirt-Samples.json`),
+    await samples(`${sd}/vcsl.json`),
+    await samples(`${sd}/mridangam.json`),
+    samples(`${sd}/strudel.json`),
+    aliasBank(`${sd}/tidal-drum-machines-alias.json`)
 
     App.audio_started = true
     App.apply_volume()

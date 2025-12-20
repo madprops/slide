@@ -255,7 +255,7 @@
             reverb_state.timer = setTimeout(() => {
               // Turn off with a very slow, subtle fade (2.5s)
               // This prevents the "pronounced" cut-off
-              window.master_fx.toggle_reverb(false, 0, 2.5)
+              window.master_fx.toggle_reverb(false, 0, 2)
             }, duration * 1000)
           },
         }

@@ -494,6 +494,11 @@ def config_assets(filename) -> Response:
     return send_from_directory("config", filename)
 
 
+@app.route("/samples/<path:filename>", methods=["GET"])  # type: ignore
+def sample_assets(filename) -> Response:
+    return send_from_directory("samples", filename)
+
+
 @app.route("/songs/list", methods=["GET"])  # type: ignore
 def list_songs() -> Response:
     """Return list of song files without extension."""
