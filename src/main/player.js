@@ -47,6 +47,7 @@ App.play_action = async (code = ``, force = false) => {
   try {
     await App.strudel_update(code)
     App.play_state = `playing`
+    App.play_buttons(false, true, false, `Update`)
     App.update_effects()
     App.update_url()
     App.save_snapshot(code, App.last_playing)
@@ -61,6 +62,7 @@ App.play_action = async (code = ``, force = false) => {
 App.stop_action = () => {
   console.info(`🔮 Stop Action`)
   App.play_state = `stopped`
+  App.play_buttons(true, false, false, `Play`)
   App.stop_strudel()
   App.stop_code_scroll()
   App.clear_draw_context()
@@ -86,6 +88,7 @@ App.stop_strudel = async () => {
 App.pause_action = () => {
   console.info(`🔮 Pause Action`)
   App.play_state = `paused`
+  App.play_buttons(true, false, true, `Resume`)
   App.pause_strudel()
   App.stop_code_scroll()
 }
@@ -278,4 +281,35 @@ App.is_paused = () => {
 
 App.is_stopped = () => {
   return App.play_state === `stopped`
+}
+
+App.play_buttons = (play, pause, stop, play_text) => {
+  let play_btn = DOM.el(`#btn-play`)
+
+  if (play) {
+    DOM.show(play_btn)
+  }
+  else {
+    DOM.hide(play_btn)
+  }
+
+  let pause_btn = DOM.el(`#btn-pause`)
+
+  if (pause) {
+    DOM.show(pause_btn)
+  }
+  else {
+    DOM.hide(pause_btn)
+  }
+
+  let stop_btn = DOM.el(`#btn-stop`)
+
+  if (stop) {
+    DOM.show(stop_btn)
+  }
+  else {
+    DOM.hide(stop_btn)
+  }
+
+  play_btn.textContent = play_text
 }
