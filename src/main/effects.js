@@ -6,6 +6,12 @@ App.panning_enabled = false
 App.eq = {low: 0, mid: 0, high: 0}
 
 App.setup_effects = () => {
+  App.effects_debouncer = App.create_debouncer(() => {
+    if (App.is_playing()) {
+      App.save_snapshot(App.last_code)
+    }
+  }, 1000)
+
   App.setup_eq()
   App.setup_reverb()
   App.setup_cutoff()
@@ -57,6 +63,7 @@ App.setup_eq = () => {
     let value = parseInt(el.value)
     el.value = Math.min(App.eq_range_max, value + amount)
     App.check_eq_color(el)
+    App.after_effect()
     apply_eq()
   }
 
@@ -64,6 +71,7 @@ App.setup_eq = () => {
     let value = parseInt(el.value)
     el.value = Math.max(App.eq_range_min, value - amount)
     App.check_eq_color(el)
+    App.after_effect()
     apply_eq()
   }
 
@@ -82,6 +90,7 @@ App.setup_eq = () => {
 
       App.check_eq_color(el)
       apply_eq()
+      App.after_effect()
     })
 
     DOM.ev(container, `mousedown`, (event) => {
@@ -138,6 +147,7 @@ App.setup_reverb = () => {
   })
 
   App.check_reverb()
+  App.after_effect()
 }
 
 App.setup_cutoff = () => {
@@ -148,6 +158,7 @@ App.setup_cutoff = () => {
   })
 
   App.check_cutoff()
+  App.after_effect()
 }
 
 App.setup_delay = () => {
@@ -158,6 +169,7 @@ App.setup_delay = () => {
   })
 
   App.check_delay()
+  App.after_effect()
 }
 
 App.setup_panning = () => {
@@ -168,6 +180,7 @@ App.setup_panning = () => {
   })
 
   App.check_panning()
+  App.after_effect()
 }
 
 App.enable_effects = () => {
@@ -295,4 +308,8 @@ App.check_effects = () => {
   App.check_panning()
   App.check_cutoff()
   App.check_delay()
+}
+
+App.after_effect = () => {
+  App.effects_debouncer.call()
 }

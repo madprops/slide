@@ -23,6 +23,7 @@ App.init_db = () => {
     }
 
     request.onsuccess = () => {
+      console.log(`💾 Snapshot saved.`)
       resolve(request.result)
     }
 
