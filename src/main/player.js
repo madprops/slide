@@ -13,8 +13,14 @@ App.reset_playing = () => {
   App.play_running = false
 }
 
-App.play_action = async (code = ``, force = false) => {
+App.play_action = async (code = ``, force = false, args = {}) => {
   console.info(`🔮 Play Action`)
+
+  let def_args = {
+    // Empty for now
+  }
+
+  App.def_args(def_args, args)
 
   if (App.play_running) {
     return
@@ -52,7 +58,6 @@ App.play_action = async (code = ``, force = false) => {
     App.play_buttons(false, true, false, `Update`)
     App.update_effects()
     App.update_url()
-    App.save_snapshot(code, App.last_playing)
   }
   catch (e) {
     App.set_status(`Error: ${e.message}`)

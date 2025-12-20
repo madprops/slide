@@ -33,13 +33,40 @@ App.init_db = () => {
   })
 }
 
+App.get_snapshot_hash = async (data) => {
+  // Create a consistent string representation of the data
+  let source = [
+    data.code,
+    data.title,
+    data.eq_low,
+    data.eq_mid,
+    data.eq_high,
+    data.reverb,
+    data.panning,
+    data.cutoff,
+    data.delay
+  ].join(`|||`)
+
+  let msg_buffer = new TextEncoder().encode(source)
+  let hash_buffer = await crypto.subtle.digest(`SHA-256`, msg_buffer)
+  let hash_array = Array.from(new Uint8Array(hash_buffer))
+  let hash_hex = hash_array.map(b => b.toString(16).padStart(2, `0`)).join(``)
+
+  return hash_hex
+}
+
 App.save_snapshot = async (code = ``, title = ``) => {
+  if (!code) {
+    code = App.last_code
+  }
+
   if (!code || !code.trim()) {
     return
   }
 
-  code = code.trim()
-  title = title.trim()
+  if (!title) {
+    title = App.last_playing
+  }
 
   if (code.length > App.max_snapshot_size) {
     return
@@ -49,74 +76,62 @@ App.save_snapshot = async (code = ``, title = ``) => {
     return
   }
 
+  // Prepare data object first to calculate hash
+  let raw_entry = {
+    code,
+    title,
+    eq_low: App.eq.low,
+    eq_mid: App.eq.mid,
+    eq_high: App.eq.high,
+    reverb: App.reverb_enabled,
+    panning: App.panning_enabled,
+    cutoff: App.cutoff_enabled,
+    delay: App.delay_enabled,
+  }
+
+  let hash = await App.get_snapshot_hash(raw_entry)
+
+  let final_entry = {
+    ...raw_entry,
+    hash,
+    timestamp: Date.now(),
+  }
+
   let db = await App.init_db()
   let transaction = db.transaction([App.db_store_name], `readwrite`)
   let store = transaction.objectStore(App.db_store_name)
 
-  // Get the most recent entry to check for changes
-  let latest_request = store.openCursor(null, `prev`)
+  // Use index if available (Fastest), otherwise scan (Slower)
+  let request
+  let using_index = store.indexNames.contains(`hash`)
 
-  latest_request.onsuccess = (event) => {
+  if (using_index) {
+    request = store.index(`hash`).openCursor(hash)
+  }
+  else {
+    request = store.openCursor()
+  }
+
+  request.onsuccess = (event) => {
     let cursor = event.target.result
 
     if (cursor) {
       let v = cursor.value
 
-      let same_code = v.code === code
-      let same_title = v.title = title
-      let same_eq_low = v.eq_low === App.eq.low
-      let same_eq_mid = v.eq_mid === App.eq.mid
-      let same_eq_high = v.eq_high === App.eq.high
-      let same_reverb = v.reverb === App.reverb_enabled
-      let same_panning = v.panning === App.panning_enabled
-      let same_cutoff = v.cutoff === App.cutoff_enabled
-      let same_delay = v.delay === App.delay_enabled
-
-      if (same_code && same_title && same_eq_low && same_eq_mid &&
-          same_eq_high && same_reverb && same_panning &&
-          same_cutoff && same_delay) {
-        // No changes, abort save
-        return
+      // If using index, we know it matches.
+      // If scanning, we check the hash manually.
+      // Fallback: If old entry has no hash, we assume it's not a duplicate
+      // (or you could add the manual field check here as a fallback)
+      if (using_index || (v.hash === hash)) {
+        cursor.delete()
       }
+
+      cursor.continue()
     }
-
-    // Add the new snapshot
-    let entry = {
-      code,
-      title,
-      eq_low: App.eq.low,
-      eq_mid: App.eq.mid,
-      eq_high: App.eq.high,
-      reverb: App.reverb_enabled,
-      panning: App.panning_enabled,
-      cutoff: App.cutoff_enabled,
-      delay: App.delay_enabled,
-      timestamp: Date.now(),
-    }
-
-    store.add(entry)
-
-    // Check count and prune
-    let count_request = store.count()
-
-    count_request.onsuccess = () => {
-      let current_count = count_request.result
-
-      if (current_count > App.max_snapshots) {
-        let overflow = current_count - App.max_snapshots
-        let delete_cursor = store.openCursor()
-        let deleted_so_far = 0
-
-        delete_cursor.onsuccess = (event) => {
-          let cursor = event.target.result
-
-          if (cursor && (deleted_so_far < overflow)) {
-            cursor.delete()
-            deleted_so_far++
-            cursor.continue()
-          }
-        }
-      }
+    else {
+      // Duplicates deleted, add new
+      store.add(final_entry)
+      App.prune_snapshots(store)
     }
   }
 
@@ -129,6 +144,30 @@ App.save_snapshot = async (code = ``, title = ``) => {
       reject(transaction.error)
     }
   })
+}
+
+App.prune_snapshots = (store) => {
+  let count_request = store.count()
+
+  count_request.onsuccess = () => {
+    let current_count = count_request.result
+
+    if (current_count > App.max_snapshots) {
+      let overflow = current_count - App.max_snapshots
+      let delete_cursor_req = store.openCursor()
+      let deleted_so_far = 0
+
+      delete_cursor_req.onsuccess = (e) => {
+        let del_cursor = e.target.result
+
+        if (del_cursor && (deleted_so_far < overflow)) {
+          del_cursor.delete()
+          deleted_so_far++
+          del_cursor.continue()
+        }
+      }
+    }
+  }
 }
 
 App.get_snapshots = async () => {
@@ -179,7 +218,7 @@ App.show_snapshots = async () => {
   let snapshots = await App.get_snapshots()
 
   if (snapshots.length === 0) {
-    let msg = `No snapshots yet. Snapshots are saved automatically when you play code.`
+    let msg = `No snapshots saved yet. Use the 💾 button.`
     App.show_alert(msg, `Empty List`)
     return
   }
@@ -224,4 +263,5 @@ App.load_snapshot = (item) => {
 
   App.beat_title = item.beat_title
   App.play_action(item.code, true)
+  App.close_modal(`snapshots`)
 }

@@ -253,7 +253,7 @@ App.start_events = async () => {
   App.setup_modals()
   App.start_visual()
 
-  DOM.ev(`#btn-play`, `click`, () => {
+  DOM.ev(`#btn-play`, `click`, async () => {
     let next_code = App.get_input_value()
     App.play_action(next_code, true)
   })
@@ -278,20 +278,16 @@ App.start_events = async () => {
     App.new_beat()
   })
 
-  let songs = DOM.el(`#btn-songs`)
+  let collections = DOM.el(`#btn-collections`)
 
-  DOM.ev(songs, `click`, () => {
-    App.show_songs()
+  DOM.ev(collections, `click`, () => {
+    App.show_collections()
   })
 
-  App.middle_click(songs, () => {
-    App.random_song()
-  })
+  let snapshot = DOM.el(`#btn-snapshot`)
 
-  let snapshots = DOM.el(`#btn-snapshots`)
-
-  DOM.ev(snapshots, `click`, () => {
-    App.show_snapshots()
+  DOM.ev(snapshot, `click`, () => {
+    App.save_snapshot()
   })
 
   App.remove_context(`#controls`)

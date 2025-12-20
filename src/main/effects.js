@@ -1,18 +1,8 @@
 App.eq_range_min = -12
 App.eq_range_max = 12
-App.effects_enabled = true
-App.reverb_enabled = false
-App.panning_enabled = false
-App.eq = {low: 0, mid: 0, high: 0}
-App.effects_debouncer_delay = 3 * 1000
 
 App.setup_effects = () => {
-  App.effects_debouncer = App.create_debouncer(() => {
-    if (App.is_playing()) {
-      App.save_snapshot(App.last_code)
-    }
-  }, App.effects_debouncer_delay)
-
+  App.reset_effects()
   App.setup_eq()
   App.setup_reverb()
   App.setup_cutoff()
@@ -23,16 +13,14 @@ App.setup_effects = () => {
 
 App.check_eq_color = (el) => {
   let num = parseInt(el.value)
+  el.classList.remove(`eq_negative`)
+  el.classList.remove(`eq_positive`)
 
   if (num < 0) {
     el.classList.add(`eq_negative`)
   }
   else if (num > 0) {
     el.classList.add(`eq_positive`)
-  }
-  else {
-    el.classList.remove(`eq_negative`)
-    el.classList.remove(`eq_positive`)
   }
 }
 
@@ -312,5 +300,13 @@ App.check_effects = () => {
 }
 
 App.after_effect = () => {
-  App.effects_debouncer.call()
+  // Empty for now
+}
+
+App.reset_effects = () => {
+  App.eq = {low: 0, mid: 0, high: 0}
+  App.reverb_enabled = false
+  App.panning_enabled = false
+  App.cutoff_enabled = false
+  App.delay_enabled = false
 }
