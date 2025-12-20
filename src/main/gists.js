@@ -23,6 +23,9 @@ App.save_private_gist = async (content, filename) => {
   }
 
   else {
+    let error_data = await response.json()
+    console.error(`Error saving gist:`, error_data)
+
     // If 401, it means the user session expired or doesn't exist
     if ((response.status == 401)) {
       console.log(`User needs to login first`)
