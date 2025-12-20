@@ -982,10 +982,10 @@ a.popup:hover {
     text-decoration: underline;
 }
 
-.green {
-    color: #a3e7a3 !important;
+.eq_positive {
+    color: rgb(255, 171, 64) !important;
 }
 
-.red {
-    color: #f0b3b3 !important;
+.eq_negative {
+    color: rgb(100, 255, 218) !important;
 }

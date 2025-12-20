@@ -48,14 +48,14 @@ App.setup_eq = () => {
     let num = parseInt(el.value)
 
     if (num < 0) {
-      el.classList.add(`red`)
+      el.classList.add(`eq_negative`)
     }
     else if (num > 0) {
-      el.classList.add(`green`)
+      el.classList.add(`eq_positive`)
     }
     else {
-      el.classList.remove(`red`)
-      el.classList.remove(`green`)
+      el.classList.remove(`eq_negative`)
+      el.classList.remove(`eq_positive`)
     }
   }
 
