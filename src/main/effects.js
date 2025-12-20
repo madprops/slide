@@ -14,6 +14,27 @@ App.setup_effects = () => {
   App.check_effects()
 }
 
+App.check_eq_color = (el) => {
+  let num = parseInt(el.value)
+
+  if (num < 0) {
+    el.classList.add(`eq_negative`)
+  }
+  else if (num > 0) {
+    el.classList.add(`eq_positive`)
+  }
+  else {
+    el.classList.remove(`eq_negative`)
+    el.classList.remove(`eq_positive`)
+  }
+}
+
+App.check_eq_colors = () => {
+  App.check_eq_color(DOM.el(`#eq-low`))
+  App.check_eq_color(DOM.el(`#eq-mid`))
+  App.check_eq_color(DOM.el(`#eq-high`))
+}
+
 App.setup_eq = () => {
   let low = DOM.el(`#eq-low`)
   let mid = DOM.el(`#eq-mid`)
@@ -35,30 +56,15 @@ App.setup_eq = () => {
   function increase(el, amount) {
     let value = parseInt(el.value)
     el.value = Math.min(App.eq_range_max, value + amount)
-    check_colors(el)
+    App.check_eq_color(el)
     apply_eq()
   }
 
   function decrease(el, amount) {
     let value = parseInt(el.value)
     el.value = Math.max(App.eq_range_min, value - amount)
-    check_colors(el)
+    App.check_eq_color(el)
     apply_eq()
-  }
-
-  function check_colors(el) {
-    let num = parseInt(el.value)
-
-    if (num < 0) {
-      el.classList.add(`eq_negative`)
-    }
-    else if (num > 0) {
-      el.classList.add(`eq_positive`)
-    }
-    else {
-      el.classList.remove(`eq_negative`)
-      el.classList.remove(`eq_positive`)
-    }
   }
 
   function register(el) {
@@ -74,14 +80,14 @@ App.setup_eq = () => {
         el.value = App.eq_range_max
       }
 
-      check_colors(el)
+      App.check_eq_color(el)
       apply_eq()
     })
 
     DOM.ev(container, `mousedown`, (event) => {
       if (event.button === 1) {
         el.value = 0
-        check_colors(el)
+        App.check_eq_color(el)
         apply_eq()
         el.blur()
         event.preventDefault()
@@ -109,7 +115,7 @@ App.setup_eq = () => {
       event.preventDefault()
     })
 
-    check_colors(el)
+    App.check_eq_color(el)
   }
 
   register(low)
@@ -121,6 +127,7 @@ App.check_eq = () => {
   DOM.el(`#eq-low`).value = App.eq.low
   DOM.el(`#eq-mid`).value = App.eq.mid
   DOM.el(`#eq-high`).value = App.eq.high
+  App.check_eq_colors()
 }
 
 App.setup_reverb = () => {
