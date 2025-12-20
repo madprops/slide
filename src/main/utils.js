@@ -266,3 +266,10 @@ App.num_lines = (s) => {
 
   return s.split(`\n`).length
 }
+
+App.filename = (s) => {
+  s = s.toLowerCase()
+  s = s.replace(/\s+/, `_`)
+  s = s.substring(0, 100)
+  return `${s}.slide`
+}

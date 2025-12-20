@@ -142,6 +142,13 @@ App.do_save_snapshot = async (code = ``, title = ``) => {
       // Duplicates deleted, add new
       store.add(final_entry)
       App.prune_snapshots(store)
+
+      try {
+        App.save_gist(JSON.stringify(raw_entry), App.filename(title))
+      }
+      catch (err) {
+        console.error(err)
+      }
     }
   }
 

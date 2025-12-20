@@ -560,26 +560,41 @@ def github_login() -> Response:
     return redirect(f"{GITHUB_AUTH_URL}?client_id={client_id}&scope={scope}")
 
 @app.route("/github_callback")
-def github_callback() -> Response:
+def github_callback() -> Response | str:
     """Step 2: Handle the code returned by GitHub."""
     code = request.args.get("code")
 
-    # Exchange code for access token
     payload = {
         "client_id": APP_CREDS["github_client_id"],
-        "client_secret": APP_CREDS["github_client_secret"],
+        "client_secret": APP_CREDS["github_private_key"],
         "code": code
     }
 
     headers = {"Accept": "application/json"}
     response = requests.post(GITHUB_TOKEN_URL, json=payload, headers=headers)
 
-    if response.status_code == 200:
+    if (response.status_code == 200):
         token_data = response.json()
-        # Save token in the server-side session
-        session["github_token"] = token_data.get("access_token")
-        # Redirect back to your main frontend app
-        return redirect("/")
+
+        if "access_token" in token_data:
+            session["github_token"] = token_data["access_token"]
+            session.permanent = True
+
+            # CRITICAL FIX: Do not redirect to "/".
+            # Return a script that talks to the opener and closes the popup.
+            return """
+            <html>
+            <script>
+                // Send message to the main window
+                if (window.opener) {
+                    window.opener.postMessage("github_authorized", window.location.origin);
+                }
+                // Close this popup
+                window.close();
+            </script>
+            <body>Authorization successful. Closing...</body>
+            </html>
+            """
 
     return "Login failed", 400
 
