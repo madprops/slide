@@ -55,7 +55,17 @@ App.get_snapshot_hash = async (data) => {
   return hash_hex
 }
 
-App.save_snapshot = async (code = ``, title = ``) => {
+App.save_snapshot = () => {
+  App.show_confirm({
+    title: `Save Snapshot`,
+    message: `Save the current code and effects?`,
+    ok_action: () => {
+      App.do_save_snapshot()
+    },
+  })
+}
+
+App.do_save_snapshot = async (code = ``, title = ``) => {
   if (!code) {
     code = App.last_code
   }
