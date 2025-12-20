@@ -15,7 +15,6 @@
     --color-transition: 0.8s;
     --number-border-color: #171717;
     --custom-number-background: rgb(55, 55, 55);
-    --custom-number-background-hover: rgb(56, 56, 56);
     --button-background: #424242;
     --text-color: #eee;
     --button-border-width: 1px;
@@ -406,6 +405,12 @@ button {
 button:hover {
     color: rgb(255, 255, 255);
     box-shadow: inset 0 0 0 1px grey;
+}
+
+button:active {
+    color: rgb(255, 255, 255);
+    box-shadow: inset 0 0 0 1px grey;
+    background-color: rgb(82, 82, 82);
 }
 
 #bottom {
@@ -952,7 +957,12 @@ a.popup:hover {
 }
 
 .custom-number-button:hover {
-    background-color: var(--custom-number-background-hover);
+    background-color: rgb(56, 56, 56);
+    color: #ffffff;
+}
+
+.custom-number-button:active {
+    background-color: rgb(66, 66, 66);
     color: #ffffff;
 }
 
