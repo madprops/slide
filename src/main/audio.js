@@ -144,7 +144,7 @@ App.stop_auto_pan = () => {
 }
 
 App.spin_panning = (duration_ms = 2000) => {
-  if (!window.master_fx || window.panning_enabled) {
+  if (!window.master_fx || App.panning_enabled) {
     return
   }
 
