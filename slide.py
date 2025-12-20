@@ -89,6 +89,7 @@ logging.basicConfig(
 )
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
 STOP_EVENT = threading.Event()
 ANSWER_LOCK = threading.Lock()
 WORKER_THREAD: threading.Thread | None = None
