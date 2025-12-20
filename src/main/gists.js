@@ -25,7 +25,6 @@ App.initiate_github_login = () => {
       // 3. Retry the save automatically
       // You might need to pass the content/filename again or store them globally
       // For now, let's assume you trigger the save logic again:
-      let content = App.get_current_code() // Assuming you have a helper for this
       App.save_private_gist(App.gist_content, App.gist_filename)
     }
   })
