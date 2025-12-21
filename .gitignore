@@ -8,3 +8,4 @@ pnpm-lock.yaml
 .directory
 config/creds.json
 creds.json
+*.pyc

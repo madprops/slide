@@ -100,6 +100,7 @@ def main() -> None:
     utils.load_config()
     auto.load_status()
     utils.load_creds()
+    app.secret_key = utils.CREDS["secret_key"]
 
     if ENABLE_AI_INTERVAL:
         auto.load_api_key()

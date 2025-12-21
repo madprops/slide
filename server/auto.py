@@ -5,7 +5,10 @@ import threading
 import logging
 import random
 from pathlib import Path
+
 from flask import Blueprint, Response  # type: ignore
+bp = Blueprint("auto", __name__)
+
 from watchdog.events import FileSystemEventHandler  # type: ignore
 from watchdog.observers import Observer  # type: ignore
 from litellm import completion  # type: ignore
@@ -42,8 +45,6 @@ ANSWER_LOCK = threading.Lock()
 WORKER_THREAD: threading.Thread | None = None
 STATUS_OBSERVER: Any = None
 HISTORY: list[str] = []
-
-bp = Blueprint("auto", __name__)
 
 
 PROMPT = """

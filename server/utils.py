@@ -11,8 +11,6 @@ CREDS = {}
 CONFIG_FILE = "config/config.json"
 CREDS_FILE = "config/creds.json"
 
-from app import app
-
 
 def strip_markdown_code_fences(text: str) -> str:
     """Remove triple-backtick markdown fences that may wrap code blocks."""
@@ -75,7 +73,6 @@ def load_creds() -> None:
     try:
         creds_content = creds_path.read_text(encoding="utf-8")
         CREDS = json.loads(creds_content)
-        app.secret_key = CREDS["secret_key"]
         logging.info("Loaded creds")
     except Exception as e:
         logging.critical("Creds Error: %s", e, exc_info=True)

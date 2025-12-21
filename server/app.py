@@ -1,4 +1,5 @@
 from flask import Flask  # type: ignore
+
 from github import bp as github_bp
 from auto import bp as auto_bp
 
