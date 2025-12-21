@@ -84,6 +84,13 @@ App.stop_strudel = async () => {
 
   if (window.clearHydra) {
     await window.clearHydra()
+
+    try {
+      hush()
+    }
+    catch(err) {
+      // Hushn't
+    }
   }
 
   App.stop_drawer()
