@@ -29,6 +29,7 @@ def github_callback() -> Any:
     }
 
     headers = {"Accept": "application/json"}
+
     response = requests.post(
         GITHUB_TOKEN_URL, json=payload, headers=headers, timeout=20
     )

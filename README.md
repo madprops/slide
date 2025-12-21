@@ -1,8 +1,8 @@
-![](img/slide.png)
+![](server/img/slide.png)
 
-![](img/screenshot_4.png)
+![](server/img/screenshot_4.png)
 
-![](img/screenshot_5.png)
+![](server/img/screenshot_5.png)
 
 ---
 

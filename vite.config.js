@@ -17,12 +17,12 @@ export default defineConfig(() => {
         const entry_file = path.resolve(project_root, `entry.js`)
 
         if (id === entry_file) {
-          const lib_files = fg.sync(`./src/libs/*.js`)
-          const main_files = fg.sync([`./src/main/*.js`])
+          const lib_files = fg.sync(`./server/src/libs/*.js`)
+          const main_files = fg.sync([`./server/src/main/*.js`])
 
           let lines = []
-          lines.push(`import "./src/app.js"`)
-          lines.push(`import "./src/mixer.js"`)
+          lines.push(`import "./server/src/app.js"`)
+          lines.push(`import "./server/src/mixer.js"`)
           lib_files.forEach((file) => lines.push(`import "./${file}"`))
           main_files.forEach((file) => lines.push(`import "./${file}"`))
 
