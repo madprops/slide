@@ -6,7 +6,7 @@ App.github_login = () => {
   let top = (window.innerHeight - height) / 2
 
   let popup = window.open(
-    `/github_login`,
+    `/github/login`,
     `GitHub Auth`,
     `width=${width},height=${height},top=${top},left=${left}`,
   )
@@ -31,7 +31,7 @@ App.github_login = () => {
 App.save_gist = async (content, filename) => {
   let payload = {filename, content}
 
-  let response = await fetch(`/create_gist`, {
+  let response = await fetch(`/github/create_gist`, {
     method: `POST`,
     headers: {
       "Content-Type": `application/json`,
