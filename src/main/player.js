@@ -86,9 +86,9 @@ App.stop_strudel = async () => {
     await window.clearHydra()
 
     try {
-      hush()
+      window.hush()
     }
-    catch(err) {
+    catch (err) {
       // Hushn't
     }
   }
