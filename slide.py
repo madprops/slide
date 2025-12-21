@@ -612,17 +612,16 @@ def create_gist() -> Any:
     content = data.get("content", "No code yet")
     filename = data.get("filename", "slide.txt")
 
-    if (not filename) or (not content):
+    if not filename or not content:
         return jsonify({"error": "Filename and content are required"}), 400
 
     # Construct Gist payload
     gist_payload = {
         "description": "Created via My App",
-        "public": False,  # Private gist
+        "public": False,
         "files": {filename: {"content": content}},
     }
 
-    # Fix: Use single quotes inside the double-quoted f-string
     headers = {
         "Authorization": f"token {session['github_token']}",
         "Accept": "application/vnd.github.v3+json",
@@ -636,7 +635,12 @@ def create_gist() -> Any:
     )
 
     if response.status_code == 201:
-        return jsonify(response.json())
+        gist_data = response.json()
+
+        # GitHub returns 'files' keyed by the specific filename
+        raw_url = gist_data["files"][filename]["raw_url"]
+
+        return jsonify({"raw_url": raw_url})
 
     # Debugging: Print why GitHub failed
     echo(f"GitHub API Error: {response.status_code}")
