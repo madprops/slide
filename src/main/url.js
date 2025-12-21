@@ -150,20 +150,20 @@ App.load_beat_url = async (play = false) => {
       throw new Error(`Failed to fetch the beat at ${App.beat_url}`)
     }
 
-    try {
-      let item = await response.json()
-      App.load_snapshot(item)
-      return
-    }
-    catch (err) {
-      // Not json
-    }
-
     let content = await response.text()
 
     if (!content) {
       App.playing()
       return
+    }
+
+    try {
+      let item = JSON.parse(content)
+      App.use_snapshot(item)
+      content = item.code
+    }
+    catch (err) {
+      // Not json
     }
 
     let code = content.trim()
@@ -177,7 +177,6 @@ App.load_beat_url = async (play = false) => {
     App.last_code = code
     let filtered = App.filter_code(code)
     App.url_code = filtered
-    App.beat_title = ``
     App.set_input(code)
     App.set_song_tempo(code)
     App.update_url()

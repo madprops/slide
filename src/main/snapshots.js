@@ -265,9 +265,7 @@ App.show_snapshots = async () => {
   })
 }
 
-App.load_snapshot = (item) => {
-  App.stop_auto()
-
+App.use_snapshot = (item) => {
   App.eq.low = item.eq_low || 0
   App.eq.mid = item.eq_mid || 0
   App.eq.high = item.eq_high || 0
@@ -275,10 +273,14 @@ App.load_snapshot = (item) => {
   App.panning_enabled = item.panning || false
   App.cutoff_enabled = item.cutoff || false
   App.delay_enabled = item.delay || false
+  App.beat_title = item.title
   App.check_effects()
   App.save_effects()
+}
 
-  App.beat_title = item.beat_title
+App.load_snapshot = (item) => {
+  App.use_snapshot(item)
+  App.stop_auto()
   App.play_action(item.code, true)
   App.close_modal(`snapshots`)
 }
