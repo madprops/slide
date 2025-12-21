@@ -487,7 +487,6 @@ App.on_input_change = () => {
 
   if (!App.edited) {
     let play_btn = DOM.el(`#btn-play`)
-    play_btn.textContent = `Update`
     DOM.show(play_btn)
     App.edited = true
   }
