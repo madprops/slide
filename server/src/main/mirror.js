@@ -6,12 +6,31 @@ App.mirror_enabled = true
 
 App.setup_drawer = () => {
   let max_haps = 1000
+  let pending_locations = null
+  let render_frame = null
+
+  // Define the render logic separately
+  let flush_highlights = () => {
+    render_frame = null
+
+    if (!App.editor || !pending_locations) {
+      return
+    }
+
+    // Dispatch the latest state
+    App.editor.dispatch({
+      effects: App.set_highlight.of(pending_locations),
+    })
+
+    pending_locations = null
+  }
 
   App.drawer = new Drawer((active_haps) => {
     if (!App.mirror_enabled || (active_haps.length > max_haps)) {
       return
     }
 
+    // 1. Just calculate data, don't touch the DOM/Editor yet
     let locations = []
 
     for (let hap of active_haps) {
@@ -23,10 +42,12 @@ App.setup_drawer = () => {
       }
     }
 
-    if (App.editor) {
-      App.editor.dispatch({
-        effects: App.set_highlight.of(locations),
-      })
+    // 2. Store the latest data
+    pending_locations = locations
+
+    // 3. Schedule the update if one isn't already running
+    if (!render_frame) {
+      render_frame = window.requestAnimationFrame(flush_highlights)
     }
   }, [0, 0])
 }

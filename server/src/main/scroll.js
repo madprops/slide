@@ -174,14 +174,20 @@ App.get_input_scroll = () => {
 App.set_input_scroll = (v_amount) => {
   let el = App.editor.scrollDOM
 
-  // 1. Update the position
+  if (Math.abs(el.scrollTop - v_amount) < 1) {
+    return
+  }
+
+  // 1. Update position
   el.scrollTop = v_amount
 
-  // 2. FORCE the event.
-  // CodeMirror listens to 'scroll' to update the viewport.
-  // Programmatic scrolling doesn't always fire this synchronously or reliably in a rAF loop.
-  el.dispatchEvent(new Event(`scroll`))
+  // 2. Do not dispatch 'new Event' manually if you can avoid it.
+  // CodeMirror observes scroll automatically.
+  // However, if your loop is too fast, the manual measure is safer.
+  // We keep your logic but add a safety check for the editor instance.
 
-  // 3. Keep requesting measure (good practice, ensures internal geometry is checked)
-  App.editor.requestMeasure()
+  if (App.editor) {
+    // requestMeasure is enough to trigger the viewport update
+    App.editor.requestMeasure()
+  }
 }
