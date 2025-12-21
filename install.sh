@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
-python3 -m venv venv
-venv/bin/pip install -r requirements.txt
-npm install
+npm install &&
+cd server &&
+python3 -m venv venv &&
+venv/bin/pip install -r requirements.txt &&
