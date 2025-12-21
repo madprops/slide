@@ -7,6 +7,7 @@ import random
 from pathlib import Path
 
 from flask import Blueprint, Response  # type: ignore
+
 bp = Blueprint("auto", __name__)
 
 from watchdog.events import FileSystemEventHandler  # type: ignore

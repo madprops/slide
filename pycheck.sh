@@ -10,6 +10,6 @@ clear
 ruff format .
 ruff check .
 mypy --strict .
-# pyright .
+pyright .
 
 deactivate
