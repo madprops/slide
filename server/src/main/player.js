@@ -13,10 +13,11 @@ App.reset_playing = () => {
   App.play_running = false
 }
 
-App.play_action = async (code = ``, force = false, args = {}) => {
+App.play_action = async (code = ``, args = {}) => {
   console.info(`🔮 Play Action`)
 
   let def_args = {
+    force: false,
     fresh: false,
   }
 
@@ -40,7 +41,7 @@ App.play_action = async (code = ``, force = false, args = {}) => {
     return
   }
 
-  if (!force && (code === App.last_code)) {
+  if (!args.fresh && (code === App.last_code)) {
     App.reset_playing()
     return
   }
@@ -292,4 +293,19 @@ App.is_paused = () => {
 
 App.is_stopped = () => {
   return App.play_state === `stopped`
+}
+
+App.copy_play = async () => {
+  try {
+    // this line triggers the browser permission prompt if needed
+    let clipboard_text = await navigator.clipboard.readText()
+
+    if ((clipboard_text) && (clipboard_text.length > 0)) {
+      App.play_action(clipboard_text, {fresh: true})
+    }
+
+  } catch (error) {
+    // handles if user denied permission or if api is unsupported
+    console.error(`Clipboard access denied or failed: ${error}`)
+  }
 }

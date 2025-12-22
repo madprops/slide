@@ -254,9 +254,15 @@ App.start_events = async () => {
   App.setup_modals()
   App.start_visual()
 
-  DOM.ev(`#btn-play`, `click`, async () => {
+  let btn_play = DOM.el(`#btn-play`)
+
+  DOM.ev(btn_play, `click`, async () => {
     let next_code = App.get_input_value()
-    App.play_action(next_code, true)
+    App.play_action(next_code, {fresh: true})
+  })
+
+  App.middle_click(btn_play, () => {
+    App.copy_play()
   })
 
   DOM.ev(`#btn-url`, `click`, () => {

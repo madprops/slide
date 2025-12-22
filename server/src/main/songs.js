@@ -102,7 +102,7 @@ App.load_song = async (song_name) => {
 
     App.reset_effects()
     App.check_effects()
-    await App.play_action(content, true, {fresh: true})
+    await App.play_action(content, {fresh: true})
     App.set_song_context(song_name)
   }
   catch (err) {

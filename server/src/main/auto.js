@@ -179,9 +179,9 @@ App.fetch_status = () => {
         return
       }
 
-      let first = App.first_auto
+      let fresh = App.first_auto
       App.first_auto = false
-      await App.play_action(code, first)
+      await App.play_action(code, {fresh})
     }
     catch (err) {
       console.error(`Failed to update Strudel status`, err)
