@@ -417,9 +417,8 @@ class SkyScanner:
         ]
 
         perc = rng_1.choice(percs)
-        data.beat_title = self.name(awards["center_star"])
-        data.beat_code = f"""/*
-Astro 🌌 Star Data
+        data.beat_title = self.name(awards["brightest_star"])
+        data.beat_code = f"""/* Astro 🌌 Star Data
 
 RA: {ra_avg}
 DEC: {dec_avg}
