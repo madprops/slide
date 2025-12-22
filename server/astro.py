@@ -230,7 +230,7 @@ stack(
 
         # You can now tweak attack/release here if you want to
         # vary them based on data (e.g. brighter = faster attack)
-        code = self.generate_strudel_code(stars, attack=0.4, release=1.0)
+        code = self.generate_strudel_code(stars)
 
         with open(OUTPUT_FILE, "w") as f:
           f.write(code)
