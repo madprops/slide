@@ -72,6 +72,7 @@ App.stop_action = () => {
   App.play_state = `stopped`
   App.stop_strudel()
   App.stop_code_scroll()
+  App.stop_auto()
   App.clear_draw_context()
   App.set_song_context(``)
   App.suspend_audio()
