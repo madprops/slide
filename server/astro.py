@@ -1,4 +1,3 @@
-import gc
 import random
 import threading
 import math
@@ -144,6 +143,7 @@ class SkyScanner:
         self.thread = None
         self.is_running = False
         self.initialized = True
+        self.current_ra = random.uniform(0.0, 360.0)
         self.read_file()
 
     def read_file(self) -> None:
@@ -171,6 +171,9 @@ class SkyScanner:
     def get_dec_average(self, dec_values: list[Any]) -> float:
         return float(np.mean(dec_values))
 
+    def get_mag_average(self, mag_values: list[Any]) -> float:
+        return float(np.mean(mag_values))
+
     def get_value(self, c: str) -> float:
         if c is None:
             return 0.5
@@ -181,28 +184,42 @@ class SkyScanner:
         return float(c)
 
     def get_star_data(self, ra: float) -> Any:
-        # Define the target center point
-        center_coord = SkyCoord(ra=ra, dec=START_DEC, unit=(u.deg, u.deg), frame="icrs")
-
         found_stars = []
 
+        # Pre-calculate the cosine of the center declination for RA scaling
+        center_dec_rad = math.radians(START_DEC)
+        cos_center_dec = math.cos(center_dec_rad)
+
         for star in self.stars:
-            # Optimization: Fast fail if the Declination is definitely out of range
-            # This avoids creating a SkyCoord object for every star in the database
-            if abs(star["dec"] - START_DEC) > SEARCH_RADIUS_DEG:
+            star_dec = star["dec"]
+            star_ra = star["ra"]
+
+            # 1. Fast fail on Declination (Vertical distance)
+            dec_diff = abs(star_dec - START_DEC)
+
+            if dec_diff > SEARCH_RADIUS_DEG:
                 continue
 
-            # Create coordinate for the current star to check spherical distance
-            star_coord = SkyCoord(ra=star["ra"], dec=star["dec"], unit=(u.deg, u.deg), frame="icrs")
+            # 2. Calculate RA difference (Horizontal distance)
+            raw_ra_diff = abs(star_ra - ra)
 
-            # Calculate angular separation
-            separation = center_coord.separation(star_coord).deg
+            # Handle 360-degree wrap-around (e.g., dist between 359 and 1 is 2, not 358)
+            if raw_ra_diff > 180:
+                raw_ra_diff = 360 - raw_ra_diff
+
+            # 3. Correct RA distance for the curvature of the sphere
+            # (RA lines get closer together near the poles)
+            adjusted_ra_diff = raw_ra_diff * cos_center_dec
+
+            # 4. Calculate total angular separation using Euclidean approximation
+            # This is accurate enough for small search radii
+            separation = math.sqrt((adjusted_ra_diff**2) + (dec_diff**2))
 
             if separation <= SEARCH_RADIUS_DEG:
                 found_stars.append({
                     "name": star["name"],
-                    "ra": star["ra"],
-                    "dec": star["dec"],
+                    "ra": star_ra,
+                    "dec": star_dec,
                     "mag": star["mag"],
                 })
 
@@ -222,9 +239,6 @@ class SkyScanner:
                 self.make_sound(stars)
                 data.persist_status()
                 utils.echo("Astro Updated.")
-
-                # Force garbage collection to clean up Astropy/NumPy temporaries
-                gc.collect()
 
             except Exception as e:
                 utils.echo(f"Critical Loop Error: {e}")
@@ -346,6 +360,7 @@ class SkyScanner:
         dec_avg = self.get_dec_average(dec_values)
 
         mag_values = [s["mag"] for s in stars]
+        mag_avg = self.get_mag_average(mag_values)
 
         awards = self.calculate_star_awards(stars, ra_avg, dec_avg, mag_values)
         tag = f"{ra_avg}_{dec_avg}_${mag_avg}"
