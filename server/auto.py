@@ -6,7 +6,7 @@ import threading
 import logging
 from pathlib import Path
 
-from flask import Blueprint, Response  # type: ignore
+from flask import Blueprint, Response, jsonify  # type: ignore
 
 bp = Blueprint("auto", __name__)
 
@@ -17,6 +17,7 @@ from typing import Any
 
 import utils
 import astro
+import data
 
 MINUTES = 5
 MAX_HISTORY = 3
@@ -124,18 +125,20 @@ def get_status() -> Response:
             if AUTO_METHOD == "ai":
                 utils.echo("Starting auto: ai")
                 start()
-
             elif AUTO_METHOD == "astro":
                 utils.echo("Starting auto: astro")
                 astro.start()
-
         else:
             logging.info("AI interval disabled; worker not started")
 
         AUTO_REQUESTED = True
 
-    status = read_status_file()
-    return Response(status, mimetype="text/plain")
+    response = {
+        "title": data.beat_title,
+        "code": data.beat_code,
+    }
+
+    return jsonify(response)
 
 
 def stop_auto() -> None:
@@ -263,6 +266,8 @@ def background_worker() -> None:
         with ANSWER_LOCK:
             record_history(answer)
 
+        data.beat_code = answer
+        data.beat_title = "Auto AI"
         persist_answer(answer)
 
 
@@ -321,6 +326,8 @@ def load_status() -> str:
         return DEFAULT_ANSWER
 
     record_history(cached)
+    data.beat_title = "Auto AI"
+    data.beat_code = cached
     return cached
 
 

@@ -290,7 +290,7 @@ body, html {
     position: absolute;
     right: 2rem;
     width: 20rem;
-    height: 5rem;
+    height: 4rem;
     z-index: 999;
     transition: opacity 1s ease;
     opacity: 0;

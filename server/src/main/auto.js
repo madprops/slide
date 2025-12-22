@@ -53,7 +53,7 @@ App.setup_auto = () => {
       App.auto_delay = parseInt(event.target.value, 10)
       App.stor_save_auto_delay()
 
-      // Restart interval if it's currently runni\ng
+      // Restart interval if it's currently running
       if (App.fetch_timer) {
         App.fetch_status()
       }
@@ -137,7 +137,9 @@ App.fetch_status_code = async () => {
     throw new Error(`Status endpoint returned ${response.status}`)
   }
 
-  return response.text()
+  let res = await response.json()
+  App.beat_title = res.title
+  return res.code
 }
 
 App.fetch_status = () => {
