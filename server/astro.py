@@ -33,6 +33,11 @@ BANKS = [
     "YamahaRM50",
 ]
 
+NOISE = [
+    "pink",
+    "brown",
+]
+
 NOTES = [
     "a",
     "b",
