@@ -1,4 +1,3 @@
-import math
 import random
 import threading
 import numpy as np  # type: ignore
@@ -28,19 +27,84 @@ BANKS = [
 ]
 
 NOTES = [
-  "c4", "e4", "g4", "a4", "f4", "d4", "b4",
-  "c3", "e3", "g3", "a3", "f3", "d3", "b3",
-  "f#4", "bb4", "c#4", "eb4", "g#4",
-  "f#3", "bb3", "c#3", "eb3", "g#3",
-  "c5", "e5", "g5", "a5", "f5", "d5", "b5",
-  "c2", "e2", "g2", "a2", "f2", "d2", "b2",
-  "f#5", "bb5", "c#5", "eb5", "g#5",
-  "f#2", "bb2", "c#2", "eb2", "g#2",
-  "c6", "e6", "g6", "a6", "f6", "d6", "b6",
-  "c1", "e1", "g1", "a1", "f1", "d1", "b1",
-  "f#6", "bb6", "c#6", "eb6", "g#6",
-  "f#1", "bb1", "c#1", "eb1", "g#1",
-  "c7", "e7", "g7", "c0", "e0", "g0",
+    "c4",
+    "e4",
+    "g4",
+    "a4",
+    "f4",
+    "d4",
+    "b4",
+    "c3",
+    "e3",
+    "g3",
+    "a3",
+    "f3",
+    "d3",
+    "b3",
+    "f#4",
+    "bb4",
+    "c#4",
+    "eb4",
+    "g#4",
+    "f#3",
+    "bb3",
+    "c#3",
+    "eb3",
+    "g#3",
+    "c5",
+    "e5",
+    "g5",
+    "a5",
+    "f5",
+    "d5",
+    "b5",
+    "c2",
+    "e2",
+    "g2",
+    "a2",
+    "f2",
+    "d2",
+    "b2",
+    "f#5",
+    "bb5",
+    "c#5",
+    "eb5",
+    "g#5",
+    "f#2",
+    "bb2",
+    "c#2",
+    "eb2",
+    "g#2",
+    "c6",
+    "e6",
+    "g6",
+    "a6",
+    "f6",
+    "d6",
+    "b6",
+    "c1",
+    "e1",
+    "g1",
+    "a1",
+    "f1",
+    "d1",
+    "b1",
+    "f#6",
+    "bb6",
+    "c#6",
+    "eb6",
+    "g#6",
+    "f#1",
+    "bb1",
+    "c#1",
+    "eb1",
+    "g#1",
+    "c7",
+    "e7",
+    "g7",
+    "c0",
+    "e0",
+    "g0",
 ]
 
 NOISE = [
@@ -78,7 +142,7 @@ class SkyScanner:
     def get_dec_average(self, dec_values: list[Any]) -> float:
         return float(np.mean(dec_values))
 
-    def get_value(self, c) -> float:
+    def get_value(self, c: str) -> float:
         # 1. Handle masked values or None safely
         if c is None:
             return 0.5
@@ -90,7 +154,7 @@ class SkyScanner:
         # 3. Return the float (don't just calculate it)
         return float(c)
 
-    def get_star_data(self, ra: float) -> dict[str, float]: # Updated return hint
+    def get_star_data(self, ra: float) -> Any:  # Updated return hint
         custom_simbad = Simbad()
         custom_simbad.add_votable_fields("ids", "V", "B")
         coord = SkyCoord(ra=ra, dec=START_DEC, unit=(u.deg, u.deg), frame="icrs")
@@ -163,7 +227,7 @@ class SkyScanner:
 
         self.is_running = False
 
-    def make_sound(self, stars: list[Any]) -> str:
+    def make_sound(self, stars: Any) -> str:
         if not stars:
             return ""
 
@@ -173,23 +237,23 @@ class SkyScanner:
         dec_values = [s["dec"] for s in stars]
         dec_avg = self.get_dec_average(dec_values)
 
-        rng_1 = random.Random(f"{ra_avg}_dec_avg_1")
-        rng_2 = random.Random(f"{ra_avg}_dec_avg_2")
-        rng_3 = random.Random(f"{ra_avg}_dec_avg_3")
+        rng_1 = random.Random(f"{ra_avg}_{dec_avg}_1")
+        rng_2 = random.Random(f"{ra_avg}_{dec_avg}_2")
+        rng_3 = random.Random(f"{ra_avg}_{dec_avg}_3")
 
         cpm = [18, 20, 22, 25, 27]
         points = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
-        def n():
+        def n() -> str:
             return rng_2.choice(NOTES)
 
-        def s():
+        def s() -> str:
             return rng_3.choice(SOUNDS)
 
-        def o():
+        def o() -> str:
             return rng_1.choice(NOISE)
 
-        def v():
+        def v() -> str:
             n1 = rng_1.choice(points)
             n2 = rng_2.choice(points)
             n3 = rng_3.choice(points)
