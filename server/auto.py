@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import os
+import random
 import threading
 import logging
-import random
 from pathlib import Path
 
 from flask import Blueprint, Response  # type: ignore
@@ -38,6 +38,8 @@ INSTRUCTIONS_FILE = os.getenv("INSTRUCTIONS_FILE", "instructions.txt")
 
 ENABLE_AUTO = True
 AUTO_REQUESTED = False
+AUTO_STOP_TIMER = None
+AUTO_STOP_DELAY = 1  # minutes
 
 AUTO_METHOD = "astro"  # either 'auto' or 'astro'
 # auto uses ai to evolve the music
@@ -65,7 +67,6 @@ ANSWER_LOCK = threading.Lock()
 WORKER_THREAD: threading.Thread | None = None
 STATUS_OBSERVER: Any = None
 HISTORY: list[str] = []
-
 
 PROMPT = """
 This is a program that writes strudel.cc patterns using the strudel syntax (or tidal notation).
@@ -107,15 +108,27 @@ STRUCTURAL_STRATEGIES = [
 def get_status() -> Response:
     """Expose the most recent status as plain text."""
     global AUTO_REQUESTED
+    global AUTO_STOP_TIMER
+
+    # Heartbeat logic: Reset the timer on every call if auto is enabled.
+    # If this route isn't called for 60 minutes, stop_auto() runs.
+    if ENABLE_AUTO:
+        if AUTO_STOP_TIMER:
+            AUTO_STOP_TIMER.cancel()
+
+        AUTO_STOP_TIMER = threading.Timer(AUTO_STOP_DELAY * 60, stop_auto)
+        AUTO_STOP_TIMER.start()
 
     if not AUTO_REQUESTED:
         if ENABLE_AUTO:
             if AUTO_METHOD == "ai":
                 utils.echo("Starting auto: ai")
                 start()
+
             elif AUTO_METHOD == "astro":
                 utils.echo("Starting auto: astro")
                 astro.start()
+
         else:
             logging.info("AI interval disabled; worker not started")
 
@@ -123,6 +136,12 @@ def get_status() -> Response:
 
     status = read_status_file()
     return Response(status, mimetype="text/plain")
+
+
+def stop_auto() -> None:
+    stop()
+    astro.stop()
+    print("Auto Stopped.")
 
 
 def get_director_instruction(intensity: str = "medium") -> str:
@@ -353,7 +372,7 @@ class StatusFileHandler(FileSystemEventHandler):  # type: ignore
                 record_history(content)
 
 
-def stop_status_fetcher() -> None:
+def stop() -> None:
     """Stop the status file fetcher."""
 
     global STATUS_OBSERVER
@@ -436,7 +455,7 @@ def resolve_model_name(raw_name: str) -> str:
 
 def shutdown_worker() -> None:
     STOP_EVENT.set()
-    stop_status_fetcher()
+    stop()
 
     if WORKER_THREAD:
         WORKER_THREAD.join(timeout=2)

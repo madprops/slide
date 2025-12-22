@@ -172,10 +172,7 @@
     <option value="60">1 minute</option>
     <option value="300">5 minutes</option>
     <option value="600">10 minutes</option>
-    <option value="900">15 minutes</option>
     <option value="1200">20 minutes</option>
-    <option value="1800">30 minutes</option>
-    <option value="3600">1 hour</option>
   `;let p=DOM.create("input","","auto-input");p.classList.add("modal-input"),p.placeholder="Endpoint URL";let d=DOM.create("div","modal-buttons","auto-buttons");d.innerHTML=`
     <button id="auto-default">Default</button>
     <button id="auto-stop">Stop</button>

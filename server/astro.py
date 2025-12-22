@@ -372,14 +372,23 @@ $: sound("bd hh hh hh").bank("{b()}")
 """
 
 
+SCANNER: SkyScanner
+
+
 # Modified start function for Flask safety
-def start() -> SkyScanner:
+def start() -> None:
+    global SCANNER
+
     # IMPORTANT: In Flask dev mode, this prevents the thread
     # from starting in the reloader (watcher) process.
     # It will only start in the actual worker process.
     if is_running_from_reloader():
         return None  # type: ignore
 
-    scanner = SkyScanner()
-    scanner.start()
-    return scanner
+    SCANNER = SkyScanner()
+    SCANNER.start()
+
+
+def stop() -> None:
+    if SCANNER:
+        SCANNER.stop()
