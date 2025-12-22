@@ -142,7 +142,7 @@ class SkyScanner:
 
         self.stop_event = threading.Event()
         self.thread = None
-        self.current_ra = START_RA
+        self.current_ra = random.uniform(0.0, 360.0)
         self.is_running = False
 
         # Init Simbad ONCE
