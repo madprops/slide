@@ -302,36 +302,11 @@ def start_auto() -> None:
     logging.info("Started watching %s for changes", data.status_path)
 
 
-def read_status_file() -> None:
-    """Read JSON from disk and update the data object attributes."""
-    status_path = Path(data.status_path)
-
-    try:
-        content = status_path.read_text(encoding="utf-8")
-
-        # Parse the JSON string into a dictionary
-        parsed_json = json.loads(content)
-        data.beat_title = parsed_json.get("title", "")
-        data.beat_code = parsed_json.get("code", "")
-
-    except FileNotFoundError:
-        data.beat_title = ""
-        data.beat_code = ""
-
-    except (json.JSONDecodeError, OSError) as exc:
-        logging.warning("Failed to read or parse status file %s: %s", status_path, exc)
-        data.beat_title = ""
-        data.beat_code = ""
-
-
 def load_status() -> str:
     """Return the cached AI response from disk if available."""
 
-    cached = read_status_file()
-
-    if not cached:
-        return DEFAULT_ANSWER
-
+    data.read_status_file()
+    cached = data.beat_code
     record_history(cached)
     data.beat_title = "Auto AI"
     data.beat_code = cached
@@ -369,10 +344,10 @@ class StatusFileHandler(FileSystemEventHandler):  # type: ignore
                 "Detected change in %s, updating history", self.status_filename
             )
 
-            content = read_status_file()
+            data.read_status_file()
 
             with ANSWER_LOCK:
-                record_history(content)
+                record_history(data.beat_code)
 
 
 def stop() -> None:
