@@ -9,7 +9,7 @@ from astropy.coordinates import SkyCoord  # type: ignore
 from pathlib import Path
 
 # Only needed if you run this inside flask to prevent double-execution
-from werkzeug.serving import is_running_from_reloader
+from werkzeug.serving import is_running_from_reloader  # type: ignore
 
 import utils
 
@@ -31,20 +31,84 @@ BANKS = [
 ]
 
 NOTES = [
-    "c4", "e4", "g4", "a4", "f4", "d4", "b4",
-    "c3", "e3", "g3", "a3", "f3", "d3", "b3",
-    "f#4", "bb4", "c#4", "eb4", "g#4",
-    "f#3", "bb3", "c#3", "eb3", "g#3",
-    "c5", "e5", "g5", "a5", "f5", "d5", "b5",
-    "c2", "e2", "g2", "a2", "f2", "d2", "b2",
-    "f#5", "bb5", "c#5", "eb5", "g#5",
-    "f#2", "bb2", "c#2", "eb2", "g#2",
-    "c6", "e6", "g6", "a6", "f6", "d6", "b6",
-    "c1", "e1", "g1", "a1", "f1", "d1", "b1",
-    "f#6", "bb6", "c#6", "eb6", "g#6",
-    "f#1", "bb1", "c#1", "eb1", "g#1",
-    "c7", "e7", "g7",
-    "c0", "e0", "g0",
+    "c4",
+    "e4",
+    "g4",
+    "a4",
+    "f4",
+    "d4",
+    "b4",
+    "c3",
+    "e3",
+    "g3",
+    "a3",
+    "f3",
+    "d3",
+    "b3",
+    "f#4",
+    "bb4",
+    "c#4",
+    "eb4",
+    "g#4",
+    "f#3",
+    "bb3",
+    "c#3",
+    "eb3",
+    "g#3",
+    "c5",
+    "e5",
+    "g5",
+    "a5",
+    "f5",
+    "d5",
+    "b5",
+    "c2",
+    "e2",
+    "g2",
+    "a2",
+    "f2",
+    "d2",
+    "b2",
+    "f#5",
+    "bb5",
+    "c#5",
+    "eb5",
+    "g#5",
+    "f#2",
+    "bb2",
+    "c#2",
+    "eb2",
+    "g#2",
+    "c6",
+    "e6",
+    "g6",
+    "a6",
+    "f6",
+    "d6",
+    "b6",
+    "c1",
+    "e1",
+    "g1",
+    "a1",
+    "f1",
+    "d1",
+    "b1",
+    "f#6",
+    "bb6",
+    "c#6",
+    "eb6",
+    "g#6",
+    "f#1",
+    "bb1",
+    "c#1",
+    "eb1",
+    "g#1",
+    "c7",
+    "e7",
+    "g7",
+    "c0",
+    "e0",
+    "g0",
 ]
 
 NOISE = [
@@ -57,9 +121,9 @@ NOISE = [
 class SkyScanner:
     _instance = None  # Singleton tracker
 
-    def __new__(cls):
+    def __new__(cls) -> "SkyScanner":
         if cls._instance is None:
-            cls._instance = super(SkyScanner, cls).__new__(cls)
+            cls._instance = super().__new__(cls)
         return cls._instance
 
     def __init__(self) -> None:
@@ -77,6 +141,7 @@ class SkyScanner:
         self.simbad.add_votable_fields("ids", "V", "B")
 
         # Disable caching to prevent memory bloat over time
+        # Type checkers often miss these dynamic attributes in astroquery
         self.simbad.cache_location = None
         self.simbad.TIMEOUT = 30
 
