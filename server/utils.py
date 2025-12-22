@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import subprocess
-import logging
+import re
 import sys
 import json
+import logging
+import subprocess
 from pathlib import Path
 
 CONFIG = {}
@@ -77,3 +78,7 @@ def load_creds() -> None:
     except Exception as e:
         logging.critical("Creds Error: %s", e, exc_info=True)
         sys.exit(1)
+
+
+def remove_multiple_spaces(text: str) -> str:
+    return re.sub(r"\s+", " ", text).strip()
