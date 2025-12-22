@@ -3,4 +3,3 @@ litellm>=1.47.0
 watchdog>=4.0.0
 gunicorn == 23.0.0
 astroquery
-numpy

@@ -169,7 +169,7 @@ class SkyScanner:
     cpm_val = 60 + int(vol * 80)
 
     # Gentle Cutoff: 400Hz base + up to 800Hz variance
-    cutoff_val = 400 + int(avg_tone * 800)
+    cutoff_val = 100 + int(avg_tone * 600)
     drum_cutoff = cutoff_val * 4
 
     drone_layer = f'  note("c2").s("{selected_waveform}").lpf({cutoff_val}).attack({attack_val}).release({release_val}).gain(0.25).slow(2)'
