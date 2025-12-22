@@ -123,10 +123,11 @@ App.start_auto = async (endpoint) => {
     return
   }
 
+  App.auto_started = true
   App.first_auto = true
   App.auto_endpoint = endpoint.trim()
   App.stor_save_auto_endpoint()
-  DOM.el(`#btn-auto`).classList.add(`active`)
+  App.check_auto()
   App.fetch_status()
 }
 
@@ -209,10 +210,22 @@ App.stop_auto = (set_cancelled = true) => {
 
   console.info(`Interval cleared 🖐`)
   clearInterval(App.fetch_timer)
-  DOM.el(`#btn-auto`).classList.remove(`active`)
+  App.check_auto()
+  App.auto_started = false
   App.fetch_timer = undefined
 
   if (set_cancelled) {
     App.fetch_cancelled = true
+  }
+}
+
+App.check_auto = () => {
+  let btn = DOM.el(`#btn-auto`)
+
+  if (App.auto_started) {
+    btn.classList.add(`active`)
+  }
+  else {
+    btn.classList.remove(`active`)
   }
 }
