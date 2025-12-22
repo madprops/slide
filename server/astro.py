@@ -142,8 +142,9 @@ class SkyScanner:
 
         # Disable caching to prevent memory bloat over time
         # Type checkers often miss these dynamic attributes in astroquery
-        self.simbad.cache_location = None
-        self.simbad.TIMEOUT = 30
+        # pyright: ignore[reportAttributeAccessIssue]
+        self.simbad.cache_location = None  # pyright: ignore
+        self.simbad.TIMEOUT = 30  # pyright: ignore
 
         self.initialized = True
 
@@ -269,8 +270,13 @@ class SkyScanner:
         rng_2 = random.Random(f"{ra_avg}_{dec_avg}_2")
         rng_3 = random.Random(f"{ra_avg}_{dec_avg}_3")
 
-        cpm = [18, 20, 22, 25, 27]
-        points = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+        min_cpm, max_cpm = 18, 28
+        cpm = list(range(min_cpm, max_cpm + 1))
+
+        min_p, max_p, step = 0, 1, 0.1
+        points = [
+            round(min_p + x * step, 1) for x in range(int((max_p - min_p) / step) + 1)
+        ]
 
         def n() -> str:
             return rng_2.choice(NOTES)
