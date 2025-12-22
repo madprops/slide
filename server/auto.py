@@ -33,7 +33,6 @@ GOOGLE_API_KEY = ""
 CLAUDE_API_KEY = ""
 GOOGLE_API_KEY_FILE = os.getenv("LITELLM_KEY_FILE", "keys/google_api_key.txt")
 CLAUDE_API_KEY_FILE = os.getenv("LITELLM_KEY_FILE", "keys/claude_api_key.txt")
-STATE_FILE = os.getenv("STATE_FILE", "status.txt")
 INSTRUCTIONS = ""
 INSTRUCTIONS_FILE = os.getenv("INSTRUCTIONS_FILE", "instructions.txt")
 
@@ -268,7 +267,7 @@ def background_worker() -> None:
 
         data.beat_code = answer
         data.beat_title = "Auto AI"
-        persist_answer(answer)
+        data.persist_status()
 
 
 def start_worker_if_needed() -> None:
@@ -285,14 +284,14 @@ def start_worker_if_needed() -> None:
 
 
 def start_auto() -> None:
-    """Start watching status.txt for external changes."""
+    """Start watching the state file for external changes."""
 
     global STATUS_OBSERVER
 
     if STATUS_OBSERVER and STATUS_OBSERVER.is_alive():
         return
 
-    status_path = Path(STATE_FILE)
+    status_path = Path(data.status_path)
     watch_dir = str(status_path.parent.resolve())
     status_filename = status_path.name
 
@@ -300,21 +299,29 @@ def start_auto() -> None:
     STATUS_OBSERVER = Observer()
     STATUS_OBSERVER.schedule(handler, watch_dir, recursive=False)
     STATUS_OBSERVER.start()
-    logging.info("Started watching %s for changes", STATE_FILE)
+    logging.info("Started watching %s for changes", data.status_path)
 
 
-def read_status_file() -> str:
-    """Read the raw status text from disk, falling back to DEFAULT_ANSWER."""
-
-    status_path = Path(STATE_FILE)
+def read_status_file() -> None:
+    """Read JSON from disk and update the data object attributes."""
+    status_path = Path(data.status_path)
 
     try:
-        return status_path.read_text(encoding="utf-8")
+        content = status_path.read_text(encoding="utf-8")
+
+        # Parse the JSON string into a dictionary
+        parsed_json = json.loads(content)
+        data.beat_title = parsed_json.get("title", "")
+        data.beat_code = parsed_json.get("code", "")
+
     except FileNotFoundError:
-        return DEFAULT_ANSWER
-    except OSError as exc:
-        logging.warning("Failed to read status file %s: %s", status_path, exc)
-        return DEFAULT_ANSWER
+        data.beat_title = ""
+        data.beat_code = ""
+
+    except (json.JSONDecodeError, OSError) as exc:
+        logging.warning("Failed to read or parse status file %s: %s", status_path, exc)
+        data.beat_title = ""
+        data.beat_code = ""
 
 
 def load_status() -> str:
@@ -329,17 +336,6 @@ def load_status() -> str:
     data.beat_title = "Auto AI"
     data.beat_code = cached
     return cached
-
-
-def persist_answer(answer: str) -> None:
-    """Persist the latest answer so it can be served without a fresh fetch."""
-
-    status_path = Path(STATE_FILE)
-
-    try:
-        status_path.write_text(answer, encoding="utf-8")
-    except OSError as exc:
-        logging.warning("Failed to write status file %s: %s", status_path, exc)
 
 
 def record_history(entry: str) -> None:
@@ -358,7 +354,7 @@ def record_history(entry: str) -> None:
 
 
 class StatusFileHandler(FileSystemEventHandler):  # type: ignore
-    """Watch for changes to status.txt and update history."""
+    """Watch for changes to the state file and update history."""
 
     def __init__(self, status_filename: str):
         super().__init__()

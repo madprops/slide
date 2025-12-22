@@ -222,14 +222,11 @@ class SkyScanner:
                 utils.echo(f"\nScanning RA: {self.current_ra:.2f}...")
                 stars = self.get_star_data(self.current_ra)
                 code = self.make_sound(stars)
+                data.persist_status()
+                utils.echo("Astro Updated.")
 
                 # Force garbage collection to clean up Astropy/NumPy temporaries
                 gc.collect()
-
-                if code:
-                    with Path(OUTPUT_FILE).open("w", encoding="UTF-8") as f:
-                        f.write(code)
-                        utils.echo("Wrote to status file.")
 
             except Exception as e:
                 utils.echo(f"Critical Loop Error: {e}")
