@@ -343,7 +343,7 @@ class SkyScanner:
         return {
             "center_ra": self.current_ra, # Return where we are looking
             "center_dec": self.current_dec,
-            "stars": found_stars
+            "stars": found_stars,
         }
 
     def find_nearest_stars(self, target_ra, target_dec, limit):
@@ -374,7 +374,7 @@ class SkyScanner:
 
             try:
                 utils.echo(f"\nScanning RA: {self.current_ra:.2f}...")
-                star_data = self.get_star_data(self.current_ra)
+                star_data = self.get_star_data()
                 self.make_sound(star_data)
                 data.persist_status()
                 utils.echo("Astro Updated.")
@@ -487,10 +487,10 @@ class SkyScanner:
         }
 
     def make_sound(self, star_data: Any) -> None:
+        stars = star_data["stars"]
+
         if not stars:
             return
-
-        stars = star_data["stars"]
 
         ra_values = [s["ra"] for s in stars]
         ra_avg = self.get_ra_average(ra_values)
