@@ -27,6 +27,9 @@ SOUNDS = [
 
 BANKS = [
     "RhodesPolaris",
+    "SakataDPM48",
+    "RolandSystem100",
+    "YamahaRM50",
 ]
 
 NOTES = [
@@ -364,7 +367,7 @@ let s4 = stack(
 )
 
 $: cat(s1, s2, s3, s4)
-$: sound("bd hh hh hh").bank("{b}")
+$: sound("bd hh hh hh").bank("{b()}")
 """
 
 
