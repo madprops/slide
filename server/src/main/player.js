@@ -29,44 +29,51 @@ App.play_action = async (code = ``, args = {}) => {
 
   App.play_running = true
 
-  if (!code) {
-    code = App.get_input_value()
-  }
-
-  if (!code) {
-    App.last_code = ``
-    App.current_song = ``
-    App.reset_playing()
-    App.stop_action()
-    return
-  }
-
-  if (!args.fresh && (code === App.last_code)) {
-    App.reset_playing()
-    return
-  }
-
-  if (args.fresh) {
-    App.restart_code_scroll(true)
-  }
-
-  App.stor_save_code()
-  App.clear_draw_context()
-  App.update_title()
-
+  // Wrap everything in a try/finally to ensure the lock is ALWAYS released
   try {
-    await App.strudel_update(code)
-    await App.resume_audio()
-    App.play_state = `playing`
-    App.update_effects()
-    App.update_url()
+    if (!code) {
+      code = App.get_input_value()
+    }
+
+    if (!code) {
+      App.last_code = ``
+      App.current_song = ``
+      App.stop_action()
+      return
+    }
+
+    if (!args.fresh && (code === App.last_code)) {
+      return
+    }
+
+    if (args.fresh) {
+      App.restart_code_scroll(true)
+    }
+
+    // These are now safe inside the try block
+    // (e.g. localStorage full won't kill the loop forever)
+    App.stor_save_code()
+    App.clear_draw_context()
+    App.update_title()
+
+    let success = await App.strudel_update(code)
+
+    // Only set state to playing if the update actually succeeded
+    if (success) {
+      await App.resume_audio()
+      App.play_state = `playing`
+      App.update_effects()
+      App.update_url()
+    }
   }
   catch (e) {
     App.last_code = ``
     App.set_status(`Error: ${e.message}`)
   }
-
-  App.reset_playing()
+  finally {
+    // This runs even if a return happened or an error was thrown above
+    App.reset_playing()
+  }
 }
 
 App.stop_action = () => {
@@ -82,8 +89,6 @@ App.stop_action = () => {
 }
 
 App.stop_strudel = async () => {
-  // 1. Activate the Zombie Canvas Guard
-  // This watches for canvases created by late-resolving async library code
   App.clear_draw_context()
   App.scheduler.stop()
   await App.scheduler.setPattern(null)
@@ -120,7 +125,7 @@ App.strudel_update = async (code) => {
 
   if (!App.audio_started) {
     console.warn(`Audio not started yet. Call init_player() first.`)
-    return
+    return false
   }
 
   console.info(`Updating 💨`)
@@ -130,18 +135,19 @@ App.strudel_update = async (code) => {
 
   if (full_result.ok) {
     App.playing()
-    return
+    return true
   }
 
   if (App.do_partial_updates) {
     let partial_applied = await App.apply_partial_update(code)
 
     if (partial_applied) {
-      return
+      return true
     }
   }
 
   App.report_eval_failure(full_result.error)
+  return false
 }
 
 App.playing = (extra) => {
@@ -297,7 +303,6 @@ App.is_stopped = () => {
 
 App.copy_play = async () => {
   try {
-    // this line triggers the browser permission prompt if needed
     let clipboard_text = await navigator.clipboard.readText()
 
     if (clipboard_text && (clipboard_text.length > 0)) {
@@ -305,7 +310,6 @@ App.copy_play = async () => {
     }
   }
   catch (error) {
-    // handles if user denied permission or if api is unsupported
     console.error(`Clipboard access denied or failed: ${error}`)
   }
 }
