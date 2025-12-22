@@ -266,7 +266,6 @@ def background_worker() -> None:
             record_history(answer)
 
         data.beat_code = answer
-        data.beat_title = "Auto AI"
         data.persist_status()
 
 
@@ -308,7 +307,6 @@ def load_status() -> str:
     data.read_status_file()
     cached = data.beat_code
     record_history(cached)
-    data.beat_title = "Auto AI"
     data.beat_code = cached
     return cached
 
