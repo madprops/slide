@@ -1007,3 +1007,7 @@ a.popup:hover {
 #eq-high-container {
     padding-right: 0.5rem;
 }
+
+#btn-auto.active {
+    border-color: red;
+}

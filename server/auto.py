@@ -16,6 +16,7 @@ from litellm import completion  # type: ignore
 from typing import Any
 
 import utils
+import astro
 
 MINUTES = 5
 MAX_HISTORY = 3
@@ -34,6 +35,13 @@ CLAUDE_API_KEY_FILE = os.getenv("LITELLM_KEY_FILE", "keys/claude_api_key.txt")
 STATE_FILE = os.getenv("STATE_FILE", "status.txt")
 INSTRUCTIONS = ""
 INSTRUCTIONS_FILE = os.getenv("INSTRUCTIONS_FILE", "instructions.txt")
+
+ENABLE_AUTO = True
+AUTO_REQUESTED = False
+
+AUTO_METHOD = "astro"  # either 'auto' or 'astro'
+# auto uses ai to evolve the music
+# astro uses astronomic data to create sounds
 
 REQUEST_INTERVAL_MINUTES = max(
     1, int(os.getenv("REQUEST_INTERVAL_MINUTES", f"{MINUTES}"))
@@ -98,12 +106,22 @@ STRUCTURAL_STRATEGIES = [
 @bp.route("/status", methods=["GET"])  # type: ignore
 def get_status() -> Response:
     """Expose the most recent status as plain text."""
+    global AUTO_REQUESTED
+
+    if not AUTO_REQUESTED:
+        if ENABLE_AUTO:
+            if AUTO_METHOD == "ai":
+                utils.echo("Starting auto: ai")
+                start()
+            elif AUTO_METHOD == "astro":
+                utils.echo("Starting auto: astro")
+                astro.start()
+        else:
+            logging.info("AI interval disabled; worker not started")
+
+        AUTO_REQUESTED = True
 
     status = read_status_file()
-
-    if status == DEFAULT_ANSWER and len(HISTORY):
-        status = HISTORY[-1]
-
     return Response(status, mimetype="text/plain")
 
 

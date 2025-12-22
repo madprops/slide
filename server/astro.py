@@ -27,7 +27,6 @@ WAVEFORMS = [
 # Using lighter, glitchier drum banks
 DRUM_BANKS = [
   "RolandTR808", # Soft kicks
-  "Linn9000",
   "CasioRZ1",    # Lo-fi crunch
   "AlesisSR16",
 ]

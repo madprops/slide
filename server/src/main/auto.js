@@ -128,6 +128,7 @@ App.start_auto = async (endpoint) => {
 
   App.auto_endpoint = endpoint.trim()
   App.stor_save_auto_endpoint()
+  DOM.el(`#btn-auto`).classList.add(`active`)
   App.fetch_status()
 }
 
@@ -206,6 +207,7 @@ App.stop_auto = (set_cancelled = true) => {
 
   console.info(`Interval cleared 🖐`)
   clearInterval(App.fetch_timer)
+  DOM.el(`#btn-auto`).classList.remove(`active`)
   App.fetch_timer = undefined
 
   if (set_cancelled) {
