@@ -20,6 +20,8 @@ Multiple background visuals are available.
 
 Current beats can be titled and shared through URLs.
 
+It also has a mode to make beats that use astronomic data as arguments.
+
 ---
 
 Use `run.sh` to start the `flask` server.
