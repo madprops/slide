@@ -117,16 +117,26 @@ App.get_input_value = () => {
 }
 
 App.set_input = (code, to_top = true) => {
-  if (App.get_input_value() === code) {
+  let editor = App.editor
+  let state = editor.state
+
+  // 1. Ensure we are reading the current length from the correct instance
+  let current_length = state.doc.length
+
+  if (state.doc.toString() === code) {
     return
   }
 
-  App.editor.dispatch({
+  // 2. Dispatch the change
+  // If you suspect filters are blocking this, you might need to add:
+  // annotations: [Transaction.addToHistory.of(false)]
+  // or specific user event annotations depending on your setup.
+  editor.dispatch({
     changes: {
       from: 0,
-      to: App.editor.state.doc.length,
+      to: current_length,
       insert: code,
-    },
+    }
   })
 
   if (to_top) {
