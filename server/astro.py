@@ -322,7 +322,7 @@ class SkyScanner:
         rng_2 = random.Random(f"{ra_avg}_{dec_avg}_2")
         rng_3 = random.Random(f"{ra_avg}_{dec_avg}_3")
 
-        min_cpm, max_cpm = 18, 28
+        min_cpm, max_cpm = 20, 30
         cpm = list(range(min_cpm, max_cpm + 1))
 
         min_p, max_p, step = 0, 1, 0.1
