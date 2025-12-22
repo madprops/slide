@@ -1,7 +1,8 @@
+import gc
 import random
 import threading
-import gc
 import math
+import json
 import numpy as np  # type: ignore
 from typing import Any
 
@@ -180,33 +181,32 @@ class SkyScanner:
         return float(c)
 
     def get_star_data(self, ra: float) -> Any:
-        coord = SkyCoord(ra=ra, dec=START_DEC, unit=(u.deg, u.deg), frame="icrs")
+        # Define the target center point
+        center_coord = SkyCoord(ra=ra, dec=START_DEC, unit=(u.deg, u.deg), frame="icrs")
 
-        try:
-            # Use the persistent instance
-            table = self.simbad.query_region(coord, radius=SEARCH_RADIUS_DEG * u.deg)
+        found_stars = []
 
-            if table is None:
-                return {}
+        for star in self.stars:
+            # Optimization: Fast fail if the Declination is definitely out of range
+            # This avoids creating a SkyCoord object for every star in the database
+            if abs(star["dec"] - START_DEC) > SEARCH_RADIUS_DEG:
+                continue
 
-            stars = []
+            # Create coordinate for the current star to check spherical distance
+            star_coord = SkyCoord(ra=star["ra"], dec=star["dec"], unit=(u.deg, u.deg), frame="icrs")
 
-            for row in table:
-                star = {
-                    "name": row["main_id"] or "Star",
-                    "ra": float(row["ra"]),
-                    "dec": float(row["dec"]),
-                }
-                stars.append(star)
+            # Calculate angular separation
+            separation = center_coord.separation(star_coord).deg
 
-            # Explicitly clear the heavy Astropy table from memory
-            del table
+            if separation <= SEARCH_RADIUS_DEG:
+                found_stars.append({
+                    "name": star["name"],
+                    "ra": star["ra"],
+                    "dec": star["dec"],
+                    "mag": star["mag"],
+                })
 
-            return stars
-
-        except Exception as e:
-            utils.echo(f"Simbad Query Error: {e}")
-            return {}
+        return found_stars
 
     def run_loop(self) -> None:
         utils.echo("--- Sky Scanner Initialized (Ambient Mode) ---")
@@ -256,14 +256,17 @@ class SkyScanner:
         self.is_running = False
 
     def calculate_star_awards(
-        self, stars: list[Any], ra_avg: float, dec_avg: float
+        self, stars: list[Any], ra_avg: float, dec_avg: float, mag_values: list[float]
     ) -> Any:
         north_star = stars[0]
         center_star = stars[0]
         loner_star = stars[0]
+        brightest_star = stars[0]
 
         min_dist_to_center = float("inf")
         max_isolation_dist = -1.0
+        # Initialize with the first star's magnitude (Lower magnitude = Brighter)
+        min_magnitude = mag_values[0]
 
         # Pre-calculate cos(dec) for the average to correct the RA scale
         # (Use the average dec of the cluster for the center calculation)
@@ -274,7 +277,13 @@ class SkyScanner:
             if star["dec"] > north_star["dec"]:
                 north_star = star
 
-            # 2. Center Star (Fixing the distance)
+            # 2. Brightest Star
+            # Check if current star has a lower magnitude value than the current minimum
+            if mag_values[i] < min_magnitude:
+                min_magnitude = mag_values[i]
+                brightest_star = star
+
+            # 3. Center Star (Fixing the distance)
             # Handle RA wrap-around: min(diff, 360 - diff)
             raw_ra_diff = abs(star["ra"] - ra_avg)
 
@@ -291,7 +300,7 @@ class SkyScanner:
                 min_dist_to_center = dist_to_avg
                 center_star = star
 
-            # 3. Loner Award
+            # 4. Loner Award
             nearest_neighbor_dist = float("inf")
 
             for j, other_star in enumerate(stars):
@@ -323,6 +332,7 @@ class SkyScanner:
             "north_star": north_star,
             "center_star": center_star,
             "loner_star": loner_star,
+            "brightest_star": brightest_star,
         }
 
     def make_sound(self, stars: Any) -> None:
@@ -335,11 +345,14 @@ class SkyScanner:
         dec_values = [s["dec"] for s in stars]
         dec_avg = self.get_dec_average(dec_values)
 
-        awards = self.calculate_star_awards(stars, ra_avg, dec_avg)
+        mag_values = [s["mag"] for s in stars]
 
-        rng_1 = random.Random(f"{ra_avg}_{dec_avg}_1")
-        rng_2 = random.Random(f"{ra_avg}_{dec_avg}_2")
-        rng_3 = random.Random(f"{ra_avg}_{dec_avg}_3")
+        awards = self.calculate_star_awards(stars, ra_avg, dec_avg, mag_values)
+        tag = f"{ra_avg}_{dec_avg}_${mag_avg}"
+
+        rng_1 = random.Random(f"{tag}_1")
+        rng_2 = random.Random(f"{tag}_2")
+        rng_3 = random.Random(f"{tag}_3")
 
         min_cpm, max_cpm = 20, 30
         cpm = list(range(min_cpm, max_cpm + 1))
@@ -425,8 +438,9 @@ RA: {ra_avg}
 DEC: {dec_avg}
 
 North Star: {awards["north_star"]["name"]}
+Loner Star: {awards["loner_star"]["name"]}
 Center Star: {awards["center_star"]["name"]}
-Loner Star: {awards["loner_star"]["name"]} */
+Brightest Star: {awards["brightest_star"]["name"]} */
 
 setcpm({rng_1.choice(cpm)})
 
