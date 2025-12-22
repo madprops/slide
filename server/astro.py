@@ -376,9 +376,6 @@ class SkyScanner:
                 elif type_idx == 3:
                     val = rng_2.randint(3, 16)
                     chain.append(f".crush({val})")
-                elif type_idx == 4:
-                    val = round(rng_1.uniform(0.1, 0.9), 1)
-                    chain.append(f".shape({val})")
                 elif type_idx == 5:
                     char = rng_3.choice(["a", "e", "i", "o", "u"])
                     chain.append(f".vowel('{char}')")
