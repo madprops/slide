@@ -17,7 +17,7 @@ App.play_action = async (code = ``, force = false, args = {}) => {
   console.info(`🔮 Play Action`)
 
   let def_args = {
-    // Empty for now
+    fresh: false,
   }
 
   App.def_args(def_args, args)
@@ -45,7 +45,10 @@ App.play_action = async (code = ``, force = false, args = {}) => {
     return
   }
 
-  App.restart_code_scroll(false)
+  if (args.fresh) {
+    App.restart_code_scroll(true)
+  }
+
   App.stor_save_code()
   App.clear_draw_context()
   App.update_title()

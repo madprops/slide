@@ -281,6 +281,6 @@ App.use_snapshot = (item) => {
 App.load_snapshot = (item) => {
   App.use_snapshot(item)
   App.stop_auto()
-  App.play_action(item.code, true)
+  App.play_action(item.code, true, {fresh: true})
   App.close_modal(`snapshots`)
 }

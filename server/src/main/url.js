@@ -183,7 +183,7 @@ App.load_beat_url = async (play = false) => {
     App.playing()
 
     if (play) {
-      App.play_action(code, true)
+      App.play_action(code, true, {fresh: true})
     }
   }
   catch (err) {
