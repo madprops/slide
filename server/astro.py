@@ -17,7 +17,7 @@ import data
 START_RA = 180.0
 START_DEC = 30.0
 SEARCH_RADIUS_DEG = 2.0
-FETCH_INTERVAL = 60  # seconds
+FETCH_INTERVAL = 45  # seconds
 OUTPUT_FILE = "status.txt"
 DRIFT_AMOUNT = 2.0
 
