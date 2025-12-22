@@ -415,15 +415,13 @@ class SkyScanner:
             f'$: sound("bd hh sd hh").bank("{b()}"){e()}',
             f'$: sound("bd sd bd sd").bank("{b()}"){e()}',
             f'$: sound("bd hh hh [sd sd]").bank("{b()}"){e()}',
-
             # Without effects
             f'$: sound("bd hh hh hh").bank("{b()}")',
             f'$: sound("bd hh sd hh").bank("{b()}")',
             f'$: sound("bd sd bd sd").bank("{b()}")',
             f'$: sound("bd hh hh [sd sd]").bank("{b()}")',
-
             # Silent
-            f'$: sound("~ ~ ~ ~")',
+            '$: sound("~ ~ ~ ~")',
         ]
 
         perc = rng_1.choice(percs)
