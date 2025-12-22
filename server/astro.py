@@ -260,14 +260,14 @@ class SkyScanner:
 
         self.is_running = False
 
-    def calculate_star_awards(self, stars, ra_avg, dec_avg):
+    def calculate_star_awards(self, stars: Any, ra_avg: float, dec_avg: float) -> Any:
         # Initialize winners
         north_star = stars[0]
         center_star = stars[0]
         loner_star = stars[0]
 
         # Tracking variables
-        min_dist_to_center = float('inf')
+        min_dist_to_center = float("inf")
         max_isolation_dist = -1.0
 
         for i, star in enumerate(stars):
@@ -279,7 +279,7 @@ class SkyScanner:
             # Using Euclidean distance for simplicity
             ra_diff = star["ra"] - ra_avg
             dec_diff = star["dec"] - dec_avg
-            dist_to_avg = math.sqrt((ra_diff ** 2) + (dec_diff ** 2))
+            dist_to_avg = math.sqrt((ra_diff**2) + (dec_diff**2))
 
             if dist_to_avg < min_dist_to_center:
                 min_dist_to_center = dist_to_avg
@@ -287,18 +287,18 @@ class SkyScanner:
 
             # 3. The Loner Award (Furthest from its nearest neighbor)
             # We must compare this star against every other star to find its closest friend
-            nearest_neighbor_dist = float('inf')
+            nearest_neighbor_dist = float("inf")
 
             for j, other_star in enumerate(stars):
                 if i == j:
                     continue
 
-            d_ra = star["ra"] - other_star["ra"]
-            d_dec = star["dec"] - other_star["dec"]
-            distance = math.sqrt((d_ra ** 2) + (d_dec ** 2))
+                d_ra = star["ra"] - other_star["ra"]
+                d_dec = star["dec"] - other_star["dec"]
+                distance = math.sqrt((d_ra**2) + (d_dec**2))
 
-            if distance < nearest_neighbor_dist:
-                nearest_neighbor_dist = distance
+                if distance < nearest_neighbor_dist:
+                    nearest_neighbor_dist = distance
 
             if nearest_neighbor_dist > max_isolation_dist:
                 max_isolation_dist = nearest_neighbor_dist
@@ -320,14 +320,11 @@ class SkyScanner:
         dec_values = [s["dec"] for s in stars]
         dec_avg = self.get_dec_average(dec_values)
 
-        name_values = [s["name"] for s in stars]
         awards = self.calculate_star_awards(stars, ra_avg, dec_avg)
 
         rng_1 = random.Random(f"{ra_avg}_{dec_avg}_1")
         rng_2 = random.Random(f"{ra_avg}_{dec_avg}_2")
         rng_3 = random.Random(f"{ra_avg}_{dec_avg}_3")
-
-        pick = rng_1.choice(name_values)
 
         min_cpm, max_cpm = 18, 28
         cpm = list(range(min_cpm, max_cpm + 1))
