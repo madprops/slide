@@ -1012,3 +1012,7 @@ button.active {
     border-color: rgb(78, 114, 198);
     box-shadow: 0 0 8px rgba(78, 114, 198, 0.6);
 }
+
+#modal-message-alert {
+    word-wrap: anywhere;
+}
