@@ -128,7 +128,7 @@ App.show_items_modal = async (id, args = {}) => {
       }
 
       item_text.textContent = name
-      item_div.title = item.title
+      item_div.title = item.title || ``
 
       DOM.ev(item_div, `click`, (event) => {
         if (event.ctrlKey) {

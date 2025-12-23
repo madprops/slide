@@ -11,12 +11,14 @@ App.show_collections = async () => {
       action: () => {
         App.show_songs()
       },
+      title: `View the songs collection`
     },
     {
       text: `Snapshots`,
       action: () => {
         App.show_snapshots()
       },
+      title: `View the snapshots collection`
     },
   ]
 
