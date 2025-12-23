@@ -49,7 +49,7 @@ App.show_items_modal = async (id, args = {}) => {
     capitalize: true,
     icons: true,
     hover: false,
-    hover_title: ``
+    hover_title: ``,
   }
 
   App.def_args(def_args, args)
