@@ -55,6 +55,7 @@ App.play_action = async (code = ``, args = {}) => {
     App.stor_save_code()
     App.clear_draw_context()
     App.update_title()
+    App.stop_queue()
 
     let success = await App.strudel_update(code)
 
@@ -64,6 +65,7 @@ App.play_action = async (code = ``, args = {}) => {
       App.set_playing(`playing`)
       App.update_effects()
       App.update_url()
+      App.start_queue()
     }
   }
   catch (e) {
@@ -85,6 +87,7 @@ App.stop_action = () => {
   App.clear_draw_context()
   App.set_song_context(``)
   App.suspend_audio()
+  App.stop_queue()
   App.playing()
 }
 
@@ -117,6 +120,7 @@ App.pause_action = () => {
   App.set_playing(`paused`)
   App.pause_strudel()
   App.stop_code_scroll()
+  App.stop_queue()
 }
 
 App.pause_strudel = () => {

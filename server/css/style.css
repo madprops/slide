@@ -1016,3 +1016,8 @@ button.active {
 #modal-message-alert {
     word-wrap: anywhere;
 }
+
+@keyframes flash-opacity {
+  0%, 100% {opacity: 1;}
+  50% {opacity: 0.5;}
+}

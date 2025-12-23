@@ -114,7 +114,12 @@ App.show_items_modal = async (id, args = {}) => {
       item_div.title = item.title
 
       DOM.ev(item_div, `click`, (event) => {
-        if (args.action) {
+        if (event.ctrlKey) {
+          if (args.ctrl_action) {
+            args.ctrl_action(item, item_div)
+          }
+        }
+        else if (args.action) {
           args.action(item, item_div)
         }
       })

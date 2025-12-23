@@ -251,7 +251,7 @@ App.show_snapshots = async () => {
 
     items.push({
       text,
-      title: `Click to load this snapshot\nMiddle Click to remove`,
+      title: `Click to load this snapshot\nMiddle Click to remove\nCtrl+Click to queue`,
       snapshot,
     })
   }
@@ -263,6 +263,10 @@ App.show_snapshots = async () => {
     },
     alt_action: (item, el) => {
       App.remove_snapshot(item.snapshot, el)
+    },
+    ctrl_action: (item, el) => {
+      App.queue_snapshot(item.snapshot)
+      App.flash(el)
     },
   })
 }
@@ -319,6 +323,27 @@ App.do_remove_snapshot = async (snapshot) => {
 
     transaction.onerror = () => {
       reject(transaction.error)
+    }
+  })
+}
+
+App.get_snapshot_by_id = async (id) => {
+  if (!id) {
+    return null
+  }
+
+  let db = await App.init_db()
+  let transaction = db.transaction([App.db_store_name], `readonly`)
+  let store = transaction.objectStore(App.db_store_name)
+  let request = store.get(id)
+
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => {
+      resolve(request.result)
+    }
+
+    request.onerror = () => {
+      reject(request.error)
     }
   })
 }

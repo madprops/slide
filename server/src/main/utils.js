@@ -273,3 +273,24 @@ App.filename = (s) => {
   s = s.substring(0, 100)
   return `${s}.slide`
 }
+
+App.flash = (el) => {
+  let min = 0.333
+
+  // define the visual states
+  let keyframes = [
+    {opacity: 1},
+    {opacity: min},
+    {opacity: 1},
+  ]
+
+  // define the timing configuration
+  let options = {
+    duration: 500,
+    iterations: 1,
+    easing: `ease-in-out`,
+  }
+
+  // this triggers the animation immediately
+  el.animate(keyframes, options)
+}
