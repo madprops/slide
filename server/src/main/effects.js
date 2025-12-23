@@ -9,6 +9,7 @@ App.setup_effects = () => {
   App.setup_delay()
   App.setup_panning()
   App.check_effects()
+  App.check_effects_container()
 }
 
 App.check_eq_color = (el) => {
@@ -180,7 +181,7 @@ App.disable_effects = () => {
   DOM.hide(App.get_effects())
 }
 
-App.check_effects = () => {
+App.check_effects_container = () => {
   if (App.effects_enabled) {
     App.enable_effects()
   }
@@ -191,7 +192,7 @@ App.check_effects = () => {
 
 App.toggle_effects = () => {
   App.effects_enabled = !App.effects_enabled
-  App.check_effects()
+  App.check_effects_container()
   App.stor_save_effects()
 }
 

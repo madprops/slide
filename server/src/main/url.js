@@ -190,6 +190,7 @@ App.load_beat_url = async (play = false) => {
     App.set_input(code)
     App.set_song_tempo(code)
     App.update_url()
+    App.check_effects()
     App.playing()
 
     if (play) {
