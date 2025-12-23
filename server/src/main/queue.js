@@ -22,9 +22,17 @@ App.check_queue = () => {
 
 App.queue_snapshot = (snapshot) => {
   App.queue.push({
-    id: `snapshot_${snapshot.id}`,
     type: `snapshot`,
     item_id: snapshot.id,
+  })
+
+  App.check_queue_button()
+}
+
+App.queue_song = (name) => {
+  App.queue.push({
+    type: `song`,
+    item_id: name,
   })
 
   App.check_queue_button()
@@ -50,6 +58,9 @@ App.next_in_queue = async () => {
     if (snapshot) {
       App.load_snapshot(snapshot)
     }
+  }
+  else if (first.type === `song`) {
+    App.load_song(first.item_id)
   }
 
   App.check_queue_button()

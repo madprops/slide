@@ -275,7 +275,7 @@ App.filename = (s) => {
 }
 
 App.flash = (el) => {
-  let min = 0.333
+  let min = 0.3
 
   // define the visual states
   let keyframes = [
@@ -286,7 +286,7 @@ App.flash = (el) => {
 
   // define the timing configuration
   let options = {
-    duration: 500,
+    duration: 600,
     iterations: 1,
     easing: `ease-in-out`,
   }
