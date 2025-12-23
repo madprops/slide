@@ -545,8 +545,7 @@ class Astro:
 
         # Helper to potentially wrap values in < > for alternation
         def p(options: list[str]) -> str:
-            # 50% chance to just pick one static value
-            if rng_1.random() < 0.5:
+            if rng_1.random() <= 0.8:
                 return rng_2.choice(options)
 
             # Otherwise create an alternation sequence
@@ -625,24 +624,26 @@ class Astro:
 
         percs = [
             # With effects
-            f'$: sound("bd hh hh hh").bank("{b()}"){e()}',
-            f'$: sound("bd hh sd hh").bank("{b()}"){e()}',
-            f'$: sound("bd sd bd sd").bank("{b()}"){e()}',
-            f'$: sound("bd hh hh [sd sd]").bank("{b()}"){e()}',
-            f'$: sound("bd [hh hh] sd hh").bank("{b()}"){e()}',
-            f'$: sound("bd sd [bd bd] sd").bank("{b()}"){e()}',
+            f'sound("bd hh hh hh").bank("{b()}"){e()}',
+            f'sound("bd hh sd hh").bank("{b()}"){e()}',
+            f'sound("bd sd bd sd").bank("{b()}"){e()}',
+            f'sound("bd hh hh [sd sd]").bank("{b()}"){e()}',
+            f'sound("bd [hh hh] sd hh").bank("{b()}"){e()}',
+            f'sound("bd sd [bd bd] sd").bank("{b()}"){e()}',
             # Without effects
-            f'$: sound("bd hh hh hh").bank("{b()}")',
-            f'$: sound("bd hh sd hh").bank("{b()}")',
-            f'$: sound("bd sd bd sd").bank("{b()}")',
-            f'$: sound("bd hh hh [sd sd]").bank("{b()}")',
-            f'$: sound("bd [hh hh] sd hh").bank("{b()}")',
-            f'$: sound("bd sd [bd bd] sd").bank("{b()}")',
+            f'sound("bd hh hh hh").bank("{b()}")',
+            f'sound("bd hh sd hh").bank("{b()}")',
+            f'sound("bd sd bd sd").bank("{b()}")',
+            f'sound("bd hh hh [sd sd]").bank("{b()}")',
+            f'sound("bd [hh hh] sd hh").bank("{b()}")',
+            f'sound("bd sd [bd bd] sd").bank("{b()}")',
             # Silent
-            '$: sound("~ ~ ~ ~")',
+            'sound("~ ~ ~ ~")',
         ]
 
-        perc = rng_1.choice(percs)
+        def perc():
+            return rng_1.choice(percs)
+
         name = self.namer.generate_name(ra_avg, dec_avg, mag_avg)
         data.beat_title = name
         data.beat_code = f"""/* Astro | Star Data
@@ -684,8 +685,13 @@ let s4 = stack(
   note("{n()} ~").sound("{s()}").pan(1){e()}
 )
 
+let p1 = {perc()}
+let p2 = {perc()}
+let p3 = {perc()}
+let p4 = {perc()}
+
 $: cat(s1, s2, s3, s4)
-{perc}
+$: cat(p1, p2, p3, p4)
 """
 
 
