@@ -87,18 +87,20 @@ App.code_scroll_tick = (timestamp) => {
   App.code_scroll_pause_until = 0
   let delta = timestamp - App.code_scroll_last_ts
   App.code_scroll_last_ts = timestamp
-  let distance = (App.code_scroll_speed_px_per_second * delta) / 1000
-  let target = App.get_input_scroll() + (distance * App.code_scroll_direction)
-  let max_scroll = Math.max(0, App.get_input_height() - App.get_input_client_height())
-  App.set_input_scroll(target)
 
+  let max_scroll = Math.max(0, App.get_input_height() - App.get_input_client_height())
+
+  // FIX: If there is no overflow, don't STOP. Just wait for the next frame.
   if (max_scroll <= 0) {
-    App.stop_code_scroll()
+    App.code_scroll_frame = window.requestAnimationFrame(App.code_scroll_tick)
     return
   }
 
+  let distance = (App.code_scroll_speed_px_per_second * delta) / 1000
+  let target = App.get_input_scroll() + (distance * App.code_scroll_direction)
+  App.set_input_scroll(target)
+
   // FIX: Only check the bottom boundary if we are actually moving DOWN (direction > 0).
-  // Otherwise, the tolerance calculation will snag us as we try to scroll up/away.
   if ((App.code_scroll_direction > 0) && ((Math.ceil(App.get_input_scroll()) + 1) >= max_scroll)) {
     App.set_input_scroll(max_scroll)
     App.reset_code_scroll_for_content({direction: -1})
