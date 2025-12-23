@@ -61,7 +61,13 @@ App.save_gist = async (content, filename) => {
 }
 
 App.show_gist_url = (url) => {
-  let location = window.location.origin
-  let title = App.beat_title ? `&title=${App.beat_title}` : ``
-  App.show_alert(`${location}?url=${url}${title}`)
+  let site_origin = window.location.origin
+  let title_query = ``
+
+  if (App.beat_title) {
+    title_query = `&title=${encodeURIComponent(App.beat_title)}`
+  }
+
+  let encoded_url = encodeURIComponent(url)
+  App.show_alert(`${site_origin}?url=${encoded_url}${title_query}`)
 }
