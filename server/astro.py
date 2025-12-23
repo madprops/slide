@@ -23,18 +23,41 @@ SCAN_WIDTH_DEG = 2.0
 SOUNDS = [
     "sine",
     "piano",
+    "rd",
+    "wind",
+    "marimba",
+    "vibraphone",
+    "darbuka",
+    "ocarina_small",
+    "trainwhistle",
+    "dantranh",
+    "strumstick",
+    "kawai",
+    "piano1",
+    "wineglass",
+    "belltree",
+    "fingercymbal",
+    "glockenspiel",
+    "glo",
 ]
 
 BANKS = [
+    "RolandTR626",
+    "RolandSystem100",
+    "RolandJD990",
+    "YamahaRM50",
+    "YamahaRX21",
     "RhodesPolaris",
     "SakataDPM48",
-    "RolandSystem100",
-    "YamahaRM50",
+    "DoepferMS404",
+    "BossDR550",
+    "CasioRZ1",
 ]
 
 NOISE = [
     "pink",
     "brown",
+    "oceandrum",
 ]
 
 NOTES = [
