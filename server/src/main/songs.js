@@ -84,7 +84,7 @@ App.show_songs = async () => {
     action: (item) => {
       App.load_song(item.text)
     },
-    ctrl_click: (item, el) => {
+    ctrl_action: (item, el) => {
       App.queue_song(item.text)
       App.flash(el)
     }
