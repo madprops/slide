@@ -48,6 +48,7 @@ App.show_items_modal = async (id, args = {}) => {
     active: -1,
     capitalize: true,
     icons: true,
+    hover: false,
   }
 
   App.def_args(def_args, args)
@@ -108,6 +109,12 @@ App.show_items_modal = async (id, args = {}) => {
 
       if (args.capitalize) {
         name = App.capitalize(name)
+      }
+
+      if (args.hover) {
+        let hover = DOM.create(`div`, `modal-hover`)
+        hover.textContent = `🌊`
+        item_div.appendChild(hover)
       }
 
       item_text.textContent = name

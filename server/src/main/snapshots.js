@@ -268,6 +268,7 @@ App.show_snapshots = async () => {
       App.queue_snapshot(item.snapshot)
       App.flash(el)
     },
+    hover: true,
   })
 }
 

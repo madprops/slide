@@ -75,7 +75,7 @@ App.show_songs = async () => {
   for (let song of songlist) {
     items.push({
       text: song,
-      title: `Click to load this song`,
+      title: `Click to load this song\nCtrl+Click to queue`,
     })
   }
 
@@ -88,6 +88,7 @@ App.show_songs = async () => {
       App.queue_song(item.text)
       App.flash(el)
     },
+    hover: true,
   })
 }
 
