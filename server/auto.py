@@ -19,15 +19,16 @@ import utils
 import astro
 import data
 
-MINUTES = 5
+SECONDS = 45
 MAX_HISTORY = 3
-USE_INSTRUCTIONS = False
+USE_INSTRUCTIONS = True
 DIRECTOR_INTENSITY = "medium"
 USE_DIRECTOR = True
 
 GOOGLE_MODEL = "gemini/gemini-2.0-flash"
 CLAUDE_MODEL = "anthropic/claude-sonnet-4-20250514"
-MODEL = os.getenv("LITELLM_MODEL", CLAUDE_MODEL)
+LLAMA_MODEL = "openai/meta-llama-3.1"
+MODEL = os.getenv("LITELLM_MODEL", LLAMA_MODEL)
 
 GOOGLE_API_KEY = ""
 CLAUDE_API_KEY = ""
@@ -41,13 +42,9 @@ AUTO_REQUESTED = False
 AUTO_STOP_TIMER = None
 AUTO_STOP_DELAY = 30  # minutes
 
-AUTO_METHOD = "astro"  # either 'auto' or 'astro'
+AUTO_METHOD = "ai"  # either 'ai' or 'astro'
 # auto uses ai to evolve the music
 # astro uses astronomic data to create sounds
-
-REQUEST_INTERVAL_MINUTES = max(
-    1, int(os.getenv("REQUEST_INTERVAL_MINUTES", f"{MINUTES}"))
-)
 
 DEFAULT_ANSWER = """// This is supposed to run an AI service to update the code periodically
 // But right now this is not runnning to avoid expenses
@@ -122,10 +119,8 @@ def get_status() -> Response:
     if not AUTO_REQUESTED:
         if ENABLE_AUTO:
             if AUTO_METHOD == "ai":
-                utils.echo("Starting auto: ai")
                 start()
             elif AUTO_METHOD == "astro":
-                utils.echo("Starting auto: astro")
                 astro.start()
         else:
             logging.info("AI interval disabled; worker not started")
@@ -176,7 +171,7 @@ def run_ai_prompt() -> str:
     model = resolve_model_name(MODEL)
 
     messages = [
-        {"role": "system", "content": "Respond with clear, user-friendly summaries."},
+        {"role": "system", "content": "Respond with pure strudel code."},
         {"role": "user", "content": make_prompt()},
     ]
 
@@ -184,6 +179,7 @@ def run_ai_prompt() -> str:
         model=model,
         messages=messages,
         api_key=get_api_key(),
+        api_base=get_api_base(),
         timeout=30,
     )
 
@@ -196,8 +192,10 @@ def run_ai_prompt() -> str:
     )
 
     if content:
+        utils.echo("Received AI Completion.")
         return utils.strip_markdown_code_fences(content)
 
+    utils.echo("AI didn't return anything.")
     return "Received empty response from model."
 
 
@@ -237,6 +235,13 @@ def get_api_key() -> str:
     return ""
 
 
+def get_api_base() -> str:
+    if "llama" in MODEL:
+        return "http://localhost:8080/v1"
+
+    return ""
+
+
 def get_beats() -> str:
     with ANSWER_LOCK:
         beats = list(HISTORY[-MAX_HISTORY:])
@@ -256,9 +261,7 @@ def get_beats() -> str:
 def background_worker() -> None:
     """Continuously refresh the cached answer on a fixed cadence."""
 
-    interval_seconds = REQUEST_INTERVAL_MINUTES * 60
-
-    while not STOP_EVENT.wait(interval_seconds):
+    while not STOP_EVENT.wait(SECONDS):
         try:
             answer = run_ai_prompt()
         except Exception:
@@ -441,6 +444,7 @@ def shutdown_worker() -> None:
 
 
 def start() -> None:
+    utils.echo(f"🤖 Auto (ai): {SECONDS} seconds")
     load_api_key()
     load_instructions()
     start_worker_if_needed()

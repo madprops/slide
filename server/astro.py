@@ -708,6 +708,7 @@ def start() -> None:
     if is_running_from_reloader():
         return
 
+    utils.echo(f"🤖 Auto (astro): {SECONDS} seconds")
     ASTRO = Astro()
     ASTRO.start()
 
