@@ -261,6 +261,9 @@ App.show_snapshots = async () => {
     action: (item) => {
       App.load_snapshot(item.snapshot)
     },
+    alt_action: (item, el) => {
+      App.remove_snapshot(item.snapshot, el)
+    },
   })
 }
 
@@ -282,4 +285,40 @@ App.load_snapshot = (item) => {
   App.stop_auto()
   App.play_action(item.code, {fresh: true})
   App.close_modal(`snapshots`)
+}
+
+App.remove_snapshot = (snapshot, el) => {
+  App.show_confirm({
+    title: `Remove`,
+    message: `Remove this snapshot?`,
+    ok_action: () => {
+      App.do_remove_snapshot(snapshot).then(() => {
+        el.remove()
+      })
+    },
+  })
+}
+
+App.do_remove_snapshot = async (snapshot) => {
+  if (!snapshot || !snapshot.id) {
+    return false
+  }
+
+  let db = await App.init_db()
+  let transaction = db.transaction([App.db_store_name], `readwrite`)
+  let store = transaction.objectStore(App.db_store_name)
+
+  // Delete the record using the primary key 'id'
+  store.delete(snapshot.id)
+
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = () => {
+      console.log(`🗑️ Snapshot removed.`)
+      resolve()
+    }
+
+    transaction.onerror = () => {
+      reject(transaction.error)
+    }
+  })
 }

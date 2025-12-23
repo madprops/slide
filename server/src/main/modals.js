@@ -112,7 +112,21 @@ App.show_items_modal = async (id, args = {}) => {
 
       item_text.textContent = name
       item_div.title = item.title
-      DOM.ev(item_div, `click`, () => args.action(item))
+
+      DOM.ev(item_div, `click`, (event) => {
+        if (args.action) {
+          args.action(item, item_div)
+        }
+      })
+
+      DOM.ev(item_div, `auxclick`, (event) => {
+        if (event.button === 1) {
+          if (args.alt_action) {
+            args.alt_action(item, item_div)
+          }
+        }
+      })
+
       App.register_tooltip(item_div)
 
       if (args.active === i) {
