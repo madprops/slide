@@ -249,23 +249,23 @@ App.anim_flux_surface = (c, w, h, f) => {
 
   for (let y = -max_amp; y < (h + max_amp); y += line_gap) {
     let y_factor = y * 0.01
-
-    // Optimization: Calculate hue once per line, not per point
     let hue = ((y * 0.2) + (f * 0.5)) % 360
-    c.strokeStyle = `hsla(${hue}, 60%, 60%, 0.8)`
 
+    c.strokeStyle = `hsla(${hue}, 60%, 60%, 0.8)`
     c.beginPath()
 
-    // Optimization: Don't use an array cache.
-    // Calculate wave_1 inline. Math.sin is fast enough.
-    // Allocating [wave_1_cache] 60 times a second causes GC stutter.
     for (let x = 0; x <= w; x += step_x) {
       let wave_1 = Math.sin((x * 0.005) + time) * 50
-      let wave_2 = Math.sin((x * 0.02) - time_doubled + y_factor) * 15
+      let wave_2 = Math.sin(((x * 0.02) - time_doubled) + y_factor) * 15
 
-      c.lineTo(x, y + wave_1 + wave_2)
+      c.lineTo(x, (y + wave_1) + wave_2)
     }
 
+    // Explicitly draw to the right edge to ensure 100% width
+    let wave_1_end = Math.sin((w * 0.005) + time) * 50
+    let wave_2_end = Math.sin(((w * 0.02) - time_doubled) + y_factor) * 15
+
+    c.lineTo(w, (y + wave_1_end) + wave_2_end)
     c.stroke()
   }
 }
