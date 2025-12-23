@@ -610,7 +610,7 @@ class Astro:
         perc = rng_1.choice(percs)
         name = self.namer.generate_name(ra_avg, dec_avg, mag_avg)
         data.beat_title = name
-        data.beat_code = f"""/* Astro 🌌 Star Data
+        data.beat_code = f"""/* Astro | Star Data
 RA: {ra_avg} | DEC: {dec_avg} | MAG: {mag_avg}
 North Star: {self.name(awards["north_star"])}
 Loner Star: {self.name(awards["loner_star"])}
