@@ -251,7 +251,7 @@ App.show_snapshots = async () => {
 
     items.push({
       text,
-      title: `Click to load and play this snapshot`,
+      title: `Click to load this snapshot\nMiddle Click to remove`,
       snapshot,
     })
   }

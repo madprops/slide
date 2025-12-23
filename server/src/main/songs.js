@@ -75,7 +75,7 @@ App.show_songs = async () => {
   for (let song of songlist) {
     items.push({
       text: song,
-      title: `Click to load and play this song`,
+      title: `Click to load this song`,
     })
   }
 
