@@ -1,43 +1,36 @@
 App.code_query_key = `code`
 App.song_query_key = `song`
-App.beat_query_key = `title`
+App.title_query_key = `title`
 App.url_query_key = `url`
 
 App.update_url = (song_name = ``) => {
   let next_url = new URL(window.location.href)
-  let code = App.get_input_value().trim()
+  let input_code = App.get_input_value().trim()
+  let current_song = song_name
 
-  if (!song_name) {
-    song_name = App.get_song_name()
+  if (!current_song) {
+    current_song = App.get_song_name()
   }
 
-  if (song_name) {
-    next_url.searchParams.set(App.song_query_key, song_name)
-  }
-  else {
-    next_url.searchParams.delete(App.song_query_key)
+  // Clear all existing parameters to ensure only related ones are kept
+  next_url.search = ``
+
+  if (current_song) {
+    next_url.searchParams.set(App.song_query_key, current_song)
   }
 
-  if (!song_name && App.beat_url) {
+  if ((!current_song) && App.beat_url) {
     next_url.searchParams.set(App.url_query_key, App.beat_url)
   }
-  else {
-    next_url.searchParams.delete(App.url_query_key)
-  }
 
-  if (code && !song_name && !App.beat_url && (code.length <= App.code_url_max)) {
-    let compressed_code = App.compress_string(code)
+  if ((input_code && (!current_song)) && ((!App.beat_url) && (input_code.length <= App.code_url_max))) {
+    let compressed_code = App.compress_string(input_code)
+
     next_url.searchParams.set(App.code_query_key, compressed_code)
-  }
-  else {
-    next_url.searchParams.delete(App.code_query_key)
   }
 
   if (App.beat_title) {
-    next_url.searchParams.set(App.beat_query_key, App.beat_title)
-  }
-  else {
-    next_url.searchParams.delete(App.beat_query_key)
+    next_url.searchParams.set(App.title_query_key, App.beat_title)
   }
 
   window.history.replaceState({}, document.title, `${next_url.pathname}${next_url.search}${next_url.hash}`)
@@ -112,7 +105,7 @@ App.load_song_from_query = async () => {
 
 App.set_beat_title_from_query = () => {
   let query_params = App.get_query_params()
-  let beat_title = query_params.get(App.beat_query_key)
+  let beat_title = query_params.get(App.title_query_key)
 
   if (beat_title) {
     App.beat_title = beat_title

@@ -334,6 +334,7 @@ App.start_events = async () => {
   App.make_main_visible()
   App.set_beat_title_from_query()
   App.max_input()
+  App.update_url()
   App.resize_scope()
   App.init_tooltips()
 
