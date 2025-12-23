@@ -141,6 +141,8 @@ def get_status() -> Response:
 
 
 def stop_auto() -> None:
+    global AUTO_REQUESTED
+
     stop()
     astro.stop()
     AUTO_REQUESTED = False
