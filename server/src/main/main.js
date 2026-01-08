@@ -250,6 +250,7 @@ App.start_events = async () => {
 
   App.events_started = true
   await App.get_config()
+  App.read_css_vars()
   App.load_all_storage()
   App.setup_modals()
   App.start_visual()
@@ -453,6 +454,12 @@ App.setup_eval = async () => {
 
 App.mirror_title = () => {
   DOM.el(`#title`).classList.toggle(`mirror`)
+}
+
+App.read_css_vars = () => {
+  let root = document.documentElement
+  let c = getComputedStyle(root)
+  App.css_text_color = c.getPropertyValue(`--text-color`).trim()
 }
 
 window.H = H_hydra

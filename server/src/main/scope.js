@@ -35,10 +35,9 @@ App.scope_click_time = 3 * 1000
 App.scope_click_level_time = 3 * 1000
 App.gesture_scope_clicks = []
 
-App.scope_title_font_size = 17
+App.scope_title_font_size = 18
 App.scope_title_font = `monospace`
-App.scope_title_color = `rgba(222, 222, 222, 1)`
-App.scope_title_padding_top = 10
+App.scope_title_padding_top = 12
 
 App.setup_scope = () => {
   App.setup_scope_canvas()
@@ -491,7 +490,7 @@ App.draw_scope_frame = () => {
   if (App.status_enabled) {
     ctx.save()
     ctx.font = `${App.scope_title_font_size}px ${App.scope_title_font}`
-    ctx.fillStyle = App.scope_title_color
+    ctx.fillStyle = App.css_text_color
     ctx.textAlign = `left`
     ctx.textBaseline = `top`
 
