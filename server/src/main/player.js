@@ -264,12 +264,19 @@ App.run_eval = async (code) => {
     else {
       App.last_code = ``
       App.seek_offset = 0
-      App.stop_action()
+
+      if (App.stoppable()) {
+        App.stop_action()
+      }
     }
   }
   catch (err) {
     App.seek_offset = 0
-    App.stop_action()
+
+    if (App.stoppable()) {
+      App.stop_action()
+    }
+
     return {ok: false, error: err}
   }
 
@@ -346,4 +353,12 @@ App.set_playing = (what) => {
   else {
     btn.classList.remove(`active`)
   }
+}
+
+App.stoppable = () => {
+  if (App.auto_started) {
+    return false
+  }
+
+  return true
 }
