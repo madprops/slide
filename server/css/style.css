@@ -420,7 +420,7 @@ button:active {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    justify-content: center;
+    justify-content: flex-start;
     margin-top: var(--panel-margin);
     margin-bottom: 2rem;
 }
@@ -431,8 +431,9 @@ button:active {
     height: 100%;
     flex-direction: row;
     align-items: flex-start;
-    justify-content: center;
+    justify-content: flex-start;
     box-sizing: border-box;
+    flex-wrap: wrap;
 }
 
 #controls button {
@@ -976,7 +977,7 @@ a.popup:hover {
     text-align: center;
     border-color: #717070;
     border-style: solid;
-    background-color: #292929;
+    background-color: #373737;
     border-width: 0;
 }
 
@@ -989,20 +990,12 @@ a.popup:hover {
     gap: var(--buttons-gap);
 }
 
-.eq_positive {
+.eq-positive {
     color: rgb(255, 171, 64) !important;
 }
 
-.eq_negative {
+.eq-negative {
     color: rgb(100, 255, 218) !important;
-}
-
-#eq-low-container {
-    padding-left: 0.5rem;
-}
-
-#eq-high-container {
-    padding-right: 0.5rem;
 }
 
 #btn-auto {

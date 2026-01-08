@@ -35,6 +35,11 @@ App.scope_click_time = 3 * 1000
 App.scope_click_level_time = 3 * 1000
 App.gesture_scope_clicks = []
 
+App.scope_title_font_size = 17
+App.scope_title_font = `monospace`
+App.scope_title_color = `rgba(222, 222, 222, 1)`
+App.scope_title_padding_top = 10
+
 App.setup_scope = () => {
   App.setup_scope_canvas()
 
@@ -481,6 +486,44 @@ App.draw_scope_frame = () => {
     // Important: Ensure draw_star isn't scaling internally
     App.draw_star(ctx, click.x, click.y, 3, 5, App.scope_click_size, angle)
     ctx.fill()
+  }
+
+  if (App.status_enabled) {
+    ctx.save()
+    ctx.font = `${App.scope_title_font_size}px ${App.scope_title_font}`
+    ctx.fillStyle = App.scope_title_color
+    ctx.textAlign = `left`
+    ctx.textBaseline = `top`
+
+    let x = App.scope_title_padding_top || 10
+    let y = App.scope_title_padding_top || 10
+    let line_height = App.scope_title_font_size * 1.5
+
+    ctx.fillText(String(App.status), x, y)
+    y += line_height
+
+    if (App.scheduler && App.is_playing()) {
+      let cps = App.scheduler.cps || 0
+      ctx.fillText(`CPS: ${cps.toFixed(2)}`, x, y)
+      y += line_height
+
+      let cycle = App.scheduler.now()
+      ctx.fillText(`Cycle: ${cycle.toFixed(2)}`, x, y)
+      y += line_height
+    }
+
+    if (waveform && App.is_playing()) {
+      let sum = 0
+      for (let i = 0; i < waveform.length; i++) {
+        let val = (waveform[i] - 128) / 128
+        sum += val * val
+      }
+      let rms = Math.sqrt(sum / waveform.length)
+      ctx.fillText(`Amp: ${rms.toFixed(3)}`, x, y)
+      y += line_height
+    }
+
+    ctx.restore()
   }
 
   App.scope_animation_id = requestAnimationFrame(App.draw_scope_frame)

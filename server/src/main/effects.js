@@ -15,14 +15,14 @@ App.setup_effects = () => {
 
 App.check_eq_color = (el) => {
   let num = parseInt(el.value)
-  el.classList.remove(`eq_negative`)
-  el.classList.remove(`eq_positive`)
+  el.classList.remove(`eq-negative`)
+  el.classList.remove(`eq-positive`)
 
   if (num < 0) {
-    el.classList.add(`eq_negative`)
+    el.classList.add(`eq-negative`)
   }
   else if (num > 0) {
-    el.classList.add(`eq_positive`)
+    el.classList.add(`eq-positive`)
   }
 }
 
