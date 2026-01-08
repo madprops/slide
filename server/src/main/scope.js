@@ -514,10 +514,12 @@ App.draw_scope_frame = () => {
 
     if (waveform && App.is_playing()) {
       let sum = 0
+
       for (let i = 0; i < waveform.length; i++) {
         let val = (waveform[i] - 128) / 128
         sum += val * val
       }
+
       let rms = Math.sqrt(sum / waveform.length)
       ctx.fillText(`Amp: ${rms.toFixed(3)}`, x, y)
       y += line_height
