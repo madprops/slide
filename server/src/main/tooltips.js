@@ -105,7 +105,7 @@ App.register_tooltip = (element) => {
   // We pass { target: element } to mimic an event object, ensuring
   // App.show_tooltip reads attributes from the container, not a child node.
   let trigger_tooltip = () => {
-    App.tooltip_debouncer.call({ target: element })
+    App.tooltip_debouncer.call({target: element})
   }
 
   // Bind mouseenter (standard)
