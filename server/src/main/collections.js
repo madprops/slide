@@ -7,6 +7,20 @@ App.create_collections_modal = () => {
 App.show_collections = async () => {
   let items = [
     {
+      text: `Songs`,
+      action: () => {
+        App.show_songs()
+      },
+      title: `View the songs collection`,
+    },
+    {
+      text: `Song Shuffle`,
+      action: () => {
+        App.song_shuffle()
+      },
+      title: `Make a randomized playlist with all the songs`,
+    },
+    {
       text: `Snapshots`,
       action: () => {
         App.show_snapshots()
@@ -14,11 +28,11 @@ App.show_collections = async () => {
       title: `View the snapshots collection`,
     },
     {
-      text: `Songs`,
+      text: `Snap Shuffle`,
       action: () => {
-        App.show_songs()
+        App.snap_shuffle()
       },
-      title: `View the songs collection`,
+      title: `Make a randomized playlist with all the snapshots`,
     },
   ]
 

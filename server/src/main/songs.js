@@ -69,10 +69,10 @@ App.create_songs_modal = () => {
 }
 
 App.show_songs = async () => {
-  let songlist = await App.fetch_songs_list()
+  let songs = await App.fetch_songs_list()
   let items = []
 
-  for (let song of songlist) {
+  for (let song of songs) {
     items.push({
       text: song,
       title: `Click to load this song\nCtrl+Click to queue`,
@@ -183,4 +183,25 @@ App.get_song_name = (clean = false) => {
 
 App.clean_song_name = (name) => {
   return App.capitalize(App.underspace(name))
+}
+
+App.song_shuffle = async () => {
+  let songs = await App.fetch_songs_list()
+
+  if (songs.length === 0) {
+    return
+  }
+
+  songs = App.shuffle_array(songs)
+  App.queue = []
+
+  for (let name of songs) {
+    App.queue.push({
+      type: `song`,
+      item_id: name,
+    })
+  }
+
+  App.check_queue_button()
+  App.next_in_queue()
 }

@@ -349,3 +349,24 @@ App.get_snapshot_by_id = async (id) => {
     }
   })
 }
+
+App.snap_shuffle = async () => {
+  let snapshots = await App.get_snapshots()
+
+  if (snapshots.length === 0) {
+    return
+  }
+
+  snapshots = App.shuffle_array(snapshots)
+  App.queue = []
+
+  for (let snapshot of snapshots) {
+    App.queue.push({
+      type: `snapshot`,
+      item_id: snapshot.id,
+    })
+  }
+
+  App.check_queue_button()
+  App.next_in_queue()
+}

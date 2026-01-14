@@ -294,3 +294,10 @@ App.flash = (el) => {
   // this triggers the animation immediately
   el.animate(keyframes, options)
 }
+
+App.shuffle_array = (array) => {
+  return array
+    .map(value => ({value, sort: Math.random()}))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({value}) => value)
+}
