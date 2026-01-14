@@ -43,27 +43,27 @@ def index() -> Any:
 
 
 @app.route("/dist/<path:filename>", methods=["GET"])  # type: ignore
-def dist_assets(filename) -> Response:
+def dist_assets(filename: str) -> Response:
     return send_from_directory("dist", filename)
 
 
 @app.route("/css/<path:filename>", methods=["GET"])  # type: ignore
-def css_assets(filename) -> Response:
+def css_assets(filename: str) -> Response:
     return send_from_directory("css", filename)
 
 
 @app.route("/img/<path:filename>", methods=["GET"])  # type: ignore
-def img_assets(filename) -> Response:
+def img_assets(filename: str) -> Response:
     return send_from_directory("img", filename)
 
 
 @app.route("/config/<path:filename>", methods=["GET"])  # type: ignore
-def config_assets(filename) -> Response:
+def config_assets(filename: str) -> Response:
     return send_from_directory("config", filename)
 
 
 @app.route("/samples/<path:filename>", methods=["GET"])  # type: ignore
-def sample_assets(filename) -> Response:
+def sample_assets(filename: str) -> Response:
     return send_from_directory("samples", filename)
 
 
@@ -83,7 +83,7 @@ def list_songs() -> Response:
 
 
 @app.route("/songs/<path:filename>", methods=["GET"])  # type: ignore
-def songs_assets(filename) -> Response:
+def songs_assets(filename: str) -> Response:
     return send_from_directory("songs", filename)
 
 
